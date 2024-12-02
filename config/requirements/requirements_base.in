@@ -1,5 +1,0 @@
-Django~=4.2.0
-python-dotenv~=1.0.0
-requests~=2.32.3
-trio~=0.26.0
-urllib3~=1.26.0     # for down-stream compatibility
