@@ -1,0 +1,7 @@
+.DS_Store
+*.pyc
+*.sqlite*
+*pycache*
+env
+migrations
+.ruff_cache
