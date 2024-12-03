@@ -6,10 +6,10 @@ import trio
 from django.conf import settings as project_settings
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
-from bdr_deposits_uploader_app.lib import version_helper
 from django.urls import reverse
-from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
 
+from bdr_deposits_uploader_app.lib import version_helper
+from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +44,26 @@ def info(request):
     return resp
 
 
+def config_new(request):
+    """
+    Enables coniguration of new app.
+    """
+    log.debug('starting config_new()')
+    # context = {}
+    return HttpResponse('config_new view')
+    # return render(request, 'config_new.html', context)
+
+
+def config_slug(request, slug):
+    """
+    Enables coniguration of existing app.
+    """
+    log.debug('starting config_slug()')
+    # context = { 'slug': slug }
+    return HttpResponse(f'config_slug view for slug: {slug}')
+    # return render(request, 'config_slug.html', context)
+
+
 # -------------------------------------------------------------------
 # support urls
 # -------------------------------------------------------------------
@@ -60,9 +80,7 @@ def error_check(request):
     log.debug(f'project_settings.DEBUG, ``{project_settings.DEBUG}``')
     if project_settings.DEBUG is True:  # localdev and dev-server; never production
         log.debug('triggering exception')
-        raise Exception(
-            'Raising intentional exception to check email-admins-on-error functionality.'
-        )
+        raise Exception('Raising intentional exception to check email-admins-on-error functionality.')
     else:
         log.debug('returning 404')
         return HttpResponseNotFound('<div>404 / Not Found</div>')

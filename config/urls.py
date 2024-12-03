@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.urls import path
-from bdr_deposits_uploader_app import views
 
+from bdr_deposits_uploader_app import views
 
 urlpatterns = [
     ## main ---------------------------------------------------------
     path('info/', views.info, name='info_url'),
+    path('config/new/', views.config_new, name='config_new_url'),
+    path('config/<str:slug>/', views.config_slug, name='config_slug_url'),
     ## other --------------------------------------------------------
     path('', views.root, name='root_url'),
     path('admin/', admin.site.urls),
