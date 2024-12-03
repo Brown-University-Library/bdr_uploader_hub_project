@@ -26,14 +26,15 @@
         </section>
         <hr/>
         <section class="recent-items-section">
-            <h2>Recent Deposits Apps</h2>
+            <h2>Recent deposits apps</h2> 
             <table class="styled-table">
                 <thead>
                     <tr>
                         <th>Modified-Date</th>
                         <th>Name</th>
                         <th>Items-Count</th>
-                        <th>Link</th>
+                        <th>Config</th>
+                        <th>Upload</th>
                         <th>More Info</th>
                     </tr>
                 </thead>
@@ -43,13 +44,15 @@
                         <td>{{ app.mod_date }}</td>
                         <td>{{ app.name }}</td>
                         <td>{{ app.items_count }}</td>
-                        <td>{{ app.link }}</td>
-                        <td><a href="/admin/{{ app.id }}" class="btn-link">More info</a></td>
+                        <td><a href="{{ app.config_link }}" class="btn-link">config</a></td>
+                        <td><a href="{{ app.upload_link }}" class="btn-link">upload</a></td>
+                        <td><a href="/admin/{{ app.id }}" class="btn-link">admin</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </section>
+        <div style="font-style: italic; margin-top: 1rem; text-align: center;">(dummy data for now)</div>
     </main>
 
     <!-- 

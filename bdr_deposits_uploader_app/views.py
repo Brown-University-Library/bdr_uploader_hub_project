@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from bdr_deposits_uploader_app.lib import version_helper
+from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
 
 log = logging.getLogger(__name__)
@@ -49,7 +49,8 @@ def config_new(request):
     Enables coniguration of new app.
     """
     log.debug('starting config_new()')
-    context = {}
+    dummy_data: list = config_new_helper.get_recent_configs()
+    context = {'recent_apps': dummy_data}
     # return HttpResponse('config_new view')
     return render(request, 'config_new.html', context)
 
