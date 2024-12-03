@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDR Deposits Configurator</title>
+    <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/config.css' %}">
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+    <header>
+        <h1>Brown University Library</h1>
+    </header>
+    <main>
+        <section class="form-section">
+            <h2>Request Archive-It Collection</h2>
+            <form id="collection-form" hx-post="/hlpr_check_coll_id/" hx-target="#response" hx-swap="innerHTML">
+                {% csrf_token %}
+                <label for="collection-id">Collection ID:</label>
+                <input id="collection-id" name="collection_id" type="text" placeholder="Enter Collection ID">
+                <button type="submit" class="btn-primary">Submit</button>
+            </form>
+            <div id="response" class="alert"></div>
+        </section>
+        <section class="recent-items-section">
+            <h2>Recent Items</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Title</th>
+                        <th>Count</th>
+                        <th>Size</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in recent_items %}
+                    <tr>
+                        <td>{{ item.date }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.number_of_items }}</td>
+                        <td>{{ item.total_size }}</td>
+                        <td>{{ item.status }}</td>
+                        <td><a href="/admin/{{ item.id }}" class="btn-link">More info</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Brown University Library</p>
+    </footer>
+</body>
+</html>

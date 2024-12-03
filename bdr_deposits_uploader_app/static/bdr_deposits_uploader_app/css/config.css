@@ -1,0 +1,108 @@
+/* General styles */
+
+head, body, form, label, input, button, table, th, td {
+    font-family: Verdana, sans-serif; /* Verdana font */
+}
+
+body {
+    font-family: 'Verdana', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: maroon;
+    color: white;
+    padding: 1rem;
+    text-align: left;
+}
+
+main {
+    padding: 1rem;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 0.25rem;
+    margin-top: 1rem;
+}
+
+/* form Section */
+.form-section {
+    background: #fff;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* for the "Confirm start download" button */
+form#confirm_download {
+    margin-top: .5rem;
+}
+
+input {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+/* main "Submit" button */
+.btn-primary {
+    background-color: maroon;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #a30000;
+}
+
+.alert {
+    margin-top: .5rem;
+    padding: 0.3rem;
+    color: maroon;
+}
+
+/* Table Styling */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 1rem;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.styled-table th, .styled-table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+}
+
+.styled-table thead th {
+    background-color: maroon;
+    color: white;
+}
+
+.styled-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.btn-link {
+    color: maroon;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}

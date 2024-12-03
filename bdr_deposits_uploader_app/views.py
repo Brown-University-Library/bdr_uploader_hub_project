@@ -49,9 +49,9 @@ def config_new(request):
     Enables coniguration of new app.
     """
     log.debug('starting config_new()')
-    # context = {}
-    return HttpResponse('config_new view')
-    # return render(request, 'config_new.html', context)
+    context = {}
+    # return HttpResponse('config_new view')
+    return render(request, 'config_new.html', context)
 
 
 def config_slug(request, slug):
