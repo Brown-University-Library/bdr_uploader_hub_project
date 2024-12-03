@@ -15,7 +15,7 @@
     </header>
     <main>
         <section class="form-section">
-            <h2>Request Archive-It Collection</h2>
+            <h2>Create new deposits app</h2>
             <form id="collection-form" hx-post="/hlpr_check_coll_id/" hx-target="#response" hx-swap="innerHTML">
                 {% csrf_token %}
                 <label for="collection-id">Collection ID:</label>
@@ -25,27 +25,25 @@
             <div id="response" class="alert"></div>
         </section>
         <section class="recent-items-section">
-            <h2>Recent Items</h2>
+            <h2>Recent Deposits Apps</h2>
             <table class="styled-table">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Title</th>
-                        <th>Count</th>
-                        <th>Size</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>Modified-Date</th>
+                        <th>Name</th>
+                        <th>Items-Count</th>
+                        <th>Link</th>
+                        <th>More Info</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in recent_items %}
+                    {% for app in recent_apps %}
                     <tr>
-                        <td>{{ item.date }}</td>
-                        <td>{{ item.title }}</td>
-                        <td>{{ item.number_of_items }}</td>
-                        <td>{{ item.total_size }}</td>
-                        <td>{{ item.status }}</td>
-                        <td><a href="/admin/{{ item.id }}" class="btn-link">More info</a></td>
+                        <td>{{ app.mod_date }}</td>
+                        <td>{{ app.name }}</td>
+                        <td>{{ app.items_count }}</td>
+                        <td>{{ app.link }}</td>
+                        <td><a href="/admin/{{ app.id }}" class="btn-link">More info</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
