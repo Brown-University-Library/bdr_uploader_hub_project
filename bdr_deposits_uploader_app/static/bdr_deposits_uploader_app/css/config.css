@@ -15,7 +15,9 @@ body {
 header {
     background-color: maroon;
     color: white;
-    padding: 1rem;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    padding-left: 1rem;
     text-align: left;
 }
 
@@ -92,6 +94,7 @@ input {
 .styled-table thead th {
     background-color: maroon;
     color: white;
+    padding: 0.375rem 0.5rem 0.375rem 0.5rem; /* Top, Right, Bottom, Left */
 }
 
 .styled-table tbody tr:nth-child(even) {
