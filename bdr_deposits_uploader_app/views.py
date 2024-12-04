@@ -53,7 +53,6 @@ def config_new(request):
     log.debug('starting config_new()')
     dummy_data: list = config_new_helper.get_recent_configs()
     context = {'recent_apps': dummy_data}
-    # return HttpResponse('config_new view')
     return render(request, 'config_new.html', context)
 
 

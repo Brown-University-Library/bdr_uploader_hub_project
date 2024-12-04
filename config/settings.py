@@ -26,7 +26,7 @@ load_dotenv(find_dotenv(str(dotenv_path), raise_error_if_not_found=True), overri
 log = logging.getLogger(__name__)
 
 
-## django project settings ------------------------------------------
+## django PROJECT settings ------------------------------------------
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -195,3 +195,8 @@ LOGGING = {
         # },
     },
 }
+
+
+## django APP settings ----------------------------------------------
+
+TEST_SHIB_META_DCT: dict = json.loads(os.environ['TEST_SHIB_META_DCT_JSON'])
