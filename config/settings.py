@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bdr_deposits_uploader_app',
+    'bdr_deposits_uploader_app.apps.BdrDepositsUploaderAppConfig',
 ]
 
 MIDDLEWARE = [
