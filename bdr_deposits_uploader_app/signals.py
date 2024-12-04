@@ -1,8 +1,14 @@
+"""
+Implements signals for the bdr_deposits_uploader_app.
+Enables auto-creation of a UserProfile record when a new User record is created.
+See the README for more info.
+"""
+
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models import UserProfile
+from bdr_deposits_uploader_app.models import UserProfile
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

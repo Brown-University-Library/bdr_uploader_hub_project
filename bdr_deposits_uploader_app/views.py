@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
+from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
 
 log = logging.getLogger(__name__)
@@ -44,6 +45,7 @@ def info(request):
     return resp
 
 
+@shib_decorator
 def config_new(request):
     """
     Enables coniguration of new app.
@@ -55,6 +57,7 @@ def config_new(request):
     return render(request, 'config_new.html', context)
 
 
+@shib_decorator
 def config_slug(request, slug):
     """
     Enables coniguration of existing app.
