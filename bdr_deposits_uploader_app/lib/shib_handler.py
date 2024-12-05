@@ -75,7 +75,7 @@ def provision_user(shib_metadata: dict) -> User | None:
     log.debug('starting provision_user()')
     log.debug(f'initial shib_metadata, ``{pprint.pformat(shib_metadata)}``')
 
-    username = shib_metadata.get('Shibboleth-eppn')
+    username: str = shib_metadata.get('Shibboleth-eppn')
     if not username:
         return None
     defaults = {
@@ -86,9 +86,10 @@ def provision_user(shib_metadata: dict) -> User | None:
     log.debug(f'username, ``{username}``')
     log.debug(f'defaults, ``{pprint.pformat(defaults)}``')
     try:
-        user, created = User.objects.update_or_create(username=username, defaults=defaults)
+        (user, created) = User.objects.update_or_create(username=username, defaults=defaults)  # user: django.contrib.auth.models.User; created: bool
         user.save()
         log.debug(f'type(user), ``{type(user)}``')
+        log.debug(f'type(created), ``{type(created)}``')
     except Exception:
         log.exception('Error creating user')
         user = None
