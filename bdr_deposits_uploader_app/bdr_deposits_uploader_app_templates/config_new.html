@@ -46,7 +46,10 @@
                         <td>{{ app.items_count }}</td>
                         <td><a href="{{ app.config_link }}" class="btn-link">config</a></td>
                         <td><a href="{{ app.upload_link }}" class="btn-link">upload</a></td>
-                        <td><a href="/admin/{{ app.id }}" class="btn-link">admin</a></td>
+                        <td><a href="{% url 'admin:index' %}" class="btn-link">admin</a></td>
+
+                        {% url 'admin:index' %}
+
                     </tr>
                     {% endfor %}
                 </tbody>
