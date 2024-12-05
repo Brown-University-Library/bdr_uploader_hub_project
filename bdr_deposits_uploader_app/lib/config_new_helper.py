@@ -1,5 +1,7 @@
 import logging
 
+from django.urls import reverse
+
 log = logging.getLogger(__name__)
 
 
@@ -15,36 +17,36 @@ def get_recent_configs() -> list:
             'mod_date': '2024-12-03 16:29:59.746846',
             'name': 'Med-School Posters',
             'items_count': 250,
-            'config_link': 'http://127.0.0.1/config/med-school-posters/',
-            'upload_link': 'http://127.0.0.1/upload/med-school-posters/',
+            'config_link': f'{reverse("config_slug_url", args=["med-school-posters"])}',
+            'upload_link': f'{reverse("upload_slug_url", args=["med-school-posters"])}',
         },
         {
             'mod_date': '2024-11-03 16:29:59.746846',
             'name': 'UTRA Posters',
             'items_count': 5000,
-            'config_link': 'http://127.0.0.1/config/utra-posters/',
-            'upload_link': 'http://127.0.0.1/upload/utra-posters/',
+            'config_link': f'{reverse("config_slug_url", args=["utra-posters"])}',
+            'upload_link': f'{reverse("upload_slug_url", args=["utra-posters"])}',
         },
         {
             'mod_date': '2024-10-03 16:29:59.746846',
             'name': 'Watson Capstones',
             'items_count': 75,
-            'config_link': 'http://127.0.0.1/config/watson-capstones/',
-            'upload_link': 'http://127.0.0.1/upload/watson-capstones/',
+            'config_link': f'{reverse("config_slug_url", args=["watson-capstones"])}',
+            'upload_link': f'{reverse("upload_slug_url", args=["watson-capstones"])}',
         },
         {
             'mod_date': '2024-11-04 16:29:59.746846',
             'name': 'BDH Oral Histories',
             'items_count': 100,
-            'config_link': 'http://127.0.0.1/config/bdh-oral-histories/',
-            'upload_link': 'http://127.0.0.1/upload/bdh-oral-histories/',
+            'config_link': f'{reverse("config_slug_url", args=["bdh-oral-histories"])}',
+            'upload_link': f'{reverse("upload_slug_url", args=["bdh-oral-histories"])}',
         },
         {
             'mod_date': '2024-08-03 16:29:59.746846',
             'name': 'Rites & Reason Images',
             'items_count': 125,
-            'config_link': 'http://127.0.0.1/config/rites-reason-images/',
-            'upload_link': 'http://127.0.0.1/upload/rites-reason-images/',
+            'config_link': f'{reverse("config_slug_url", args=["rites-reason-images"])}',
+            'upload_link': f'{reverse("upload_slug_url", args=["rites-reason-images"])}',
         },
     ]
     ## sort dict by date descending
