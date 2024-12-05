@@ -2,6 +2,7 @@ import copy
 import logging
 import pprint
 from functools import wraps
+from typing import Tuple
 
 from django.conf import settings
 from django.contrib import auth
@@ -26,16 +27,18 @@ def shib_decorator(func):
     def wrapper(request, *args, **kwargs):
         log.debug('starting shib_decorator wrapper()')
         log.debug(f'type(func), ``{type(func)}``')
+        ## if user's already authenticated, just call the view ------
         if request.user.is_authenticated:
             log.debug('user already authenticated.')
             return func(request, *args, **kwargs)
-
+        ## process shib metadata ------------------------------------
         shib_metadata: dict = prep_shib_meta(request.META, request.get_host())
+        ## provision user -------------------------------------------
         user = provision_user(shib_metadata)
         if not user:
             log.error('User creation failed; raising Exception.')
             return HttpResponseServerError('Sorry, problem with authentication; ask developers to check the logs.')
-
+        ## log user in and call view --------------------------------
         auth.login(request, user)
         log.info(f'user {user.username} logged in.')
         return func(request, *args, **kwargs)
@@ -73,23 +76,30 @@ def provision_user(shib_metadata: dict) -> User | None:
     Called by shib_login().
     """
     log.debug('starting provision_user()')
-    log.debug(f'initial shib_metadata, ``{pprint.pformat(shib_metadata)}``')
-
+    # log.debug(f'initial shib_metadata, ``{pprint.pformat(shib_metadata)}``')
+    ## ensure username and email ------------------------------------
     username: str = shib_metadata.get('Shibboleth-eppn')
     if not username:
+        log.warning('No eppn found in Shibboleth metadata')
+    email: str = shib_metadata.get('Shibboleth-mail')
+    if not email:
+        log.warning('No email found in Shibboleth metadata')
+    if not username or not email:
         return None
+    ## set defaults -------------------------------------------------
     defaults = {
-        'email': shib_metadata.get('Shibboleth-mail', f'{username}@example.com'),
+        'email': email,
         'first_name': shib_metadata.get('Shibboleth-givenName', ''),
         'last_name': shib_metadata.get('Shibboleth-sn', ''),
     }
     log.debug(f'username, ``{username}``')
     log.debug(f'defaults, ``{pprint.pformat(defaults)}``')
+    ## create or update user ----------------------------------------
     try:
-        (user, created) = User.objects.update_or_create(username=username, defaults=defaults)  # user: django.contrib.auth.models.User; created: bool
+        result: Tuple[User, bool] = User.objects.update_or_create(username=username, defaults=defaults)
+        (user, created) = result
+        log.debug(f'created, ``{created}``')
         user.save()
-        log.debug(f'type(user), ``{type(user)}``')
-        log.debug(f'type(created), ``{type(created)}``')
     except Exception:
         log.exception('Error creating user')
         user = None
