@@ -83,6 +83,14 @@ def provision_user(shib_metadata: dict) -> User | None:
         'first_name': shib_metadata.get('Shibboleth-givenName', ''),
         'last_name': shib_metadata.get('Shibboleth-sn', ''),
     }
-    user, created = User.objects.update_or_create(username=username, defaults=defaults)
-    user.save()
+    log.debug(f'username, ``{username}``')
+    log.debug(f'defaults, ``{pprint.pformat(defaults)}``')
+    try:
+        user, created = User.objects.update_or_create(username=username, defaults=defaults)
+        user.save()
+        log.debug(f'type(user), ``{type(user)}``')
+    except Exception:
+        log.exception('Error creating user')
+        user = None
+    log.debug(f'returning user, ``{user}``')
     return user
