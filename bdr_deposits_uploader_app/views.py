@@ -75,6 +75,22 @@ def config_slug(request, slug):
     # return render(request, 'config_slug.html', context)
 
 
+@shib_decorator
+def upload_slug(request, slug):
+    """
+    Displays the upload app.
+    """
+    log.debug('starting upload_slug()')
+    log.debug(f'slug, ``{slug}``')
+
+    if slug not in request.user.userprofile.can_view_these_apps:
+        return HttpResponse('You do not have permissions to view this app.')
+
+    # context = { 'slug': slug }
+    return HttpResponse(f'upload_slug view for slug: {slug}')
+    # return render(request, 'config_slug.html', context)
+
+
 # -------------------------------------------------------------------
 # support urls
 # -------------------------------------------------------------------
