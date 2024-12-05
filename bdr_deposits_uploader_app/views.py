@@ -51,6 +51,9 @@ def config_new(request):
     Enables coniguration of new app.
     """
     log.debug('starting config_new()')
+
+    if not request.user.userprofile.can_create_app:
+        return HttpResponse('You do not have permissions to create an app.')
     dummy_data: list = config_new_helper.get_recent_configs()
     context = {'recent_apps': dummy_data}
     return render(request, 'config_new.html', context)
@@ -62,6 +65,11 @@ def config_slug(request, slug):
     Enables coniguration of existing app.
     """
     log.debug('starting config_slug()')
+    log.debug(f'slug, ``{slug}``')
+
+    if slug not in request.user.userprofile.can_configure_these_apps:
+        return HttpResponse('You do not have permissions to configure this app.')
+
     # context = { 'slug': slug }
     return HttpResponse(f'config_slug view for slug: {slug}')
     # return render(request, 'config_slug.html', context)
