@@ -65,7 +65,7 @@ def prep_shib_meta(shib_metadata: dict, host: str) -> dict:
             elif 'wsgi.' in key:
                 new_dct.pop(key)
 
-    log.debug(f'returning new_dct, ``{pprint.pformat(new_dct)}``')
+    # log.debug(f'returning new_dct, ``{pprint.pformat(new_dct)}``')
     return new_dct
 
 
