@@ -10,11 +10,20 @@ from django.dispatch import receiver
 
 from bdr_deposits_uploader_app.models import UserProfile
 
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_or_update_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         UserProfile.objects.create(user=instance)
+#     else:
+#         UserProfile.objects.get_or_create(user=instance)
+#         instance.userprofile.save()
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
-    else:
+        # Check if a UserProfile already exists to avoid duplication
         UserProfile.objects.get_or_create(user=instance)
+    else:
+        # Update or save an existing UserProfile
         instance.userprofile.save()
