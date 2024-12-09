@@ -14,13 +14,27 @@
         <h1>Brown University Library</h1>
     </header>
     <main>
+
+
         <section class="form-section">
             <h2>Create new deposits app</h2>
             <form id="new-app-form" hx-post="/hlpr_check_coll_id/" hx-target="#response" hx-swap="innerHTML">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                     <label for="new-app-name" style="margin-right: 1rem; width: 150px; text-align: right;">New App Name:</label>
-                    <input id="new-app-name" name="new_app_name" type="text" placeholder="Enter name of new app" oninput="updateSlug(this.value)">
+                    
+                    <input 
+                        id="new-app-name" 
+                        name="new_app_name" 
+                        type="text" 
+                        placeholder="Enter name of new app" 
+                        hx-post="/hlpr_generate_slug/" 
+                        hx-trigger="input changed delay:250ms" 
+                        hx-target="#url-slug" 
+                        hx-swap="outerHTML" 
+                        hx-indicator=".htmx-indicator"
+                    >
+
                 </div>
                 <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                     <label for="url-slug" style="margin-right: 1rem; width: 150px; text-align: right;">URL Slug:</label>
@@ -30,6 +44,8 @@
             </form>
             <div id="response" class="alert"></div>
         </section>
+
+
         <hr/>
         <section class="recent-items-section">
             <h2>Recent deposits apps</h2> 
