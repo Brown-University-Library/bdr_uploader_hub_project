@@ -18,7 +18,8 @@
 
         <section class="form-section">
             <h2>Create new deposits app</h2>
-            <form id="new-app-form" hx-post="/hlpr_check_name_and_slug/" hx-target="#response" hx-swap="innerHTML">
+            <!-- <form id="new-app-form" hx-post="/hlpr_check_name_and_slug/" hx-target="#response" hx-swap="innerHTML"> -->
+            <form id="new-app-form" hx-post="{{hlpr_check_name_and_slug_url}}" hx-target="#response" hx-swap="innerHTML">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                     <label for="new-app-name" style="margin-right: 1rem; width: 150px; text-align: right;">New App Name:</label>
@@ -28,7 +29,7 @@
                         name="new_app_name" 
                         type="text" 
                         placeholder="Enter name of new app" 
-                        hx-post="/hlpr_generate_slug/" 
+                        hx-post="{{hlpr_generate_slug_url}}" 
                         hx-trigger="input changed delay:250ms" 
                         hx-target="#url-slug" 
                         hx-swap="outerHTML" 
@@ -77,7 +78,7 @@
         <div style="font-style: italic; margin-top: 1rem; text-align: center;">(dummy data for now)</div>
     </main>
     
-    <script>
+    <!-- <script>
         function updateSlug(name) {
             const slugInput = document.getElementById('url-slug');
             const slug = name
@@ -89,7 +90,7 @@
                 .replace(/-+/g, '-');
             slugInput.value = slug;
         }
-    </script>
+    </script> -->
     
     <!-- 
     <footer>

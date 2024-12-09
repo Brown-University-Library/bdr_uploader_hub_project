@@ -77,7 +77,13 @@ def config_new(request):
     if not request.user.userprofile.can_create_app:
         return HttpResponse('You do not have permissions to create an app.')
     dummy_data: list = config_new_helper.get_recent_configs()
-    context = {'recent_apps': dummy_data}
+    hlpr_check_name_and_slug_url = reverse('hlpr_check_name_and_slug_url')
+    hlpr_generate_slug_url = reverse('hlpr_generate_slug_url')
+    context = {
+        'hlpr_check_name_and_slug_url': hlpr_check_name_and_slug_url,
+        'hlpr_generate_slug_url': hlpr_generate_slug_url,
+        'recent_apps': dummy_data,
+        }
     return render(request, 'config_new.html', context)
 
 
