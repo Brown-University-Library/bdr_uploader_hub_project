@@ -196,6 +196,7 @@ LOGGING = {
     },
 }
 
+LOGIN_URL = os.environ['LOGIN_URL']
 
 ## django APP settings ----------------------------------------------
 

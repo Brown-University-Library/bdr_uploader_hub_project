@@ -4,6 +4,7 @@ import logging
 
 import trio
 from django.conf import settings as project_settings
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -46,6 +47,26 @@ def info(request):
 
 
 @shib_decorator
+def login(request) -> HttpResponseRedirect:
+    """
+    Handles authentication and initial authorization via shib.
+    Then:
+    - On successful further UserProfile authorization, logs user in and redirects to the `next_url`.
+        - If no `next_url`, redirects to the `info` page.
+    Called automatically by attempting to access an `@login_required` view.
+    """
+    log.debug('\n\nstarting login()')
+    next_url: str | None = request.GET.get('next', None)
+    log.debug(f'next_url, ```{next_url}```')
+    if not next_url:
+        redirect_url = reverse('info_url')
+    else:
+        redirect_url = request.GET['next']  # may be same page
+    log.debug('redirect_url, ```%s```' % redirect_url)
+    return HttpResponseRedirect(redirect_url)
+
+
+@login_required
 def config_new(request):
     """
     Enables coniguration of new app.
@@ -59,7 +80,7 @@ def config_new(request):
     return render(request, 'config_new.html', context)
 
 
-@shib_decorator
+@login_required
 def config_slug(request, slug):
     """
     Enables coniguration of existing app.
@@ -75,7 +96,7 @@ def config_slug(request, slug):
     # return render(request, 'config_slug.html', context)
 
 
-@shib_decorator
+@login_required
 def upload_slug(request, slug):
     """
     Displays the upload app.
