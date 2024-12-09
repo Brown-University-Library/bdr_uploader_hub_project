@@ -18,8 +18,14 @@
             <h2>Create new deposits app</h2>
             <form id="new-app-form" hx-post="/hlpr_check_coll_id/" hx-target="#response" hx-swap="innerHTML">
                 {% csrf_token %}
-                <label for="new-app-name">New App Name:</label>
-                <input id="new-app-name" name="new_app_name" type="text" placeholder="Enter name of new app">
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <label for="new-app-name" style="margin-right: 1rem; width: 150px; text-align: right;">New App Name:</label>
+                    <input id="new-app-name" name="new_app_name" type="text" placeholder="Enter name of new app" oninput="updateSlug(this.value)">
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <label for="url-slug" style="margin-right: 1rem; width: 150px; text-align: right;">URL Slug:</label>
+                    <input id="url-slug" name="url_slug" type="text" placeholder="Auto-generated or enter manually">
+                </div>
                 <button type="submit" class="btn-primary">Submit</button>
             </form>
             <div id="response" class="alert"></div>
@@ -54,7 +60,21 @@
         </section>
         <div style="font-style: italic; margin-top: 1rem; text-align: center;">(dummy data for now)</div>
     </main>
-
+    
+    <script>
+        function updateSlug(name) {
+            const slugInput = document.getElementById('url-slug');
+            const slug = name
+                .toLowerCase()
+                .replace(/&/g, 'and')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+            slugInput.value = slug;
+        }
+    </script>
+    
     <!-- 
     <footer>
         <p>© 2024 Brown University Library</p>
