@@ -154,7 +154,7 @@ def hlpr_check_name_and_slug(request):
     ## if not zero, I want the form to go to a new page, so I _assume_ I need to return a redirect
     else:
         log.debug('returning redirect')
-        temp_redirect_url = 'https://library.brown.edu'
+        temp_redirect_url = 'http://127.0.0.1:8000/version/'
         return HttpResponseRedirect(temp_redirect_url)
 
 
