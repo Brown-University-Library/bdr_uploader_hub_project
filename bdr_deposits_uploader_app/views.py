@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.text import slugify
 
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
@@ -110,6 +111,28 @@ def upload_slug(request, slug):
     # context = { 'slug': slug }
     return HttpResponse(f'upload_slug view for slug: {slug}')
     # return render(request, 'config_slug.html', context)
+
+
+# -------------------------------------------------------------------
+# htmx helpers
+# -------------------------------------------------------------------
+
+
+def hlpr_generate_slug(request):
+    """
+    Generates a url slug for given incoming text.
+    """
+    app_name = request.POST.get('new_app_name', '')
+    slug = slugify(app_name)
+    html = f"""<input 
+        id="url-slug" 
+        name="url_slug" 
+        type="text" 
+        value="{slug}" 
+        placeholder="Auto-generated or enter manually"
+         >"""
+    log.debug(f'html, ``{html}``')
+    return HttpResponse(html)
 
 
 # -------------------------------------------------------------------
