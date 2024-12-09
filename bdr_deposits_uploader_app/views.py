@@ -135,6 +135,29 @@ def hlpr_generate_slug(request):
     return HttpResponse(html)
 
 
+def hlpr_check_name_and_slug(request):
+    """
+    Validates that the incoming app-name and slug are unique.
+    """
+    ## give me a randome 0 or 1
+    import random
+
+    rand = random.randint(0, 1)
+    log.debug(f'rand, ``{rand}``')
+
+    ## if zero, return the some error-html
+    if rand == 0:
+        html = 'Name and slug are not unique.'
+        log.debug(f'html, ``{html}``')
+        return HttpResponse(html)
+
+    ## if not zero, I want the form to go to a new page, so I _assume_ I need to return a redirect
+    else:
+        log.debug('returning redirect')
+        temp_redirect_url = 'https://library.brown.edu'
+        return HttpResponseRedirect(temp_redirect_url)
+
+
 # -------------------------------------------------------------------
 # support urls
 # -------------------------------------------------------------------
