@@ -16,10 +16,10 @@
     <main>
         <section class="form-section">
             <h2>Create new deposits app</h2>
-            <form id="collection-form" hx-post="/hlpr_check_coll_id/" hx-target="#response" hx-swap="innerHTML">
+            <form id="new-app-form" hx-post="/hlpr_check_coll_id/" hx-target="#response" hx-swap="innerHTML">
                 {% csrf_token %}
-                <label for="collection-id">Collection ID:</label>
-                <input id="collection-id" name="collection_id" type="text" placeholder="Enter Collection ID">
+                <label for="new-app-name">New App Name:</label>
+                <input id="new-app-name" name="new_app_name" type="text" placeholder="Enter name of new app">
                 <button type="submit" class="btn-primary">Submit</button>
             </form>
             <div id="response" class="alert"></div>
