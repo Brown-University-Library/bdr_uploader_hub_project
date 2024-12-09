@@ -2,17 +2,17 @@ import copy
 import logging
 import pprint
 from functools import wraps
-from typing import Tuple
+from typing import Any, Callable, Tuple
 
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.http import HttpResponseServerError
+from django.http import HttpRequest, HttpResponse, HttpResponseServerError
 
 log = logging.getLogger(__name__)
 
 
-def shib_decorator(func):
+def shib_decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpResponse]:
     """
     Decorator for views that require Shibboleth authentication.
     Flow:
@@ -21,12 +21,16 @@ def shib_decorator(func):
     - If user creation fails, redirects to login page.
     - If user is successfully provisioned, logs user in and calls view.
     Called by views.abc()
-    """
 
-    @wraps(func)  # all this does is preserves function metadata
-    def wrapper(request, *args, **kwargs):
+    Note to self: the type-hint `Callable[..., HttpResponse]` means that `func` is a function or method
+        that can take any number of arguments, and returns an HttpResponse object
+        which makes sense since this is a decorator.
+    """
+    log.debug('starting shib_decorator()')
+
+    @wraps(func)  # all this line does is preserves function metadata
+    def wrapper(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         log.debug('starting shib_decorator wrapper()')
-        log.debug(f'type(func), ``{type(func)}``')
         ## if user's already authenticated, just call the view ------
         if request.user.is_authenticated:
             log.debug('user already authenticated.')
@@ -34,7 +38,7 @@ def shib_decorator(func):
         ## process shib metadata ------------------------------------
         shib_metadata: dict = prep_shib_meta(request.META, request.get_host())
         ## provision user -------------------------------------------
-        user = provision_user(shib_metadata)
+        user: User | None = provision_user(shib_metadata)
         if not user:
             log.error('User creation failed; raising Exception.')
             return HttpResponseServerError('Sorry, problem with authentication; ask developers to check the logs.')
@@ -56,7 +60,7 @@ def prep_shib_meta(shib_metadata: dict, host: str) -> dict:
     log.debug(f'request.META: ``{pprint.pformat(shib_metadata)}``')
 
     if host in ['127.0.0.1', '127.0.0.1:8000', 'testserver']:
-        new_dct = settings.TEST_SHIB_META_DCT
+        new_dct: dict = settings.TEST_SHIB_META_DCT
     else:
         new_dct: dict = copy.copy(shib_metadata)
         for key, val in shib_metadata.items():  # get rid of some dictionary items not serializable
@@ -65,7 +69,7 @@ def prep_shib_meta(shib_metadata: dict, host: str) -> dict:
             elif 'wsgi.' in key:
                 new_dct.pop(key)
 
-    # log.debug(f'returning new_dct, ``{pprint.pformat(new_dct)}``')
+    log.debug(f'returning new_dct, ``{pprint.pformat(new_dct)}``')
     return new_dct
 
 
@@ -78,16 +82,16 @@ def provision_user(shib_metadata: dict) -> User | None:
     log.debug('starting provision_user()')
     # log.debug(f'initial shib_metadata, ``{pprint.pformat(shib_metadata)}``')
     ## ensure username and email ------------------------------------
-    username: str = shib_metadata.get('Shibboleth-eppn')
+    username: str | None = shib_metadata.get('Shibboleth-eppn')
     if not username:
         log.warning('No eppn found in Shibboleth metadata')
-    email: str = shib_metadata.get('Shibboleth-mail')
+    email: str | None = shib_metadata.get('Shibboleth-mail')
     if not email:
         log.warning('No email found in Shibboleth metadata')
     if not username or not email:
         return None
     ## set defaults -------------------------------------------------
-    defaults = {
+    defaults: dict[str, str] = {
         'email': email,
         'first_name': shib_metadata.get('Shibboleth-givenName', ''),
         'last_name': shib_metadata.get('Shibboleth-sn', ''),
