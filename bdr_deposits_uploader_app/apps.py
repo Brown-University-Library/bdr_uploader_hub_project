@@ -18,4 +18,5 @@ class BdrDepositsUploaderAppConfig(AppConfig):
     def ready(self):
         import bdr_deposits_uploader_app.signals  # this is the reason for this apps.py file
 
-        assert type(bdr_deposits_uploader_app.signals) is object
+        ## lightweight way to prevent IDE from removing otherwise-unused import
+        _ = getattr(bdr_deposits_uploader_app.signals, '__name__', None)
