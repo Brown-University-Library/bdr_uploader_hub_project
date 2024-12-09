@@ -18,7 +18,7 @@
 
         <section class="form-section">
             <h2>Create new deposits app</h2>
-            <form id="new-app-form" hx-post="/hlpr_check_coll_id/" hx-target="#response" hx-swap="innerHTML">
+            <form id="new-app-form" hx-post="/hlpr_check_name_and_slug/" hx-target="#response" hx-swap="innerHTML">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                     <label for="new-app-name" style="margin-right: 1rem; width: 150px; text-align: right;">New App Name:</label>

@@ -10,11 +10,9 @@ urlpatterns = [
     path('config/new/', views.config_new, name='config_new_url'),
     path('config/<str:slug>/', views.config_slug, name='config_slug_url'),
     path('upload/<str:slug>/', views.upload_slug, name='upload_slug_url'),
-
     ## htmx helpers -------------------------------------------------
     path('hlpr_generate_slug/', views.hlpr_generate_slug, name='hlpr_generate_slug_url'),
-
-
+    path('hlpr_check_name_and_slug/', views.hlpr_check_name_and_slug, name='hlpr_check_name_and_slug_url'),
     ## other --------------------------------------------------------
     path('', views.root, name='root_url'),
     path('admin/', admin.site.urls),
