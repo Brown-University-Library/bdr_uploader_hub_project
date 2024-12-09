@@ -5,7 +5,7 @@ import logging
 import trio
 from django.conf import settings as project_settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.text import slugify
@@ -139,23 +139,50 @@ def hlpr_check_name_and_slug(request):
     """
     Validates that the incoming app-name and slug are unique.
     """
-    ## give me a randome 0 or 1
-    import random
+    ## get the incoming data
+    app_name: str = request.POST.get('new_app_name', '')
+    log.debug(f'app_name, ``{app_name}``')
+    slug: str = request.POST.get('url_slug', '')
+    log.debug(f'slug, ``{slug}``')
 
-    rand = random.randint(0, 1)
-    log.debug(f'rand, ``{rand}``')
+    ## if either are empty, return an error
+    if not app_name or not slug:
+        # Return an error message for missing inputs
+        html = 'Both name and slug are required.'
+        log.debug(f'html, ``{html}``')
+        return HttpResponse(html)
 
-    ## if zero, return the some error-html
-    if rand == 0:
+    DUMMY_TAKEN_NAMES = ['Theses & Dissertations']
+    DUMMY_TAKEN_SLUGS = ['theses-dissertations']
+    name_problem = ''
+    slug_problem = ''
+    if app_name in DUMMY_TAKEN_NAMES:
+        name_problem = 'Name already exists.'
+    if slug in DUMMY_TAKEN_SLUGS:
+        slug_problem = 'Slug already exists.'
+
+    ## create html to show any problems
+    if name_problem or slug_problem:
+        html = f'{name_problem} {slug_problem}'
+        log.debug(f'html, ``{html}``')
+        return HttpResponse(html)
+
+    ## if either are in the dummy-taken-list, return an error
+    if app_name in DUMMY_TAKEN_NAMES or slug in DUMMY_TAKEN_SLUGS:
+        # Return an error message for invalid inputs
         html = 'Name and slug are not unique.'
         log.debug(f'html, ``{html}``')
         return HttpResponse(html)
 
-    ## if not zero, I want the form to go to a new page, so I _assume_ I need to return a redirect
-    else:
-        log.debug('returning redirect')
-        temp_redirect_url = 'http://127.0.0.1:8000/version/'
-        return HttpResponseRedirect(temp_redirect_url)
+    ## getting here means life is good; use HX-Redirect to handle the redirection
+    log.debug('returning redirect')
+    # redirect_url = '/version/'
+    redirect_url = reverse('config_slug_url', args=[slug])
+    log.debug(f'redirect_url, ``{redirect_url}``')
+
+    response = JsonResponse({'redirect': redirect_url})
+    response['HX-Redirect'] = redirect_url
+    return response
 
 
 # -------------------------------------------------------------------
