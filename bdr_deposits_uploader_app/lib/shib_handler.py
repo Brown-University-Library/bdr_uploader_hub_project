@@ -1,4 +1,3 @@
-import copy
 import logging
 import pprint
 from functools import wraps
@@ -22,7 +21,7 @@ def shib_decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpRespo
     - If user is successfully provisioned, logs user in and calls view.
     Called by views.abc()
 
-    Note to self: the type-hint `Callable[..., HttpResponse]` means that `func` is a function or method
+    Note to self: the type-hint `Callable[..., HttpResponse]` above -- means that `func` is a function or method
         that can take any number of arguments, and returns an HttpResponse object
         which makes sense since this is a decorator.
     """
@@ -40,7 +39,7 @@ def shib_decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpRespo
         ## provision user -------------------------------------------
         user: User | None = provision_user(shib_metadata)
         if not user:
-            log.error('User creation failed; raising Exception.')
+            log.error('User creation failed; returning 500.')
             return HttpResponseServerError('Sorry, problem with authentication; ask developers to check the logs.')
         ## log user in and call view --------------------------------
         auth.login(request, user)
@@ -49,38 +48,37 @@ def shib_decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpRespo
 
     return wrapper
 
+    ## end def shib_decorator()
 
-def prep_shib_meta(shib_metadata: dict, host: str) -> dict:
+
+def prep_shib_meta(request_metadata: dict, host: str) -> dict:
     """
     Extracts Shib metadata from WSGI environ.
     Returns extracted metadata as a dictionary.
-    Called by shib_login().
+    Called by wrapper().
     """
     log.debug('starting prep_shib_meta()')
-    log.debug(f'request.META: ``{pprint.pformat(shib_metadata)}``')
+    log.debug(f'request.META: ``{pprint.pformat(request_metadata)}``')
 
-    if host in ['127.0.0.1', '127.0.0.1:8000', 'testserver']:
-        new_dct: dict = settings.TEST_SHIB_META_DCT
+    shib_dct = {}
+    if host in ['127.0.0.1', '127.0.0.1:8000', 'testserver']:  # allows for easy local testing
+        shib_dct: dict = settings.TEST_SHIB_META_DCT
     else:
-        new_dct: dict = copy.copy(shib_metadata)
-        for key, val in shib_metadata.items():  # get rid of some dictionary items not serializable
-            if 'passenger' in key:
-                new_dct.pop(key)
-            elif 'wsgi.' in key:
-                new_dct.pop(key)
+        for key, val in request_metadata.items():
+            if key.startswith('Shib'):
+                shib_dct[key] = val
 
-    log.debug(f'returning new_dct, ``{pprint.pformat(new_dct)}``')
-    return new_dct
+    log.debug(f'returning new_dct, ``{pprint.pformat(shib_dct)}``')
+    return shib_dct
 
 
 def provision_user(shib_metadata: dict) -> User | None:
     """
     Creates or updates User object based on Shibboleth metadata.
     Returns User object or None
-    Called by shib_login().
+    Called by wrapper().
     """
     log.debug('starting provision_user()')
-    # log.debug(f'initial shib_metadata, ``{pprint.pformat(shib_metadata)}``')
     ## ensure username and email ------------------------------------
     username: str | None = shib_metadata.get('Shibboleth-eppn')
     if not username:
@@ -102,10 +100,12 @@ def provision_user(shib_metadata: dict) -> User | None:
     try:
         result: Tuple[User, bool] = User.objects.update_or_create(username=username, defaults=defaults)
         (user, created) = result
-        log.debug(f'created, ``{created}``')
+        log.debug(f'user-created, ``{created}``')
         user.save()
     except Exception:
         log.exception('Error creating user')
         user = None
     log.debug(f'returning user, ``{user}``')
     return user
+
+    ## end def provision_user()
