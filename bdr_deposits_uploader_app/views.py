@@ -99,9 +99,9 @@ def config_slug(request, slug):
     if slug not in request.user.userprofile.can_configure_these_apps:
         return HttpResponse('You do not have permissions to configure this app.')
 
-    # context = { 'slug': slug }
-    return HttpResponse(f'config_slug view for slug: {slug}')
-    # return render(request, 'config_slug.html', context)
+    # return HttpResponse(f'config_slug view for slug: {slug}')
+    context = {'slug': slug}
+    return render(request, 'config_slug.html', context)
 
 
 @login_required
