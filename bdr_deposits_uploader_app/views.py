@@ -83,7 +83,8 @@ def config_new(request):
         'hlpr_check_name_and_slug_url': hlpr_check_name_and_slug_url,
         'hlpr_generate_slug_url': hlpr_generate_slug_url,
         'recent_apps': dummy_data,
-        }
+        'username': request.user.username,
+    }
     return render(request, 'config_new.html', context)
 
 

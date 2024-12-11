@@ -12,6 +12,7 @@ body {
     padding: 0;
 }
 
+/* 
 header {
     background-color: maroon;
     color: white;
@@ -20,6 +21,41 @@ header {
     padding-left: 1rem;
     text-align: left;
 }
+ */
+
+
+/* --- header CSS start --- */
+
+header {
+    background-color: maroon;
+    color: white;
+    /* padding: .25rem 1rem; */
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1.5rem;
+    text-align: left; /* Keep this so h1 is still aligned left in the flex container */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.header-content h1 {
+    margin: 0; /* Ensure no extra margin that might misalign baseline */
+    font-size: 1.75rem; /* Adjust as needed for your main title size */
+}
+
+.welcome-text {
+    color: white;
+    font-size: 1rem; /* Smaller than the h1 text */
+    margin: 0; /* Ensure alignment is nice and neat */
+}
+
+/* --- header CSS end --- */
+
 
 main {
     padding: 1rem;
