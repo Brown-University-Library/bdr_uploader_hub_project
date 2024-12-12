@@ -4,6 +4,7 @@ import logging
 
 import trio
 from django.conf import settings as project_settings
+from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -69,9 +70,16 @@ def login(request) -> HttpResponseRedirect:
 
 def logout(request):
     """
-    Will log user out and redirect to the `info` page.
+    Flow:
+    - Clears django-session.
+    - Hits IDP shib-logout url.
+    - Redirects user to info page.
     """
     log.debug('starting logout()')
+    ## clear django-session -----------------------------------------
+    auth.logout(request)
+    ## build redirect-url -------------------------------------------
+    # full_redirect_url = u'%s://%s%s' % ( scheme, request.get_host(), reverse(u'request_url') )
     return HttpResponseRedirect(reverse('info_url'))
 
 
