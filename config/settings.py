@@ -201,3 +201,5 @@ LOGIN_URL = os.environ['LOGIN_URL']
 ## django APP settings ----------------------------------------------
 
 TEST_SHIB_META_DCT: dict = json.loads(os.environ['TEST_SHIB_META_DCT_JSON'])
+
+SHIB_IDP_LOGOUT_URL: str = os.environ['SHIB_IDP_LOGOUT_URL']
