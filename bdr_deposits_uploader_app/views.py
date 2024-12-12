@@ -67,6 +67,31 @@ def login(request) -> HttpResponseRedirect:
     return HttpResponseRedirect(redirect_url)
 
 
+def logout(request):
+    """
+    Will log user out and redirect to the `info` page.
+    """
+    log.debug('starting logout()')
+    return HttpResponseRedirect(reverse('info_url'))
+
+
+## template to implement above
+# def shib_logout( request ):
+#     """ Clears session, hits shib logout, and redirects user to landing page. """
+#     log.debug( 'request.__dict__, ```%s```' % request.__dict__ )
+#     request.session[u'authz_info'][u'authorized'] = False
+#     logout( request )
+#     scheme = u'https' if request.is_secure() else u'http'
+#     redirect_url = u'%s://%s%s' % ( scheme, request.get_host(), reverse(u'request_url') )
+#     if request.get_host() == u'127.0.0.1' and project_settings.DEBUG == True:  # eases local development
+#         pass
+#     else:
+#         encoded_redirect_url =  urlquote( redirect_url )  # django's urlquote()
+#         redirect_url = u'%s?return=%s' % ( os.environ[u'EZSCAN__SHIB_LOGOUT_URL_ROOT'], encoded_redirect_url )
+#     log.debug( u'in views.shib_logout(); redirect_url, `%s`' % redirect_url )
+#     return HttpResponseRedirect( redirect_url )
+
+
 @login_required
 def config_new(request):
     """

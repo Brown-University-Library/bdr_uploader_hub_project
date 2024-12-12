@@ -54,6 +54,31 @@ header {
     margin: 0; /* Ensure alignment is nice and neat */
 }
 
+header.span.href {
+    color: white;
+    text-decoration: none;
+}
+
+/* unvisited link */
+a:link {
+    color: white;
+}
+  
+/* visited link */
+a:visited {
+    color: white;
+}
+
+/* mouse over link */
+a:hover {
+    color: orange;
+}
+
+/* selected link */
+a:active {
+    color: white;
+}  
+
 /* --- header CSS end --- */
 
 

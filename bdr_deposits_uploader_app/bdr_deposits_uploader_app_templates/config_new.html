@@ -21,7 +21,7 @@
         <div class="header-content">
             <h1>Brown University Library</h1>
             {% if username %}
-            <span class="welcome-text">Welcome {{ username }}</span>
+            <span class="welcome-text">Welcome {{ username }} / <a href="{% url 'logout_url' %}">Logout</a></span>
             {% endif %}
         </div>
     </header>
