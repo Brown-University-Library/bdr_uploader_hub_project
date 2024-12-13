@@ -87,6 +87,7 @@ def logout(request):
         ## build shib-logout-url -------------------------------------
         encoded_return_param_url: str = quote(redirect_url, safe='')
         redirect_url: str = f'{project_settings.SHIB_IDP_LOGOUT_URL}?return={encoded_return_param_url}'
+    log.debug( f'redirect_url, ``{redirect_url}``')
     return HttpResponseRedirect(redirect_url)
 
 
