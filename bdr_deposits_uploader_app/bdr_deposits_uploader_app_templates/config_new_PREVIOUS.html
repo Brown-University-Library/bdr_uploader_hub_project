@@ -1,21 +1,33 @@
-{% extends "base.html" %}
 {% load static %}
 
-<!-- html -->
-
-<!-- head -->
-    {% block header_other %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDR Deposits Configurator</title>
     <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/config.css' %}">
-    {% endblock header_other %}
-<!-- /head -->
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+    
+<!-- 
+    <header>
+        <h1>Brown University Library</h1>
+    </header>
+ -->
 
-<!-- body -->
+    <header>
+        <div class="header-content">
+            <h1>Brown University Library</h1>
+            {% if username %}
+            <span class="welcome-text">Welcome {{ username }} / <a href="{% url 'logout_url' %}">Logout</a></span>
+            {% endif %}
+        </div>
+    </header>
 
-    <!-- header -->
-    <!-- /header -->
+    <main>
 
-    <!-- main -->
-        {% block main_content %}
         <section class="form-section">
             <h2>Create new deposits app</h2>
             <!-- <form id="new-app-form" hx-post="/hlpr_check_name_and_slug/" hx-target="#response" hx-swap="innerHTML"> -->
@@ -75,9 +87,29 @@
             </table>
         </section>
         <div style="font-style: italic; margin-top: 1rem; text-align: center;">(dummy data for now)</div>
-        {% endblock main_content %}
-    <!-- /main -->
+    </main>
+    
+    <!-- <script>
+        function updateSlug(name) {
+            const slugInput = document.getElementById('url-slug');
+            const slug = name
+                .toLowerCase()
+                .replace(/&/g, 'and')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+            slugInput.value = slug;
+        }
+    </script> -->
+    
+    <!-- 
+    <footer>
+        <p>© 2024 Brown University Library</p>
+    </footer> 
+    -->
 
-<!-- /body -->
+    <hr/>
 
+</body>
 </html>
