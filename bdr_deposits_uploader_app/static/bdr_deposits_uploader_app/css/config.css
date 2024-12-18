@@ -60,23 +60,23 @@ header.span.href {
 }
 
 /* unvisited link */
-a:link {
-    color: white;
+a.btn-link:link {
+    color: maroon;
 }
   
 /* visited link */
-a:visited {
-    color: white;
+a.btn-link:visited {
+    color: maroon;
 }
 
 /* mouse over link */
-a:hover {
+a.btn-link:hover {
     color: orange;
 }
 
 /* selected link */
-a:active {
-    color: white;
+a.btn-link:active {
+    color: maroon;
 }  
 
 /* --- header CSS end --- */
