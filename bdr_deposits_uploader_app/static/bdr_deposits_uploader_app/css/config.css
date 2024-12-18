@@ -1,99 +1,3 @@
-/* General styles */
-
-head, body, form, label, input, button, table, th, td {
-    font-family: Verdana, sans-serif; /* Verdana font */
-}
-
-body {
-    font-family: 'Verdana', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-/* 
-header {
-    background-color: maroon;
-    color: white;
-    padding-top: .25rem;
-    padding-bottom: .25rem;
-    padding-left: 1rem;
-    text-align: left;
-}
- */
-
-
-/* --- header CSS start --- */
-
-header {
-    background-color: maroon;
-    color: white;
-    /* padding: .25rem 1rem; */
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-    padding-left: 1rem;
-    padding-right: 1.5rem;
-    text-align: left; /* Keep this so h1 is still aligned left in the flex container */
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
-.header-content h1 {
-    margin: 0; /* Ensure no extra margin that might misalign baseline */
-    font-size: 1.75rem; /* Adjust as needed for your main title size */
-}
-
-.welcome-text {
-    color: white;
-    font-size: 1rem; /* Smaller than the h1 text */
-    margin: 0; /* Ensure alignment is nice and neat */
-}
-
-header.span.href {
-    color: white;
-    text-decoration: none;
-}
-
-/* unvisited link */
-a.btn-link:link {
-    color: maroon;
-}
-  
-/* visited link */
-a.btn-link:visited {
-    color: maroon;
-}
-
-/* mouse over link */
-a.btn-link:hover {
-    color: orange;
-}
-
-/* selected link */
-a.btn-link:active {
-    color: maroon;
-}  
-
-/* --- header CSS end --- */
-
-
-main {
-    padding: 1rem;
-}
-
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 0.25rem;
-    margin-top: 1rem;
-}
-
 /* form Section */
 .form-section {
     background: #fff;
@@ -162,6 +66,8 @@ input {
     background-color: #f2f2f2;
 }
 
+
+/* 
 .btn-link {
     color: maroon;
     text-decoration: none;
@@ -170,3 +76,25 @@ input {
 .btn-link:hover {
     text-decoration: underline;
 }
+ */
+
+ 
+/* unvisited link */
+a.btn-link:link {
+    color: maroon;
+}
+  
+/* visited link */
+a.btn-link:visited {
+    color: maroon;
+}
+
+/* mouse over link */
+a.btn-link:hover {
+    color: orange;
+}
+
+/* selected link */
+a.btn-link:active {
+    color: maroon;
+}  

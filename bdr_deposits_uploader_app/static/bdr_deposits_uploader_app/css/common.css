@@ -1,0 +1,102 @@
+head, body, form, label, input, button, table, th, td {
+    font-family: Verdana, sans-serif; /* Verdana font */
+}
+
+html {
+    background-color: white;
+    padding-top: .1em;  /* keeps maroon of header from bleeding into the browser interface */
+}
+
+body {
+    font-family: 'Verdana', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* --- header CSS start --- */
+
+header {
+    background-color: maroon;
+    color: white;
+    /* padding: .25rem 1rem; */
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1.5rem;
+    text-align: left; /* Keep this so h1 is still aligned left in the flex container */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.header-content h1 {
+    margin: 0; /* Ensure no extra margin that might misalign baseline */
+    font-size: 1.75rem; /* Adjust as needed for your main title size */
+}
+
+.welcome-text {
+    color: white;
+    font-size: 1rem; /* Smaller than the h1 text */
+    margin: 0; /* Ensure alignment is nice and neat */
+}
+
+header.span.href {
+    color: white;
+    text-decoration: none;
+}
+
+
+/* unvisited link */
+a.login_logout:link {
+    color: white;
+}
+  
+/* visited link */
+a.login_logout:visited {
+    color: white;
+}
+
+/* mouse over link */
+a.login_logout.login_logout:hover {
+    color: orange;
+}
+
+/* selected link */
+a.login_logout:active {
+    color: white;
+}  
+
+
+
+
+
+
+/* --- header CSS end --- */
+
+
+main {
+    padding: 1rem;
+}
+
+
+.container {
+    background-color: #fff;
+    padding: 1.25rem; /* Equivalent to 20px if base font-size is 16px */
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 37.5rem;
+    margin: calc(100vh / 4) auto 0 auto;
+}
+.parenthetical {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 2rem;
+    font-style: italic;
+}
