@@ -60,13 +60,13 @@ def pre_login(request):
             - Redirects to the IDP-shib-logout-url.
         - If found (meaning we're back here after redirecting to the shib-logout-url)...
             - Clears the "logout_status" session key-val.
-            - Builds the IDP-shib-login-url with `next` param set to the `request-collection` view.
+            - Builds the IDP-shib-login-url with `next` param set to the `config-new` view.
             - Redirects to the IDP-shib-login-url.
     """
     log.debug('\n\nstarting pre_login()')
     if request.get_host() in ['127.0.0.1:8000']:  # eases local development
         log.debug('skipping shib stuff for local development')
-        redirect_url = reverse('request_collection_url')
+        redirect_url = reverse('config_new_url')
         return HttpResponseRedirect(redirect_url)
     ## check for session "logout_status" ----------------------------
     logout_status = request.session.get('logout_status', None)
@@ -86,10 +86,10 @@ def pre_login(request):
         del request.session['logout_status']
         log.debug('logout_status cleared')
         ## build IDP-shib-login-url ---------------------------------
-        full_request_collection_url = f'{request.scheme}://{request.get_host()}{reverse("request_collection_url")}'
-        log.debug(f'full_request_collection_url, ``{full_request_collection_url}``')
-        encoded_full_request_collection_url = parse.quote(full_request_collection_url, safe='')
-        redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_request_collection_url}'
+        full_config_new_url = f'{request.scheme}://{request.get_host()}{reverse("config_new_url")}'
+        log.debug(f'full_config_new_url, ``{full_config_new_url}``')
+        encoded_full_config_new_url = parse.quote(full_config_new_url, safe='')
+        redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_config_new_url}'
     log.debug(f'redirect_url, ``{redirect_url}``')
     return HttpResponseRedirect(redirect_url)
 
