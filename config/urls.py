@@ -6,6 +6,7 @@ from bdr_deposits_uploader_app import views
 urlpatterns = [
     ## main ---------------------------------------------------------
     path('info/', views.info, name='info_url'),
+    path('pre_login/', views.pre_login, name='pre_login_url'),
     path('login/', views.login, name='login_url'),
     path('logout/', views.logout, name='logout_url'),
     path('config/new/', views.config_new, name='config_new_url'),

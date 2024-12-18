@@ -202,4 +202,5 @@ LOGIN_URL = os.environ['LOGIN_URL']
 
 TEST_SHIB_META_DCT: dict = json.loads(os.environ['TEST_SHIB_META_DCT_JSON'])
 
+SHIB_SP_LOGIN_URL: str = os.environ['SHIB_SP_LOGIN_URL']
 SHIB_IDP_LOGOUT_URL: str = os.environ['SHIB_IDP_LOGOUT_URL']

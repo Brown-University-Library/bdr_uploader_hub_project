@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+from urllib import parse
 from urllib.parse import quote
 
 import trio
@@ -49,6 +50,52 @@ def info(request):
     return resp
 
 
+def pre_login(request):
+    """
+    Ensures shib actually comes up for user. Flow:
+    - Checks "logout_status" session-key for 'forcing_logout'.
+        - If not found (meaning user has come, from, say, the public info page by clicking "Staff Login")...
+            - Builds the IDP-shib-logout-url with `return` param set back to here.
+            - Sets the "logout_status" session key-val to 'forcing_logout'.
+            - Redirects to the IDP-shib-logout-url.
+        - If found (meaning we're back here after redirecting to the shib-logout-url)...
+            - Clears the "logout_status" session key-val.
+            - Builds the IDP-shib-login-url with `next` param set to the `request-collection` view.
+            - Redirects to the IDP-shib-login-url.
+    """
+    log.debug('\n\nstarting pre_login()')
+    if request.get_host() in ['127.0.0.1:8000']:  # eases local development
+        log.debug('skipping shib stuff for local development')
+        redirect_url = reverse('request_collection_url')
+        return HttpResponseRedirect(redirect_url)
+    ## check for session "logout_status" ----------------------------
+    logout_status = request.session.get('logout_status', None)
+    log.debug(f'logout_status, ``{logout_status}``')
+    if logout_status != 'forcing_logout':
+        ## meaning user has come directly, from, say, the public info page by clicking "Staff Login"
+        ## set logout_status ----------------------------------------
+        request.session['logout_status'] = 'forcing_logout'
+        log.debug(f'logout_status set to ``{request.session["logout_status"]}``')
+        ## build IDP-shib-logout-url --------------------------------
+        full_pre_login_url = f'{request.scheme}://{request.get_host()}{reverse("pre_login_url")}'
+        log.debug(f'full_pre_login_url, ``{full_pre_login_url}``')
+        encoded_full_pre_login_url = parse.quote(full_pre_login_url, safe='')
+        redirect_url = f'{project_settings.SHIB_IDP_LOGOUT_URL}?return={encoded_full_pre_login_url}'
+    else:  # request.session['logout_status'] _is_ found -- eaning user is back after hitting the IDP-shib-logout-url
+        ## clear logout_status --------------------------------------
+        del request.session['logout_status']
+        log.debug('logout_status cleared')
+        ## build IDP-shib-login-url ---------------------------------
+        full_request_collection_url = f'{request.scheme}://{request.get_host()}{reverse("request_collection_url")}'
+        log.debug(f'full_request_collection_url, ``{full_request_collection_url}``')
+        encoded_full_request_collection_url = parse.quote(full_request_collection_url, safe='')
+        redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_request_collection_url}'
+    log.debug(f'redirect_url, ``{redirect_url}``')
+    return HttpResponseRedirect(redirect_url)
+
+    ## end def pre_login()
+
+
 @shib_decorator
 def login(request) -> HttpResponseRedirect:
     """
@@ -87,7 +134,7 @@ def logout(request):
         ## build shib-logout-url -------------------------------------
         encoded_return_param_url: str = quote(redirect_url, safe='')
         redirect_url: str = f'{project_settings.SHIB_IDP_LOGOUT_URL}?return={encoded_return_param_url}'
-    log.debug( f'redirect_url, ``{redirect_url}``')
+    log.debug(f'redirect_url, ``{redirect_url}``')
     return HttpResponseRedirect(redirect_url)
 
 
