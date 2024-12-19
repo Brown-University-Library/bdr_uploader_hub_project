@@ -29,6 +29,24 @@ def infer_environment_type() -> str:
     return env_type
 
 
+def infer_group(project_path: Path) -> str:
+    """
+    Infers the group ownership for the project directory by examining existing files.
+    Returns the most common group.
+    """
+    log.debug('starting infer_group()')
+    try:
+        group_list: list[str] = subprocess.check_output(['ls', '-l', str(project_path)], text=True).splitlines()
+        groups = [line.split()[3] for line in group_list if len(line.split()) > 3]
+        most_common_group: str = max(set(groups), key=groups.count)
+        log.debug(f'most_common_group: {most_common_group}')
+        return most_common_group
+    except Exception as e:
+        message = f'Error inferring group: {e}'
+        log.exception(message)
+        raise Exception(message)
+
+
 def validate_project_path(project_path: str) -> None:
     """
     Validate that the provided project path exists.
@@ -140,12 +158,18 @@ def remove_old_backups(backup_dir: Path, keep_recent: int = 7) -> None:
 def compare_with_previous_backup(project_path: Path, backup_file: Path) -> bool:
     """
     Compare the newly created requirements backup with the most recent previous backup.
-    Excludes line 2 (timestamp line) from the comparison.
+    Ignore initial lines starting with '#' in the comparison.
     Returns False if there are no changes, True otherwise.
     """
     log.debug('starting compare_with_previous_backup()')
+    changes = True
     backup_dir: Path = project_path.parent / 'requirements_backups'
     previous_files: list[Path] = sorted([f for f in backup_dir.iterdir() if f.suffix == '.txt' and f != backup_file])
+
+    def filter_initial_comments(lines: list[str]) -> list[str]:
+        """Filters out initial lines starting with '#' from a list of lines."""
+        non_comment_index = next((i for i, line in enumerate(lines) if not line.startswith('#')), len(lines))
+        return lines[non_comment_index:]
 
     if previous_files:
         previous_file_path: Path = previous_files[-1]
@@ -153,14 +177,16 @@ def compare_with_previous_backup(project_path: Path, backup_file: Path) -> bool:
             prev_lines = prev.readlines()
             curr_lines = curr.readlines()
 
-            # Exclude line 2 from comparison
-            prev_lines_filtered = prev_lines[:1] + prev_lines[2:]
-            curr_lines_filtered = curr_lines[:1] + curr_lines[2:]
+            prev_lines_filtered = filter_initial_comments(prev_lines)
+            curr_lines_filtered = filter_initial_comments(curr_lines)
 
             if prev_lines_filtered == curr_lines_filtered:
                 log.debug('no differences found in dependencies.')
-                return False
-    return True
+                changes = False
+    else:
+        log.debug('no previous backups found, so changes=True.')
+    log.debug(f'changes: ``{changes}``')
+    return changes
 
 
 def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> None:
@@ -175,6 +201,7 @@ def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> Non
 
     try:
         subprocess.run(sync_command, check=True)
+        log.debug('uv pip sync was successful')
     except subprocess.CalledProcessError:
         message = 'Error during pip sync'
         log.exception(message)
@@ -187,10 +214,16 @@ def update_permissions_and_mark_active(project_path: Path, backup_file: Path) ->
     Mark the backup file as active by adding a header comment.
     """
     log.debug('starting update_permissions_and_mark_active()')
+    group: str = infer_group(project_path)
     backup_dir: Path = project_path.parent / 'requirements_backups'
-    for path in [project_path / 'env', backup_dir]:
-        subprocess.run(['chgrp', '-R', 'foo', str(path)], check=True)
-        subprocess.run(['chmod', '-R', 'g+rw', str(path)], check=True)
+    log.debug(f'backup_dir: ``{backup_dir}``')
+    relative_env_path = project_path / '../env'
+    env_path = relative_env_path.resolve()
+    log.debug(f'env_path: ``{env_path}``')
+    for path in [env_path, backup_dir]:
+        log.debug(f'updating group and permissions for path: ``{path}``')
+        subprocess.run(['chgrp', '-R', group, str(path)], check=True)
+        subprocess.run(['chmod', '-R', 'g=rwX', str(path)], check=True)
 
     with backup_file.open('r') as file:
         content: list[str] = file.readlines()
