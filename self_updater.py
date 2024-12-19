@@ -135,7 +135,7 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
     requirements_in: Path = project_path / 'requirements' / f'{environment_type}.in'  # local.in, staging.in, production.in
     log.debug(f'requirements.in path, ``{requirements_in}``')
 
-    uv_path = get_uv_path(project_path)
+    uv_path: Path = get_uv_path(project_path)
     compile_command: list[str] = [
         str(uv_path),
         'pip',
@@ -239,7 +239,8 @@ def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> Non
     log.debug('starting activate_and_sync_dependencies()')
     activate_virtualenv(project_path)
 
-    sync_command: list[str] = ['uv', 'pip', 'sync', str(backup_file)]
+    uv_path: Path = get_uv_path(project_path)
+    sync_command: list[str] = [str(uv_path), 'pip', 'sync', str(backup_file)]
 
     try:
         subprocess.run(sync_command, check=True)
