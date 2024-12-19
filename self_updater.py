@@ -36,8 +36,30 @@ def validate_project_path(project_path: str) -> None:
     """
     log.debug('starting validate_project_path()')
     if not Path(project_path).exists():
-        print(f'Error: The provided path ``{project_path}`` does not exist.')
-        sys.exit(1)
+        message = f'Error: The provided project_path ``{project_path}`` does not exist.'
+        log.exception(message)
+        raise Exception(message)
+
+
+def activate_virtualenv(project_path: Path) -> None:
+    """
+    Activates the virtual environment for the project.
+    """
+    log.debug('starting activate_virtualenv()')
+    activate_script: Path = (project_path / '../env/bin/activate').resolve()
+    log.debug(f'activate_script: ``{activate_script}``')
+    if not activate_script.exists():
+        message = 'Error: Activate script not found.'
+        log.exception(message)
+        raise Exception(message)
+
+    activate_command: str = f'source {activate_script}'
+    try:
+        subprocess.run(activate_command, shell=True, check=True, executable='/bin/bash')
+    except subprocess.CalledProcessError:
+        message = 'Error activating virtual environment'
+        log.exception(message)
+        raise Exception(message)
 
 
 def infer_python_version(project_path: Path) -> str:
@@ -48,13 +70,15 @@ def infer_python_version(project_path: Path) -> str:
     log.debug('starting infer_python_version()')
     env_python_path: Path = project_path.parent / 'env/bin/python3'
     if not env_python_path.exists():
-        print('Error: Virtual environment not found.')
-        sys.exit(1)
+        message = 'Error: Virtual environment not found.'
+        log.exception(message)
+        raise Exception(message)
 
     python_version: str = subprocess.check_output([str(env_python_path), '--version'], text=True).strip().split()[-1]
     if not python_version.startswith('3.'):
-        print('Error: Invalid Python version.')
-        sys.exit(1)
+        message = 'Error: Invalid Python version.'
+        log.exception(message)
+        raise Exception(message)
     return python_version
 
 
@@ -64,6 +88,9 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
     Returns the path to the newly created backup file.
     """
     log.debug('starting compile_requirements()')
+    activate_virtualenv(project_path)
+    log.debug('virtual-enviroment activated.')
+
     timestamp: str = datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
     backup_dir: Path = project_path.parent / 'requirements_backups'
     log.debug(f'backup_dir: ``{backup_dir}``')
@@ -73,7 +100,7 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
     log.debug(f'backup_file: ``{backup_file}``')
 
     requirements_in: Path = project_path / 'requirements' / f'{environment_type}.in'  # local.in, staging.in, production.in
-    log.debug(f'requirements_in: ``{requirements_in}``')
+    log.debug(f'requirements.in path, ``{requirements_in}``')
 
     compile_command: list[str] = [
         'uv',
@@ -89,9 +116,10 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
 
     try:
         subprocess.run(compile_command, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f'Error during pip compile: {e}')
-        sys.exit(1)
+    except subprocess.CalledProcessError:
+        message = 'Error during pip compile'
+        log.exception(message)
+        raise Exception(message)
 
     return backup_file
 
@@ -141,20 +169,16 @@ def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> Non
     Exits the script if any command fails.
     """
     log.debug('starting activate_and_sync_dependencies()')
-    activate_script: Path = project_path / 'env/bin/activate'
-    if not activate_script.exists():
-        print('Error: Activate script not found.')
-        sys.exit(1)
+    activate_virtualenv(project_path)
 
-    activate_command: str = f'source {activate_script}'
     sync_command: list[str] = ['uv', 'pip', 'sync', str(backup_file)]
 
     try:
-        subprocess.run(activate_command, shell=True, check=True, executable='/bin/bash')
         subprocess.run(sync_command, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f'Error during pip sync: {e}')
-        sys.exit(1)
+    except subprocess.CalledProcessError:
+        message = 'Error during pip sync'
+        log.exception(message)
+        raise Exception(message)
 
 
 def update_permissions_and_mark_active(project_path: Path, backup_file: Path) -> None:
