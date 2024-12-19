@@ -13,8 +13,11 @@ Flow overview...
 - it's checked to see if anything is new
 - if so, the virtual-environment is updated
 
-Usage (generally run by a cron job):
-- `$ python update_packages.py "/path/to/project_code_dir/"`
+Usage:
+- Directly:
+    `$ python update_packages.py "/path/to/project_code_dir/"`
+- Via cron (eg to run every day at midnight):
+    `0 0 * * * /path/to/python /path/to/self_updater.py "/path/to/project_code_dir/"`
 
 Assumptions:
 - All requirements files are in a top-level `requirements` directory.
