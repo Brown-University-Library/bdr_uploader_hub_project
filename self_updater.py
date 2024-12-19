@@ -1,3 +1,37 @@
+"""
+Enables automatic self-updating! (To a limited extent.)
+This script is possible because of the tilde-pattern of the requirements files.
+Called by a cron job, it will check to see if a `uv pip compile ...`
+  would create anything different from the previous run.
+  If so, it will run `uv pip sync...' against the newly compiled file, auto-updating the venv.
+
+Flow overview...
+(see `manage_update()`, near bottom dundermain, for details)
+- the local/staging/production environment is inferred
+- the python version is inferred
+- the requirements file is newly-compiled
+- it's checked to see if anything is new
+- if so, the virtual-environment is updated
+
+Usage (generally run by a cron job):
+- `$ python update_packages.py "/path/to/project_code_dir/"`
+
+Assumptions:
+- All requirements files are in a top-level `requirements` directory.
+- The requirements files are named `local.in`, `staging.in`, and `production.in`.
+- The virtual environment is in a parent-level `env` (simlink) directory.
+- `uv` is installed in the virtual environment. (I'd like instead for `uv` to be installed globally.)
+- We only use `.in` files, not `.txt` files.
+  (I think this is ok, because for every app where this is implemented, we have backups
+   of the relevant `.txt` files.)
+- (Suggestion: we do _not_ tweak this script for different structures, but rather
+   we restructure our apps to fit this assumptions (to keep this script simple).)
+
+TODOs:
+- Add tests.
+- Email on error.
+"""
+
 import logging
 import subprocess
 import sys
@@ -15,7 +49,7 @@ log = logging.getLogger(__name__)
 
 def infer_environment_type() -> str:
     """
-    Infers the environment type based on the system hostname.
+    Infers environment type based on the system hostname.
     Returns 'local', 'staging', or 'production'.
     """
     hostname: str = subprocess.check_output(['hostname'], text=True).strip()
@@ -31,7 +65,7 @@ def infer_environment_type() -> str:
 
 def infer_group(project_path: Path) -> str:
     """
-    Infers the group ownership for the project directory by examining existing files.
+    Infers the group by examining existing files.
     Returns the most common group.
     """
     log.debug('starting infer_group()')
@@ -49,7 +83,7 @@ def infer_group(project_path: Path) -> str:
 
 def validate_project_path(project_path: str) -> None:
     """
-    Validate that the provided project path exists.
+    Validates that the provided project path exists.
     Exits the script if the path is invalid.
     """
     log.debug('starting validate_project_path()')
@@ -57,6 +91,7 @@ def validate_project_path(project_path: str) -> None:
         message = f'Error: The provided project_path ``{project_path}`` does not exist.'
         log.exception(message)
         raise Exception(message)
+    return
 
 
 def activate_virtualenv(project_path: Path) -> None:
@@ -74,6 +109,7 @@ def activate_virtualenv(project_path: Path) -> None:
     activate_command: str = f'source {activate_script}'
     try:
         subprocess.run(activate_command, shell=True, check=True, executable='/bin/bash')
+        return
     except subprocess.CalledProcessError:
         message = 'Error activating virtual environment'
         log.exception(message)
@@ -82,7 +118,7 @@ def activate_virtualenv(project_path: Path) -> None:
 
 def infer_python_version(project_path: Path) -> str:
     """
-    Determine the Python version from the virtual environment in the project.
+    Determines Python version from the virtual environment in the project.
     Exits the script if the virtual environment or Python version is invalid.
     """
     log.debug('starting infer_python_version()')
@@ -102,7 +138,7 @@ def infer_python_version(project_path: Path) -> str:
 
 def compile_requirements(project_path: Path, python_version: str, environment_type: str) -> Path:
     """
-    Compile the project's requirements.in file into a versioned requirements.txt backup.
+    Compiles the project's `requirements.in` file into a versioned `requirements.txt` backup.
     Returns the path to the newly created backup file.
     """
     log.debug('starting compile_requirements()')
@@ -131,9 +167,11 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
         '--python',
         python_version,
     ]
+    log.debug(f'compile_command: ``{compile_command}``')
 
     try:
         subprocess.run(compile_command, check=True)
+        log.debug('uv pip compile was successful')
     except subprocess.CalledProcessError:
         message = 'Error during pip compile'
         log.exception(message)
@@ -144,7 +182,7 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
 
 def remove_old_backups(backup_dir: Path, keep_recent: int = 7) -> None:
     """
-    Removes all files in the backup directory except the most recent `keep_recent` files.
+    Removes all files in the backup directory other than the most-recent 7 files.
     """
     log.debug('starting remove_old_backups()')
     backups: list[Path] = sorted([f for f in backup_dir.iterdir() if f.is_file() and f.suffix == '.txt'], reverse=True)
@@ -153,21 +191,29 @@ def remove_old_backups(backup_dir: Path, keep_recent: int = 7) -> None:
     for old_backup in old_backups:
         log.debug(f'removing old backup: {old_backup}')
         old_backup.unlink()
+    return
 
 
 def compare_with_previous_backup(project_path: Path, backup_file: Path) -> bool:
     """
-    Compare the newly created requirements backup with the most recent previous backup.
-    Ignore initial lines starting with '#' in the comparison.
+    Compares the newly created `requirements.txt` with the most recent one.
+    Ignores initial lines starting with '#' in the comparison.
     Returns False if there are no changes, True otherwise.
     """
     log.debug('starting compare_with_previous_backup()')
     changes = True
     backup_dir: Path = project_path.parent / 'requirements_backups'
+    log.debug(f'backup_dir: ``{backup_dir}``')
     previous_files: list[Path] = sorted([f for f in backup_dir.iterdir() if f.suffix == '.txt' and f != backup_file])
 
     def filter_initial_comments(lines: list[str]) -> list[str]:
-        """Filters out initial lines starting with '#' from a list of lines."""
+        """
+        Filters out initial lines starting with '#' from a list of lines.
+        The reason for this is that:
+        - one of the first line of the backup file includes a timestamp, which would always be different.
+        - if a generated `.txt` file is used to update the venv, the string `# ACTIVE`
+          is added to the top of the file, which would always be different from a fresh compile.
+        """
         non_comment_index = next((i for i, line in enumerate(lines) if not line.startswith('#')), len(lines))
         return lines[non_comment_index:]
 
@@ -202,6 +248,7 @@ def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> Non
     try:
         subprocess.run(sync_command, check=True)
         log.debug('uv pip sync was successful')
+        return
     except subprocess.CalledProcessError:
         message = 'Error during pip sync'
         log.exception(message)
@@ -231,6 +278,7 @@ def update_permissions_and_mark_active(project_path: Path, backup_file: Path) ->
 
     with backup_file.open('w') as file:
         file.writelines(content)
+    return
 
 
 def manage_update(project_path: str) -> None:
@@ -239,21 +287,28 @@ def manage_update(project_path: str) -> None:
     Calls various helper functions to validate, compile, compare, sync, and update permissions.
     """
     log.debug('starting manage_update()')
-    environment_type: str = infer_environment_type()
-    validate_project_path(project_path)
     project_path: Path = Path(project_path).resolve()
+    ## infer local/staging/production, and python version -----------
+    environment_type: str = infer_environment_type()
     python_version: str = infer_python_version(project_path)
+    ## validate project path ----------------------------------------
+    validate_project_path(project_path)
+    ## compile requirements file ------------------------------------
     backup_file: Path = compile_requirements(project_path, python_version, environment_type)
+    ## cleanup old backups ------------------------------------------
     backup_dir: Path = project_path.parent / 'requirements_backups'
     remove_old_backups(backup_dir)
+    ## see if the new compile is different --------------------------
     differences_found: bool = compare_with_previous_backup(project_path, backup_file)
     if not differences_found:
         log.debug('no differences found in dependencies; exiting.')
         return
     else:  # differences
+        ## if it's different, update the venv -----------------------
         activate_and_sync_dependencies(project_path, backup_file)
         update_permissions_and_mark_active(project_path, backup_file)
         log.debug('dependencies updated successfully.')
+    return
 
 
 if __name__ == '__main__':
