@@ -36,6 +36,7 @@ TODOs:
 """
 
 import logging
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -231,19 +232,45 @@ def compare_with_previous_backup(project_path: Path, backup_file: Path) -> bool:
     return changes
 
 
+# def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> None:
+#     """
+#     Activate the virtual environment and sync dependencies using the provided backup file.
+#     Exits the script if any command fails.
+#     """
+#     log.debug('starting activate_and_sync_dependencies()')
+#     activate_virtualenv(project_path)
+
+#     uv_path: Path = get_uv_path(project_path)
+#     sync_command: list[str] = [str(uv_path), 'pip', 'sync', str(backup_file)]
+
+#     try:
+#         subprocess.run(sync_command, check=True)
+#         log.debug('uv pip sync was successful')
+#         return
+#     except subprocess.CalledProcessError:
+#         message = 'Error during pip sync'
+#         log.exception(message)
+#         raise Exception(message)
+
+
 def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> None:
     """
     Activate the virtual environment and sync dependencies using the provided backup file.
     Exits the script if any command fails.
     """
     log.debug('starting activate_and_sync_dependencies()')
-    activate_virtualenv(project_path)
 
     uv_path: Path = get_uv_path(project_path)
+    venv_bin_path = project_path / 'venv' / 'bin'
+
     sync_command: list[str] = [str(uv_path), 'pip', 'sync', str(backup_file)]
 
+    env = os.environ.copy()
+    env['PATH'] = f'{venv_bin_path}:{env["PATH"]}'
+    env['VIRTUAL_ENV'] = str(project_path / 'venv')
+
     try:
-        subprocess.run(sync_command, check=True)
+        subprocess.run(sync_command, check=True, env=env)
         log.debug('uv pip sync was successful')
         return
     except subprocess.CalledProcessError:
