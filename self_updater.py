@@ -28,7 +28,7 @@ Assumptions:
   (I think this is ok, because for every app where this is implemented, we have backups
    of the relevant `.txt` files.)
 - (Suggestion: we do _not_ tweak this script for different structures, but rather
-   we restructure our apps to fit this assumptions (to keep this script simple).)
+   we restructure our apps to fit these assumptions (to keep this script simple).)
 
 TODOs:
 - Add tests.
