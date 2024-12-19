@@ -1,3 +1,4 @@
+## base requirements
 Django~=4.2.0
 httpx~=0.28.0
 pip~=24.3.1 
