@@ -261,13 +261,18 @@ def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> Non
     log.debug('starting activate_and_sync_dependencies()')
 
     uv_path: Path = get_uv_path(project_path)
-    venv_bin_path = project_path / 'venv' / 'bin'
+    log.debug(f'uv_path: ``{uv_path}``')
+    venv_bin_path: Path = project_path.parent / 'env' / 'bin'
+    log.debug(f'venv_bin_path: ``{venv_bin_path}``')
+    venv_path: Path = project_path.parent / 'env'
+    log.debug(f'venv_path: ``{venv_path}``')
 
     sync_command: list[str] = [str(uv_path), 'pip', 'sync', str(backup_file)]
+    log.debug(f'sync_command: ``{sync_command}``')
 
     env = os.environ.copy()
     env['PATH'] = f'{venv_bin_path}:{env["PATH"]}'
-    env['VIRTUAL_ENV'] = str(project_path / 'venv')
+    env['VIRTUAL_ENV'] = str(venv_path)
 
     try:
         subprocess.run(sync_command, check=True, env=env)
