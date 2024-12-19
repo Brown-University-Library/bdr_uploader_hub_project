@@ -97,28 +97,6 @@ def validate_project_path(project_path: str) -> None:
     return
 
 
-def activate_virtualenv(project_path: Path) -> None:
-    """
-    Activates the virtual environment for the project.
-    """
-    log.debug('starting activate_virtualenv()')
-    activate_script: Path = (project_path / '../env/bin/activate').resolve()
-    log.debug(f'activate_script: ``{activate_script}``')
-    if not activate_script.exists():
-        message = 'Error: Activate script not found.'
-        log.exception(message)
-        raise Exception(message)
-
-    activate_command: str = f'source {activate_script}'
-    try:
-        subprocess.run(activate_command, shell=True, check=True, executable='/bin/bash')
-        return
-    except subprocess.CalledProcessError:
-        message = 'Error activating virtual environment'
-        log.exception(message)
-        raise Exception(message)
-
-
 def infer_python_version(project_path: Path) -> str:
     """
     Determines Python version from the virtual environment in the project.
@@ -145,22 +123,21 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
     Returns the path to the newly created backup file.
     """
     log.debug('starting compile_requirements()')
-    activate_virtualenv(project_path)
-    log.debug('virtual-enviroment activated.')
 
-    timestamp: str = datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
     backup_dir: Path = project_path.parent / 'requirements_backups'
     log.debug(f'backup_dir: ``{backup_dir}``')
     backup_dir.mkdir(parents=True, exist_ok=True)
 
+    timestamp: str = datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
     backup_file: Path = backup_dir / f'{environment_type}_{timestamp}.txt'
     log.debug(f'backup_file: ``{backup_file}``')
 
     requirements_in: Path = project_path / 'requirements' / f'{environment_type}.in'  # local.in, staging.in, production.in
     log.debug(f'requirements.in path, ``{requirements_in}``')
 
+    uv_path = get_uv_path(project_path)
     compile_command: list[str] = [
-        'uv',
+        str(uv_path),
         'pip',
         'compile',
         str(requirements_in),
@@ -181,6 +158,20 @@ def compile_requirements(project_path: Path, python_version: str, environment_ty
         raise Exception(message)
 
     return backup_file
+
+
+def get_uv_path(project_path: Path) -> Path:
+    """
+    Infers the full path to `uv` directly from the virtual environment.
+    """
+    log.debug('starting get_uv_path()')
+    uv_path: Path = project_path.parent / 'env/bin/uv'
+    log.debug(f'uv_path: {uv_path}')
+    if not uv_path.exists():
+        message = f'Error: `uv` command not found in virtual environment at {uv_path}.'
+        log.exception(message)
+        raise Exception(message)
+    return uv_path
 
 
 def remove_old_backups(backup_dir: Path, keep_recent: int = 7) -> None:
@@ -217,10 +208,12 @@ def compare_with_previous_backup(project_path: Path, backup_file: Path) -> bool:
         - if a generated `.txt` file is used to update the venv, the string `# ACTIVE`
           is added to the top of the file, which would always be different from a fresh compile.
         """
+        log.debug('starting filter_initial_comments()')
         non_comment_index = next((i for i, line in enumerate(lines) if not line.startswith('#')), len(lines))
         return lines[non_comment_index:]
 
     if previous_files:
+        log.debug('hereC')
         previous_file_path: Path = previous_files[-1]
         with previous_file_path.open() as prev, backup_file.open() as curr:
             prev_lines = prev.readlines()
@@ -254,6 +247,29 @@ def activate_and_sync_dependencies(project_path: Path, backup_file: Path) -> Non
         return
     except subprocess.CalledProcessError:
         message = 'Error during pip sync'
+        log.exception(message)
+        raise Exception(message)
+
+
+def activate_virtualenv(project_path: Path) -> None:
+    """
+    Activates the virtual environment for the project.
+    Called by `activate_and_sync_dependencies()`.
+    """
+    log.debug('starting activate_virtualenv()')
+    activate_script: Path = (project_path / '../env/bin/activate').resolve()
+    log.debug(f'activate_script: ``{activate_script}``')
+    if not activate_script.exists():
+        message = 'Error: Activate script not found.'
+        log.exception(message)
+        raise Exception(message)
+
+    activate_command: str = f'source {activate_script}'
+    try:
+        subprocess.run(activate_command, shell=True, check=True, executable='/bin/bash')
+        return
+    except subprocess.CalledProcessError:
+        message = 'Error activating virtual environment'
         log.exception(message)
         raise Exception(message)
 
@@ -306,7 +322,7 @@ def manage_update(project_path: str) -> None:
     if not differences_found:
         log.debug('no differences found in dependencies; exiting.')
         return
-    else:  # differences
+    else:
         ## if it's different, update the venv -----------------------
         activate_and_sync_dependencies(project_path, backup_file)
         update_permissions_and_mark_active(project_path, backup_file)
