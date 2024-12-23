@@ -198,6 +198,8 @@ LOGGING = {
 
 LOGIN_URL = os.environ['LOGIN_URL']
 
+TEST_RUNNER = 'test_runner.JSONTestRunner'
+
 ## django APP settings ----------------------------------------------
 
 TEST_SHIB_META_DCT: dict = json.loads(os.environ['TEST_SHIB_META_DCT_JSON'])
