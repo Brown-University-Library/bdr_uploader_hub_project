@@ -36,14 +36,18 @@ class JSONTestResult(TextTestResult):
 
 
 class JSONTestRunner(DiscoverRunner):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Default descriptions and verbosity for compatibility
+        self.descriptions = kwargs.get('descriptions', True)
+        self.verbosity = kwargs.get('verbosity', 1)
+
     def run_suite(self, suite, **kwargs):
         # Create a stream to capture output (StringIO acts as a writable buffer)
         stream = StringIO()
-        verbosity = self.verbosity
-        descriptions = self.descriptions
 
-        # Initialize the custom result class
-        result = JSONTestResult(stream, descriptions, verbosity)
+        # Initialize the custom result class with descriptions and verbosity
+        result = JSONTestResult(stream, self.descriptions, self.verbosity)
 
         # Run the test suite with the custom result
         suite.run(result)
