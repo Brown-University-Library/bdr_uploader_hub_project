@@ -1,4 +1,5 @@
 import json
+from io import StringIO
 from unittest.runner import TextTestResult
 
 from django.test.runner import DiscoverRunner
@@ -36,10 +37,20 @@ class JSONTestResult(TextTestResult):
 
 class JSONTestRunner(DiscoverRunner):
     def run_suite(self, suite, **kwargs):
-        stream = self.stream  # Ensure `stream` is set
-        result = JSONTestResult(stream, self.descriptions, self.verbosity)
+        # Create a stream to capture output (StringIO acts as a writable buffer)
+        stream = StringIO()
+        verbosity = self.verbosity
+        descriptions = self.descriptions
+
+        # Initialize the custom result class
+        result = JSONTestResult(stream, descriptions, verbosity)
+
+        # Run the test suite with the custom result
         suite.run(result)
+
+        # Display results as JSON
         self.display_results_as_json(result)
+
         return result
 
     @staticmethod
