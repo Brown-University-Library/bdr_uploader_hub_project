@@ -1,5 +1,5 @@
 import json
-from io import StringIO
+import sys
 from unittest.runner import TextTestResult
 
 from django.test.runner import DiscoverRunner
@@ -43,8 +43,8 @@ class JSONTestRunner(DiscoverRunner):
         self.verbosity = kwargs.get('verbosity', 1)
 
     def run_suite(self, suite, **kwargs):
-        # Create a stream to capture output (StringIO acts as a writable buffer)
-        stream = StringIO()
+        # Wrap sys.stdout with StreamWrapper to ensure compatibility
+        stream = StreamWrapper(sys.stdout)
 
         # Initialize the custom result class with descriptions and verbosity
         result = JSONTestResult(stream, self.descriptions, self.verbosity)
@@ -61,3 +61,17 @@ class JSONTestRunner(DiscoverRunner):
     def display_results_as_json(result):
         output = {'tests': result.results}
         print(json.dumps(output, indent=4))
+
+
+class StreamWrapper:
+    def __init__(self, stream):
+        self.stream = stream
+
+    def write(self, message):
+        self.stream.write(message)
+
+    def writeln(self, message):
+        self.stream.write(message + '\n')
+
+    def flush(self):
+        self.stream.flush()
