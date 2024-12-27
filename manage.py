@@ -1,7 +1,7 @@
 ## <https://peps.python.org/pep-0723/> recently adopted python standard.
 ## Allows, for development, to run the app via `uv run ./manage.py runserver`, with no venv.
 # /// script
-# requires-python = "~=3.8.0"
+# requires-python = "~=3.12.0"
 # dependencies = [
 #     "django~=4.2.0",
 #     "python-dotenv~=1.0.0",
