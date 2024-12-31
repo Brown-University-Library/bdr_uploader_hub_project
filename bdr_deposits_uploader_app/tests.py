@@ -6,7 +6,6 @@ from django.conf import settings as project_settings
 from django.test import SimpleTestCase as TestCase  # SimpleTestCase does not require db
 from django.test.utils import override_settings
 
-
 log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
 
