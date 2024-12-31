@@ -198,7 +198,8 @@ LOGGING = {
 
 LOGIN_URL = os.environ['LOGIN_URL']
 
-TEST_RUNNER = 'test_runner.JSONTestRunner'
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+# TEST_RUNNER = 'test_runner.JSONTestRunner'
 
 ## django APP settings ----------------------------------------------
 

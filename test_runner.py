@@ -1,3 +1,12 @@
+"""
+Not currently used.
+
+This is a custom test runner that outputs test results in JSON format.
+
+To use it, uncomment this config/settings.py line:
+`# TEST_RUNNER = 'test_runner.JSONTestRunner'`
+"""
+
 import json
 import sys
 from unittest.runner import TextTestResult
