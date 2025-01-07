@@ -52,7 +52,11 @@ def info(request):
 
 def pre_login(request):
     """
-    Ensures shib actually comes up for user. Flow:
+    Ensures shib actually comes up for user.
+
+    Triggered by clicking "Staff Login" on the public info page.
+
+    Flow:
     - Checks "logout_status" session-key for 'forcing_logout'.
         - If not found (meaning user has come, from, say, the public info page by clicking "Staff Login")...
             - Builds the IDP-shib-logout-url with `return` param set back to here.
@@ -100,9 +104,11 @@ def pre_login(request):
 def login(request) -> HttpResponseRedirect:
     """
     Handles authentication and initial authorization via shib.
+
     Then:
     - On successful further UserProfile authorization, logs user in and redirects to the `next_url`.
         - If no `next_url`, redirects to the `info` page.
+
     Called automatically by attempting to access an `@login_required` view.
     """
     log.debug('\n\nstarting login()')
@@ -170,7 +176,6 @@ def config_slug(request, slug):
     if slug not in request.user.userprofile.can_configure_these_apps:
         return HttpResponse('You do not have permissions to configure this app.')
 
-    # return HttpResponse(f'config_slug view for slug: {slug}')
     context = {'slug': slug}
     return render(request, 'config_slug.html', context)
 
