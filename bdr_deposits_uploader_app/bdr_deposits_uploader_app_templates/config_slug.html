@@ -1,5 +1,36 @@
-<h1>Configure Upload Form for `{{slug}}`</h1>
 
-<p>This will be the config-form for the `{{slug}}` webapp.</p>
+{% extends "base.html" %}
+{% load static %}
 
-<hr/>
+<!-- html -->
+
+<!-- head -->
+    {% block header_other %}
+    <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/config_new.css' %}">
+    {% endblock header_other %}
+<!-- /head -->
+
+<!-- body -->
+
+    <!-- header -->
+    <!-- /header -->
+
+    <!-- main -->
+        {% block main_content %}
+        <section class="form-section">
+            <h2>Configure {{ slug }} app</h2>
+            <form id="new-app-form" hx-post="{{hlpr_validate_config}}" hx-target="#response" hx-swap="innerHTML">
+                {% csrf_token %}
+                <button type="submit" class="btn-primary">Submit</button>
+            </form>
+            <div id="response" class="alert"></div>
+        </section>
+
+        <hr/>
+        {% endblock main_content %}
+    <!-- /main -->
+
+<!-- /body -->
+
+<!-- /html -->
+ 
