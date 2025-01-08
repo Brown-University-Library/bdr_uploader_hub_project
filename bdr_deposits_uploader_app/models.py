@@ -17,3 +17,17 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+
+
+class AppConfig(models.Model):
+    """
+    This model represents an app that can be configured by staff.
+    """
+
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    temp_config_json = models.JSONField(default=dict, blank=True)
+
+    def __str__(self):
+        return self.slug
