@@ -2,7 +2,21 @@ import logging
 
 from django.urls import reverse
 
+from bdr_deposits_uploader_app.models import AppConfig
+
 log = logging.getLogger(__name__)
+
+
+def get_existing_names_and_slugs() -> list[tuple[str, ...]]:
+    """
+    Returns a list of app names.
+    Called by views.config_new().
+    """
+    apps = AppConfig.objects.values_list('name', 'slug')
+    names: tuple[str, ...]  # elipsis indicates the tuple can contain any number of elements
+    slugs: tuple[str, ...]
+    names, slugs = zip(*apps)
+    return [names, slugs]
 
 
 def get_recent_configs() -> list:
