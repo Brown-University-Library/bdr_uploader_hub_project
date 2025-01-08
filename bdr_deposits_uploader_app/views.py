@@ -16,6 +16,7 @@ from django.utils import text
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
+from bdr_deposits_uploader_app.models import AppConfig
 
 log = logging.getLogger(__name__)
 
@@ -258,6 +259,14 @@ def hlpr_check_name_and_slug(request):
         return HttpResponse(html)
 
     ## getting here means life is good; use HX-Redirect to handle the redirection
+    log.debug('saving data')
+    try:
+        app_config = AppConfig(name=app_name, slug=slug)
+        app_config.save()
+    except Exception as e:
+        message = f'problem saving data, ``{e}``'
+        log.exception(message)
+        raise Exception(message)
     log.debug('returning redirect')
     # redirect_url = '/version/'
     redirect_url = reverse('config_slug_url', args=[slug])
