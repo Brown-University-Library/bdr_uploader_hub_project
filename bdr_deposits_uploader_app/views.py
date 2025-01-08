@@ -153,6 +153,7 @@ def config_new(request):
     log.debug('starting config_new()')
 
     if not request.user.userprofile.can_create_app:
+        log.debug(f'user ``{request.user}`` does not have permissions to create an app')
         return HttpResponse('You do not have permissions to create an app.')
     dummy_data: list = config_new_helper.get_recent_configs()
     hlpr_check_name_and_slug_url = reverse('hlpr_check_name_and_slug_url')
@@ -173,12 +174,14 @@ def config_slug(request, slug):
     """
     log.debug('starting config_slug()')
     log.debug(f'slug, ``{slug}``')
-
-    if slug not in request.user.userprofile.can_configure_these_apps:
-        return HttpResponse('You do not have permissions to configure this app.')
-
-    context = {'slug': slug}
-    return render(request, 'config_slug.html', context)
+    if not request.user.userprofile.can_create_app:
+        log.debug('user does not have permissions to create an app')
+        resp = HttpResponse('You do not have permissions to configure this app.')
+    else:
+        log.debug('user has permissions to configure app')
+        context = {'slug': slug}
+        resp = render(request, 'config_slug.html', context)
+    return resp
 
 
 @login_required
