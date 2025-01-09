@@ -72,6 +72,12 @@ a.login_logout:active {
     color: white;
 }  
 
+/* add a little extra space between the two login links */
+a.staff-login {
+    margin-left: 10px; 
+    /* padding-left: 100px; */
+}
+
 /* --- header CSS end --- */
 
 
