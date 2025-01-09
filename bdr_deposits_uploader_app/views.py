@@ -32,12 +32,15 @@ def info(request) -> HttpResponse:
     Can get here from 'info' url, and the root-url redirects here.
     """
     log.debug('\n\nstarting info()')
+    log.debug(f'user, ``{request.user}``')
     ## prep data ----------------------------------------------------
     # context = { 'message': 'Hello, world.' }
     context = {
         'quote': 'The best life is the one in which the creative impulses play the largest part and the possessive impulses the smallest.',
         'author': 'Bertrand Russell',
     }
+    if request.user.is_authenticated:
+        context['username'] = request.user.first_name
     ## prep response ------------------------------------------------
     if request.GET.get('format', '') == 'json':
         log.debug('building json response')
@@ -156,7 +159,7 @@ def config_new(request) -> HttpResponse:
     Enables coniguration of new app.
     """
     log.debug('\n\nstarting config_new()')
-
+    log.debug(f'user, ``{request.user}``')
     if not request.user.userprofile.can_create_app:
         log.debug(f'user ``{request.user}`` does not have permissions to create an app')
         return HttpResponse('You do not have permissions to create an app.')
