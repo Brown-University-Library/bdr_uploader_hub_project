@@ -90,18 +90,16 @@ def pre_login(request) -> HttpResponseRedirect:
         del request.session['logout_status']
         log.debug('logout_status cleared')
         ## build IDP-shib-login-url ---------------------------------
-        # full_config_new_url = f'{request.scheme}://{request.get_host()}{reverse("config_new_url")}'
-        # log.debug(f'full_config_new_url, ``{full_config_new_url}``')
-        # encoded_full_config_new_url = parse.quote(full_config_new_url, safe='')
-        # redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_config_new_url}'
         if type_value == 'staff':
             full_authenticated_new_url = f'{request.scheme}://{request.get_host()}{reverse("config_new_url")}'
         elif type_value == 'student':
             full_authenticated_new_url = f'{request.scheme}://{request.get_host()}{reverse("upload_url")}'
         log.debug(f'full_config_new_url, ``{full_authenticated_new_url}``')
-        encoded_full_config_new_url = parse.quote(full_authenticated_new_url, safe='')
-        redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_config_new_url}'
-
+        if request.get_host() == '127.0.0.1:8000':  # eases local development
+            redirect_url = full_authenticated_new_url
+        else:
+            encoded_full_config_new_url = parse.quote(full_authenticated_new_url, safe='')
+            redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_config_new_url}'
     log.debug(f'redirect_url, ``{redirect_url}``')
     return HttpResponseRedirect(redirect_url)
 
