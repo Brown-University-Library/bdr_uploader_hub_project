@@ -199,7 +199,10 @@ def upload(request) -> HttpResponse:
     """
     log.debug('\n\nstarting upload()')
     log.debug(f'user, ``{request.user}``')
-    return HttpResponse('upload view')
+    context = {
+        'username': request.user.first_name,
+    }
+    return render(request, 'uploader_select.html', context)
 
 
 @login_required
