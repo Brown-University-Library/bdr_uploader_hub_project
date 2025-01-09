@@ -195,6 +195,7 @@ def upload(request) -> HttpResponse:
     Displays the upload app.
     """
     log.debug('\n\nstarting upload()')
+    log.debug(f'user, ``{request.user}``')
     return HttpResponse('upload view')
 
 
