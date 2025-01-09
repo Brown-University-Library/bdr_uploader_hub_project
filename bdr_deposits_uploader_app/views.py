@@ -51,7 +51,7 @@ def info(request) -> HttpResponse:
     return resp
 
 
-def pre_login(request, type_value: str) -> HttpResponseRedirect:
+def pre_login(request) -> HttpResponseRedirect:
     """
     Ensures shib actually comes up for user.
 
@@ -69,6 +69,8 @@ def pre_login(request, type_value: str) -> HttpResponseRedirect:
             - Redirects to the IDP-shib-login-url.
     """
     log.debug('\n\nstarting pre_login()')
+    type_value = request.GET.get('type', None)
+    log.debug(f'type_value, ``{type_value}``')
     ## check for session "logout_status" ----------------------------
     logout_status = request.session.get('logout_status', None)
     log.debug(f'logout_status, ``{logout_status}``')
@@ -79,9 +81,7 @@ def pre_login(request, type_value: str) -> HttpResponseRedirect:
         log.debug(f'logout_status set to ``{request.session["logout_status"]}``')
         ## build IDP-shib-logout-url --------------------------------
         # full_pre_login_url = f'{request.scheme}://{request.get_host()}{reverse("pre_login_url")}'
-        full_pre_login_url = (
-            f'{request.scheme}://{request.get_host()}{reverse("pre_login_url", kwargs={"type": type_value})}'
-        )
+        full_pre_login_url = f'{request.scheme}://{request.get_host()}{reverse("pre_login_url")}?type={type_value}'
         log.debug(f'full_pre_login_url, ``{full_pre_login_url}``')
         encoded_full_pre_login_url = parse.quote(full_pre_login_url, safe='')
         redirect_url = f'{project_settings.SHIB_IDP_LOGOUT_URL}?return={encoded_full_pre_login_url}'
