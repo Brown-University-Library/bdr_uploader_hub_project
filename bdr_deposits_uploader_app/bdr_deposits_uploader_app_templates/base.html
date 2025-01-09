@@ -26,8 +26,8 @@
             <span class="welcome-text">Welcome {{ username }} / <a class="login_logout" href="{% url 'logout_url' %}">Logout</a></span>
             {% else %}
             <span class="welcome-text">
-                <a class="login_logout" href="{% url 'pre_login_url' %}">Student Login</a> 
-                <a class="login_logout staff-login" href="{% url 'pre_login_url' %}">Staff Login</a>
+                <a class="login_logout" href="{% url 'pre_login_url' %}?type=student">Student Login</a> 
+                <a class="login_logout staff-login" href="{% url 'pre_login_url' %}?type=staff">Staff Login</a>
             </span>
             <!-- <span class="welcome-text"><a class="login_logout" href="{% url 'pre_login_url' %}">Staff Login</a></span> -->
             {% endif %}
