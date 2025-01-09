@@ -72,8 +72,17 @@ def pre_login(request) -> HttpResponseRedirect:
             - Redirects to the IDP-shib-login-url.
     """
     log.debug('\n\nstarting pre_login()')
+    ## get the type-value -------------------------------------------
     type_value = request.GET.get('type', None)
-    log.debug(f'type_value, ``{type_value}``')
+    log.debug(f'type_value from GET, ``{type_value}``')
+    if type_value not in ['staff', 'student']:  ## try to get the type from the session
+        log.debug('type_value not in [staff, student]')
+        type_value = request.session.get('type', None)
+        log.debug(f'type_value from session, ``{type_value}``')
+    if type_value not in ['staff', 'student']:  ## if still not found, default to 'staff'
+        log.warning('type_value not in [staff, student]')
+        type_value = 'student'
+    request.session['type'] = type_value
     ## check for session "logout_status" ----------------------------
     logout_status = request.session.get('logout_status', None)
     log.debug(f'logout_status, ``{logout_status}``')
