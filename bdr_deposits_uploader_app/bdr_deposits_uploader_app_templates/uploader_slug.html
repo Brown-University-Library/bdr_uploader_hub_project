@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+<!-- Template for templates 🙂
+     The html comments just help remember the overall structure of the page. -->
+
+<!-- html -->
+
+<!-- head -->
+{% block title %}
+<title>BDR Deposits Uploader</title>
+{% endblock title %}
+
+{% block header_other %}  <!-- custom-page CSS can go in here-->
+<link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/info.css' %}">
+{% endblock header_other %}
+<!-- /head -->
+
+<!-- body -->
+
+    <!-- header -->
+    <!-- /header -->
+
+    <!-- main -->
+    {% block main_content %}
+    <div class="info-section">
+        <h2>BDR Deposits Student Uploader Form — {{ slug }}</h2>
+        <p>This page will show the {{ slug }} upload form.</p>
+        <p></p>
+        <p>(Under development.)</p>
+    </div>
+    {% endblock main_content %}
+    <!-- /main -->
+
+<!-- /body -->
+
+<!-- /html -->
