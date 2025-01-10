@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
 
@@ -24,6 +26,7 @@ class AppConfig(models.Model):
     This model represents an app that can be configured by staff.
     """
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
@@ -31,3 +34,29 @@ class AppConfig(models.Model):
 
     def __str__(self):
         return self.slug
+
+
+class Submission(models.Model):
+    """
+    This model represents a user's submission of a deposit.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    app_slug = models.SlugField(unique=True)
+    title = models.CharField(max_length=255)
+    abstract = models.TextField()
+    upload = models.FileField()
+    original_file_name = models.CharField(max_length=255, null=True)
+    checksum_type = models.CharField(max_length=100, null=True)
+    checksum = models.CharField(max_length=255, null=True)
+    student_eppn = models.CharField(max_length=255)
+    student_email = models.CharField(max_length=255)
+    temp_submission_json = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        title_short = self.title
+        if len(self.title) > 10:
+            title_short = f'{self.title[0:10]}...'
+        return title_short
