@@ -53,11 +53,11 @@
                 <thead>
                     <tr>
                         <th>Modified-Date</th>
-                        <th>Name</th>
+                        <th>App-Name</th>
                         <th>Items-Count</th>
-                        <th>Config</th>
-                        <th>Upload</th>
-                        <th>More Info</th>
+                        <th>Config-Form</th>
+                        <th>Upload-Form</th>
+                        <th>Items</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,13 +68,14 @@
                         <td>{{ app.items_count }}</td>
                         <td><a href="{{ app.config_link }}" class="btn-link">config</a></td>
                         <td><a href="{{ app.upload_link }}" class="btn-link">upload</a></td>
-                        <td><a href="{% url 'admin:index' %}" class="btn-link">admin</a></td>
+                        <!-- <td><a href="{% url 'admin:index' %}" class="btn-link">admin</a></td> -->
+                        <td><a href="{{ app.admin_link }}" class="btn-link">admin</a></td> 
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </section>
-        <div style="font-style: italic; margin-top: 1rem; text-align: center;">(dummy data for now)</div>
+        <div style="font-style: italic; margin-top: 1rem; text-align: center;">(dummy data is less dumb now -- it's still made up, but loads from the database)</div>
         {% endblock main_content %}
     <!-- /main -->
 
