@@ -27,6 +27,7 @@ class AppConfig(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # id = models.CharField(primary_key=True, default=uuid.uuid4, editable=True, max_length=36)
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
@@ -42,15 +43,15 @@ class Submission(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    app_slug = models.SlugField(unique=True)
+    app = models.ForeignKey(AppConfig, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=255)
     abstract = models.TextField()
-    upload = models.FileField()
-    original_file_name = models.CharField(max_length=255, null=True)
-    checksum_type = models.CharField(max_length=100, null=True)
-    checksum = models.CharField(max_length=255, null=True)
-    student_eppn = models.CharField(max_length=255)
-    student_email = models.CharField(max_length=255)
+    upload = models.FileField(blank=True)
+    original_file_name = models.CharField(max_length=255, blank=True, null=True)
+    checksum_type = models.CharField(max_length=100, null=True, blank=True)
+    checksum = models.CharField(max_length=255, null=True, blank=True)
+    student_eppn = models.CharField(max_length=255, null=True, blank=True)
+    student_email = models.CharField(max_length=255, null=True, blank=True)
     temp_submission_json = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
