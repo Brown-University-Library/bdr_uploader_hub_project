@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import pprint
 from urllib import parse
 from urllib.parse import quote
 
@@ -172,13 +173,17 @@ def config_new(request) -> HttpResponse:
     if not request.user.userprofile.can_create_app:
         log.debug(f'user ``{request.user}`` does not have permissions to create an app')
         return HttpResponse('You do not have permissions to create an app.')
-    dummy_data: list = config_new_helper.get_recent_configs()
+    # dummy_data: list = config_new_helper.get_recent_configs()
+    # log.debug(f'dummy_data, ``{pprint.pformat(dummy_data)}``')
+    apps_data: list = config_new_helper.get_configs()
+    log.debug(f'apps_data, ``{pprint.pformat(apps_data)}``')
     hlpr_check_name_and_slug_url = reverse('hlpr_check_name_and_slug_url')
     hlpr_generate_slug_url = reverse('hlpr_generate_slug_url')
     context = {
         'hlpr_check_name_and_slug_url': hlpr_check_name_and_slug_url,
         'hlpr_generate_slug_url': hlpr_generate_slug_url,
-        'recent_apps': dummy_data,
+        # 'recent_apps': dummy_data,
+        'recent_apps': apps_data,
         'username': request.user.first_name,
     }
     return render(request, 'config_new.html', context)
