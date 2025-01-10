@@ -32,6 +32,8 @@ class AppConfig(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     temp_config_json = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
         return self.slug
