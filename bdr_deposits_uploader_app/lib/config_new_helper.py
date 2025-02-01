@@ -12,11 +12,22 @@ def get_existing_names_and_slugs() -> list[tuple[str, ...]]:
     """
     Returns a list of app names.
     Called by views.hlpr_check_name_and_slug().
+    Example: say `apps` is:
+        [
+            ('App1', 'app1-slug'),
+            ('App2', 'app2-slug'),
+            ('App3', 'app3-slug'),
+        ]
+        ...then `names` would be:
+        ('App1', 'App2', 'App3'),  # All the 'name' values
+
+        ...and `slugs` would be:
+        ('app1-slug', 'app2-slug', 'app3-slug'),  # All the 'slug' values
     """
     apps = AppConfig.objects.values_list('name', 'slug')
     names: tuple[str, ...]  # elipsis indicates the tuple can contain any number of elements
     slugs: tuple[str, ...]
-    names, slugs = zip(*apps)
+    names, slugs = zip(*apps)  # zip is an iterator that aggregates elements from each of the iterables
     return [names, slugs]
 
 
