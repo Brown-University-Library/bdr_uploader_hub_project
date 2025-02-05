@@ -10,10 +10,11 @@ from django.conf import settings as project_settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import text
 
+from bdr_deposits_uploader_app.forms.staff_form import StaffForm
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
@@ -205,9 +206,40 @@ def config_slug(request, slug) -> HttpResponse:
         app_config = get_object_or_404(AppConfig, slug=slug)
         log.debug(f'app_config, ``{app_config}``')
 
-        context = {'slug': slug}
-        resp = render(request, 'config_slug.html', context)
+        if request.method == 'POST':
+            form = StaffForm(request.POST)
+            if form.is_valid():
+                # Process the form data here.
+                # For instance, save configuration options, etc.
+                # Then redirect to a success page.
+                return redirect(reverse('staff_form_success'))
+        else:
+            form = StaffForm()
+
+    return render(request, 'staff_form.html', {'form': form})
+
     return resp
+
+
+# @login_required
+# def config_slug(request, slug) -> HttpResponse:
+#     """
+#     Enables coniguration of existing app.
+#     """
+#     log.debug('\n\nstarting config_slug()')
+#     log.debug(f'slug, ``{slug}``')
+#     if not request.user.userprofile.can_create_app:
+#         log.debug('user does not have permissions to create an app')
+#         resp = HttpResponse('You do not have permissions to configure this app.')
+#     else:
+#         log.debug('user has permissions to configure app')
+
+#         app_config = get_object_or_404(AppConfig, slug=slug)
+#         log.debug(f'app_config, ``{app_config}``')
+
+#         context = {'slug': slug}
+#         resp = render(request, 'config_slug.html', context)
+#     return resp
 
 
 @login_required
