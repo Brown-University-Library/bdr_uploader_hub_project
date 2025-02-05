@@ -1,6 +1,7 @@
 import logging
 from urllib.parse import urlencode
 
+from django.db.models.query import QuerySet  # for type-hint
 from django.urls import reverse
 
 from bdr_deposits_uploader_app.models import AppConfig
@@ -12,11 +13,28 @@ def get_existing_names_and_slugs() -> list[tuple[str, ...]]:
     """
     Returns a list of app names.
     Called by views.hlpr_check_name_and_slug().
+    Example: say `apps` is:
+        [
+            ('App1', 'app1-slug'),
+            ('App2', 'app2-slug'),
+            ('App3', 'app3-slug'),
+        ]
+        ...then `names` would be:
+        ('App1', 'App2', 'App3'),  # All the 'name' values
+
+        ...and `slugs` would be:
+        ('app1-slug', 'app2-slug', 'app3-slug'),  # All the 'slug' values
     """
-    apps = AppConfig.objects.values_list('name', 'slug')
+    apps: QuerySet = AppConfig.objects.values_list('name', 'slug')
     names: tuple[str, ...]  # elipsis indicates the tuple can contain any number of elements
     slugs: tuple[str, ...]
-    names, slugs = zip(*apps)
+    if not apps:
+        names = ()
+        slugs = ()
+    else:
+        names, slugs = zip(*apps)  # zip is an iterator that aggregates elements from each of the iterables
+    log.debug(f'names, ``{names}``')
+    log.debug(f'slugs, ``{slugs}``')
     return [names, slugs]
 
 
@@ -28,33 +46,73 @@ def get_configs() -> list:
     log.debug('starting get_configs()')
     existing_app_data: list = []
     apps = AppConfig.objects.all()
-    app_label = apps[0]._meta.app_label
-    log.debug(f'app_label, ``{app_label}``')
-    # model_name = apps[0]._meta.model_name
-    # log.debug(f'model_name, ``{model_name}``')
-    base_admin_url = reverse('admin:bdr_deposits_uploader_app_submission_changelist')
-    log.debug(f'base_admin_url, ``{base_admin_url}``')
-    for app in apps:
-        app_data: dict = {}
-        mod_date_without_microseconds: str = app.updated_at.strftime('%Y-%m-%d %H:%M:%S')
-        app_data['mod_date'] = mod_date_without_microseconds
-        app_data['name'] = app.name
-        submission_count_for_app = app.submission_set.count()
-        app_data['items_count'] = submission_count_for_app
-        app_data['config_link'] = f'{reverse("config_slug_url", args=[app.slug])}'
-        app_data['upload_link'] = f'{reverse("upload_slug_url", args=[app.slug])}'
-        # app_data['admin_link'] = reverse(
-        #     f'admin:{app_label}_{model_name}_change', args=[app.id]
-        # )  # works, but not what I want
+    if apps:
+        app_label = apps[0]._meta.app_label
+        log.debug(f'app_label, ``{app_label}``')
+        # model_name = apps[0]._meta.model_name
+        # log.debug(f'model_name, ``{model_name}``')
+        base_admin_url = reverse('admin:bdr_deposits_uploader_app_submission_changelist')
+        log.debug(f'base_admin_url, ``{base_admin_url}``')
+        for app in apps:
+            app_data: dict = {}
+            mod_date_without_microseconds: str = app.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            app_data['mod_date'] = mod_date_without_microseconds
+            app_data['name'] = app.name
+            submission_count_for_app = app.submission_set.count()
+            app_data['items_count'] = submission_count_for_app
+            app_data['config_link'] = f'{reverse("config_slug_url", args=[app.slug])}'
+            app_data['upload_link'] = f'{reverse("upload_slug_url", args=[app.slug])}'
+            # app_data['admin_link'] = reverse(
+            #     f'admin:{app_label}_{model_name}_change', args=[app.id]
+            # )  # works, but not what I want
 
-        query_params = {'app__id__exact': str(app.id)}
-        full_admin_url = f'{base_admin_url}?{urlencode(query_params)}'
-        app_data['admin_link'] = full_admin_url
+            query_params = {'app__id__exact': str(app.id)}
+            full_admin_url = f'{base_admin_url}?{urlencode(query_params)}'
+            app_data['admin_link'] = full_admin_url
 
-        existing_app_data.append(app_data)
+            existing_app_data.append(app_data)
+    else:
+        log.debug('no apps found')
 
     log.debug(f'existing_app_data, ``{existing_app_data}``')
     return existing_app_data
+
+
+# def get_configs() -> list:
+#     """
+#     Returns a list of app names and slugs. Will replace get_recent_configs() soon.
+#     Called by views.config_new().
+#     """
+#     log.debug('starting get_configs()')
+#     existing_app_data: list = []
+#     apps = AppConfig.objects.all()
+#     app_label = apps[0]._meta.app_label
+#     log.debug(f'app_label, ``{app_label}``')
+#     # model_name = apps[0]._meta.model_name
+#     # log.debug(f'model_name, ``{model_name}``')
+#     base_admin_url = reverse('admin:bdr_deposits_uploader_app_submission_changelist')
+#     log.debug(f'base_admin_url, ``{base_admin_url}``')
+#     for app in apps:
+#         app_data: dict = {}
+#         mod_date_without_microseconds: str = app.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+#         app_data['mod_date'] = mod_date_without_microseconds
+#         app_data['name'] = app.name
+#         submission_count_for_app = app.submission_set.count()
+#         app_data['items_count'] = submission_count_for_app
+#         app_data['config_link'] = f'{reverse("config_slug_url", args=[app.slug])}'
+#         app_data['upload_link'] = f'{reverse("upload_slug_url", args=[app.slug])}'
+#         # app_data['admin_link'] = reverse(
+#         #     f'admin:{app_label}_{model_name}_change', args=[app.id]
+#         # )  # works, but not what I want
+
+#         query_params = {'app__id__exact': str(app.id)}
+#         full_admin_url = f'{base_admin_url}?{urlencode(query_params)}'
+#         app_data['admin_link'] = full_admin_url
+
+#         existing_app_data.append(app_data)
+
+#     log.debug(f'existing_app_data, ``{existing_app_data}``')
+#     return existing_app_data
 
 
 # def get_recent_configs() -> list:

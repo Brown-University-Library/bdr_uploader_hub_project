@@ -265,10 +265,11 @@ def hlpr_check_name_and_slug(request) -> HttpResponse | JsonResponse:
     Validates that the incoming app-name and slug are unique.
     """
     log.debug('\n\nstarting hlpr_check_name_and_slug()')
+
     ## get the incoming data
-    app_name: str = request.POST.get('new_app_name', '')
+    app_name: str = request.POST.get('new_app_name', '').strip()
     log.debug(f'app_name, ``{app_name}``')
-    slug: str = request.POST.get('url_slug', '')
+    slug: str = request.POST.get('url_slug', '').strip()
     log.debug(f'slug, ``{slug}``')
 
     ## if either are empty, return an error
@@ -278,29 +279,15 @@ def hlpr_check_name_and_slug(request) -> HttpResponse | JsonResponse:
         log.debug(f'html, ``{html}``')
         return HttpResponse(html)
 
-    ## get the existing names and slugs
-    taken_values: list[tuple[str, ...]] = config_new_helper.get_existing_names_and_slugs()
-    TAKEN_NAMES: tuple[str, ...] = taken_values[0]
-    TAKEN_SLUGS: tuple[str, ...] = taken_values[1]
-    name_problem = ''
-    slug_problem = ''
-    if app_name in TAKEN_NAMES:
-        log.debug(f'app_name, ``{app_name}`` already in TAKEN_NAMES, ``{TAKEN_NAMES}``')
-        name_problem = 'Name already exists.'
-    if slug in TAKEN_SLUGS:
-        log.debug(f'slug, ``{slug}`` already in TAKEN_SLUGS, ``{TAKEN_SLUGS}``')
-        slug_problem = 'Slug already exists.'
+    ## check for existing names and slugs
+    name_already_exists: bool = AppConfig.objects.filter(name__iexact=app_name).exists()
+    slug_already_exists: bool = AppConfig.objects.filter(slug__iexact=slug).exists()
+    name_problem: str = '' if not name_already_exists else 'Name already exists.'
+    slug_problem: str = '' if not slug_already_exists else 'Slug already exists.'
 
     ## create html to show any problems
     if name_problem or slug_problem:
         html = f'{name_problem} {slug_problem}'
-        log.debug(f'html, ``{html}``')
-        return HttpResponse(html)
-
-    ## if either are in the dummy-taken-list, return an error
-    if app_name in TAKEN_NAMES or slug in TAKEN_SLUGS:
-        # Return an error message for invalid inputs
-        html = 'Name and slug are not unique.'
         log.debug(f'html, ``{html}``')
         return HttpResponse(html)
 
