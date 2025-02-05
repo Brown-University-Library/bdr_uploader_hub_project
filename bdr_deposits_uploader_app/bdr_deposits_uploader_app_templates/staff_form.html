@@ -1,11 +1,16 @@
-<!-- staff_form.html -->
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "base.html" %}
+{% load static %}
+
+<!-- html -->
+
+<!-- head -->
+    {% block header_other %}
+    <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
+
     <title>Staff Form</title>
     <style>
         form {
-            width: 600px;
+            width: 800px;
             margin: auto;
         }
         .form-field {
@@ -27,26 +32,45 @@
             padding: 0;
         }
     </style>
-</head>
-<body>
-    <h1>Staff Form</h1>
-    <form method="post" action="{% url 'config_slug_url' slug=slug %}">
-        {% csrf_token %}
-        {% for field in form %}
+
+    {% endblock header_other %}
+<!-- /head -->
+
+<!-- body -->
+
+    <!-- header -->
+    <!-- /header -->
+
+    <!-- main -->
+    {% block main_content %}
+    <section class="form-section">
+        <h2>Configure {{ slug }} app</h2>
+
+        <form method="post" action="{% url 'config_slug_url' slug=slug %}">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-field">
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
             <div class="form-field">
-                {{ field.label_tag }} {{ field }}
-                {% if field.errors %}
-                    <ul class="errorlist">
-                        {% for error in field.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                <input type="submit" value="Submit">
             </div>
-        {% endfor %}
-        <div class="form-field">
-            <input type="submit" value="Submit">
-        </div>
-    </form>
-</body>
-</html>
+        </form>
+    
+    </section>
+
+    <hr/>
+    {% endblock main_content %}
+<!-- /main -->
+
+<!-- /body -->
+
+<!-- /html -->
