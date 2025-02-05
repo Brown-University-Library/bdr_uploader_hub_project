@@ -30,7 +30,7 @@
 </head>
 <body>
     <h1>Staff Form</h1>
-    <form method="post" action="{% url 'dummy_url' %}">
+    <form method="post" action="{% url 'config_slug_url' slug=slug %}">
         {% csrf_token %}
         {% for field in form %}
             <div class="form-field">

@@ -214,11 +214,10 @@ def config_slug(request, slug) -> HttpResponse:
                 # Then redirect to a success page.
                 return redirect(reverse('staff_form_success'))
         else:
+            ## various prep will go here
             form = StaffForm()
 
-    return render(request, 'staff_form.html', {'form': form})
-
-    return resp
+    return render(request, 'staff_form.html', {'form': form, 'slug': slug})
 
 
 # @login_required
