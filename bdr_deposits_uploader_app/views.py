@@ -10,7 +10,7 @@ from django.conf import settings as project_settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import text
 
@@ -201,6 +201,10 @@ def config_slug(request, slug) -> HttpResponse:
         resp = HttpResponse('You do not have permissions to configure this app.')
     else:
         log.debug('user has permissions to configure app')
+
+        app_config = get_object_or_404(AppConfig, slug=slug)
+        log.debug(f'app_config, ``{app_config}``')
+
         context = {'slug': slug}
         resp = render(request, 'config_slug.html', context)
     return resp
