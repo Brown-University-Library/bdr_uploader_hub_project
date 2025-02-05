@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Form</title>
+    <style>
+        form {
+            width: 600px;
+            margin: auto;
+        }
+        .form-field {
+            margin-bottom: 10px;
+        }
+        label {
+            display: inline-block;
+            width: 200px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        input[type="text"], select, textarea {
+            text-align: left;
+        }
+        .errorlist {
+            color: red;
+            margin-left: 210px;
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Staff Form</h1>
+    <form method="post" action="{% url 'config_slug_url' slug=slug %}">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+                {{ field.label_tag }} {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="form-field">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</body>
+</html>
