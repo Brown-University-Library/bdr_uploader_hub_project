@@ -212,12 +212,12 @@ def config_slug(request, slug) -> HttpResponse:
                 # Process the form data here.
                 # For instance, save configuration options, etc.
                 # Then redirect to a success page.
-                return redirect(reverse('staff_form_success'))
+                return redirect(reverse('staff_form_success_url'))
         else:
             ## various prep will go here
             form = StaffForm()
-
-    return render(request, 'staff_form.html', {'form': form, 'slug': slug})
+            resp = render(request, 'staff_form.html', {'form': form, 'slug': slug})
+    return resp
 
 
 # @login_required
@@ -239,6 +239,15 @@ def config_slug(request, slug) -> HttpResponse:
 #         context = {'slug': slug}
 #         resp = render(request, 'config_slug.html', context)
 #     return resp
+
+
+@login_required
+def staff_form_success(request) -> HttpResponse:
+    """
+    Displays a success message after a staff form is submitted.
+    """
+    log.debug('\n\nstarting staff_form_success()')
+    return HttpResponse('Form submitted successfully; option to view the student form will be available here.')
 
 
 @login_required

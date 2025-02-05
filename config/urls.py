@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout_url'),
     path('config/new/', views.config_new, name='config_new_url'),
     path('config/<str:slug>/', views.config_slug, name='config_slug_url'),
+    path('staff_form_success/', views.staff_form_success, name='staff_form_success_url'),
     path('upload/', views.upload, name='upload_url'),
     path('upload/<str:slug>/', views.upload_slug, name='upload_slug_url'),
     ## htmx helpers -------------------------------------------------
