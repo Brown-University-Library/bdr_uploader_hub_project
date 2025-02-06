@@ -10,6 +10,11 @@
 <title>Staff Form</title>
 
 <style>
+
+    #form-title {
+        margin-bottom: 3rem;
+    }
+
     /* General form styling */
     form {
         width: 800px;
@@ -29,7 +34,8 @@
         grid-template-columns: 250px auto; /* Labels take fixed width, inputs expand */
         align-items: center;
         gap: 10px;
-        margin-bottom: 20px;
+        /* margin-bottom: 20px; */
+        margin-bottom: 2rem;
     }
     
     /* Label styling - ensure proper alignment */
@@ -65,7 +71,7 @@
 
 {% block main_content %}
 <section class="form-container">
-    <h2>Configure {{ slug }} app</h2>
+    <h2 id="form-title">Configure {{ slug }} app</h2>
 
     <form method="post" action="{% url 'config_slug_url' slug=slug %}">
         {% csrf_token %}
