@@ -23,6 +23,7 @@ class StaffForm(forms.Form):
         label='Department Options',
         choices=[('dept1', 'Department 1'), ('dept2', 'Department 2')],
         widget=forms.CheckboxSelectMultiple,
+        help_text='Select one or more departments',
     )
 
     offer_research_program = forms.BooleanField(required=False, label='Offer Research Program')
@@ -66,5 +67,15 @@ class StaffForm(forms.Form):
     degrees_required = forms.BooleanField(required=False, label='Degrees required')
 
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
+
+    authorized_student_groups = forms.CharField(
+        required=False,
+        label='Authorized student grouper-groups',
+        help_text='Preferred to student-emails. <br>Example: "group:A | group:B"',
+        widget=forms.Textarea,
+    )
+    authorized_student_emails = forms.CharField(
+        required=False, label='Authorized student emails', help_text='Example: "email1 | email2"', widget=forms.Textarea
+    )
 
     ## end class StaffForm()

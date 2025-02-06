@@ -4,73 +4,206 @@
 <!-- html -->
 
 <!-- head -->
-    {% block header_other %}
-    <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
+{% block header_other %}
+<link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
 
-    <title>Staff Form</title>
-    <style>
-        form {
-            width: 800px;
-            margin: auto;
-        }
-        .form-field {
-            margin-bottom: 10px;
-        }
-        label {
-            display: inline-block;
-            width: 300px;
-            text-align: right;
-            margin-right: 10px;
-        }
-        input[type="text"], select, textarea {
-            text-align: left;
-        }
-        .errorlist {
-            color: red;
-            margin-left: 210px;
-            list-style-type: none;
-            padding: 0;
-        }
-    </style>
+<title>Staff Form</title>
 
-    {% endblock header_other %}
+<style>
+    #form-title {
+        margin-bottom: 3rem;
+    }
+
+    /* General form styling */
+    form {
+        width: 800px;
+        margin: auto;
+    }
+    
+    /* Form section styling */
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #ccc;
+    }
+    
+    /* Form group styling - align labels and inputs properly */
+    .form-group {
+        display: grid;
+        grid-template-columns: 250px auto; /* Labels take fixed width, inputs expand */
+
+        /* align-items: center; */
+        align-items: start; /* Align labels to the top */;
+
+        gap: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    /* Label styling - ensure proper alignment */
+    label {
+        text-align: right;
+        margin-right: 10px;
+    }
+
+    /* Help text styling */
+    .help {
+        font-size: 0.9em;
+        color: #666;
+        text-align: right;
+        margin-top: 2px; 
+        margin-right: 14px;
+    }
+    
+    /* Input, select, and textarea styling */
+    input[type='text'], select, textarea {
+        width: 100%;
+        text-align: left;
+        max-width: 500px; /* Adjust for better alignment */
+    }
+    
+    /* Ensure checkboxes align correctly with their labels */
+    .form-group input[type='checkbox'] {
+        justify-self: start;
+    }
+
+
+    /* Wraps the label and help text together */
+    .label-container {
+        display: flex;
+        flex-direction: column; /* Stack label and help text */
+        align-items: flex-end; /* Align both to the right */
+    }
+
+    
+    /* Error message styling */
+    .errorlist {
+        color: red;
+        list-style-type: none;
+        padding: 0;
+    }
+</style>     
+
+{% endblock header_other %}
 <!-- /head -->
 
 <!-- body -->
 
-    <!-- header -->
-    <!-- /header -->
+{% block main_content %}
+<section class="form-container">
+    <h2 id="form-title">Configure {{ slug }} app</h2>
 
-    <!-- main -->
-    {% block main_content %}
-    <section class="form-section">
-        <h2>Configure {{ slug }} app</h2>
+    <form method="post" action="{% url 'config_slug_url' slug=slug %}">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h3>Collaborator Options</h3>
+            <div class="form-group">
+                {{ form.offer_advisors_and_readers.label_tag }} {{ form.offer_advisors_and_readers }}
+                {{ form.advisors_and_readers_required.label_tag }} {{ form.advisors_and_readers_required }}
+            </div>
+            <div class="form-group">
+                {{ form.offer_team_members.label_tag }} {{ form.offer_team_members }}
+                {{ form.team_members_required.label_tag }} {{ form.team_members_required }}
+            </div>
+            <div class="form-group">
+                {{ form.offer_faculty_mentors.label_tag }} {{ form.offer_faculty_mentors }}
+                {{ form.faculty_mentors_required.label_tag }} {{ form.faculty_mentors_required }}
+            </div>
+            <div class="form-group">
+                {{ form.offer_authors.label_tag }} {{ form.offer_authors }}
+                {{ form.authors_required.label_tag }} {{ form.authors_required }}
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3>Department/Program Options</h3>
+            <div class="form-group">
+                {{ form.offer_department.label_tag }} {{ form.offer_department }}
+                {{ form.department_required.label_tag }} {{ form.department_required }}
 
-        <form method="post" action="{% url 'config_slug_url' slug=slug %}">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-field">
-                    {{ field.label_tag }} {{ field }}
-                    {% if field.errors %}
-                        <ul class="errorlist">
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
+                <div class="label-container">
+                    {{ form.department_options.label_tag }}
+                    {% if form.department_options.help_text %}
+                        <p class="help">{{ form.department_options.help_text|safe }}</p>
                     {% endif %}
                 </div>
-            {% endfor %}
-            <div class="form-field">
-                <input type="submit" value="Submit">
+                {{ form.department_options }}
+
             </div>
-        </form>
-    
-    </section>
+            <div class="form-group">
+                {{ form.offer_research_program.label_tag }} {{ form.offer_research_program }}
+                {{ form.research_program_required.label_tag }} {{ form.research_program_required }}
+                {{ form.research_program_options.label_tag }} {{ form.research_program_options }}
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3>Access Options</h3>
+            <div class="form-group">
+                {{ form.offer_embargo_access.label_tag }} {{ form.offer_embargo_access }}
+            </div>
+            <div class="form-group">
+                {{ form.offer_license_options.label_tag }} {{ form.offer_license_options }}
+                {{ form.license_required.label_tag }} {{ form.license_required }}
+                {{ form.license_options.label_tag }} {{ form.license_options }}
+                {{ form.license_default.label_tag }} {{ form.license_default }}
+            </div>
+            <div class="form-group">
+                {{ form.offer_access_options.label_tag }} {{ form.offer_access_options }}
+                {{ form.access_required.label_tag }} {{ form.access_required }}
+                {{ form.access_options.label_tag }} {{ form.access_options }}
+                {{ form.access_default.label_tag }} {{ form.access_default }}
+            </div>
+            <div class="form-group">
+                {{ form.offer_visibility_options.label_tag }} {{ form.offer_visibility_options }}
+                {{ form.visibility_required.label_tag }} {{ form.visibility_required }}
+                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}
+                {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3>Other Options</h3>
+            <div class="form-group">
+                {{ form.ask_for_concentrations.label_tag }} {{ form.ask_for_concentrations }}
+                {{ form.concentrations_required.label_tag }} {{ form.concentrations_required }}
+            </div>
+            <div class="form-group">
+                {{ form.ask_for_degrees.label_tag }} {{ form.ask_for_degrees }}
+                {{ form.degrees_required.label_tag }} {{ form.degrees_required }}
+            </div>
+            <div class="form-group">
+                {{ form.invite_supplementary_files.label_tag }} {{ form.invite_supplementary_files }}
+            </div>
 
-    <hr/>
-    {% endblock main_content %}
-<!-- /main -->
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_groups.label_tag }}
+                    {% if form.authorized_student_groups.help_text %}
+                        <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_groups }}
+            </div>  
 
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_emails.label_tag }}
+                    {% if form.authorized_student_emails.help_text %}
+                        <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_emails }}
+            </div>  
+
+        </div>
+        
+        <div class="form-field">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</section>
+{% endblock main_content %}
 <!-- /body -->
 
 <!-- /html -->

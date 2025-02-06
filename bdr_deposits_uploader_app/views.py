@@ -167,7 +167,7 @@ def logout(request) -> HttpResponseRedirect:
 @login_required
 def config_new(request) -> HttpResponse:
     """
-    Enables coniguration of new app.
+    Enables initial specification of new app name and slug.
     """
     log.debug('\n\nstarting config_new()')
     log.debug(f'user, ``{request.user}``')
@@ -191,54 +191,32 @@ def config_new(request) -> HttpResponse:
 
 
 @login_required
-def config_slug(request, slug) -> HttpResponse:
+def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     """
     Enables coniguration of existing app.
     """
     log.debug('\n\nstarting config_slug()')
     log.debug(f'slug, ``{slug}``')
+    ## check permissions --------------------------------------------
     if not request.user.userprofile.can_create_app:
         log.debug('user does not have permissions to create an app')
         resp = HttpResponse('You do not have permissions to configure this app.')
     else:
         log.debug('user has permissions to configure app')
-
+        ## get the app_config ---------------------------------------
         app_config = get_object_or_404(AppConfig, slug=slug)
         log.debug(f'app_config, ``{app_config}``')
-
-        if request.method == 'POST':
+        if request.method == 'POST':  # process submitted form
             form = StaffForm(request.POST)
             if form.is_valid():
                 # Process the form data here.
                 # For instance, save configuration options, etc.
                 # Then redirect to a success page.
-                return redirect(reverse('staff_form_success_url'))
-        else:
-            ## various prep will go here
+                resp = redirect(reverse('staff_form_success_url'))
+        else:  # GET will display empty form
             form = StaffForm()
-            resp = render(request, 'staff_form.html', {'form': form, 'slug': slug})
+            resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
     return resp
-
-
-# @login_required
-# def config_slug(request, slug) -> HttpResponse:
-#     """
-#     Enables coniguration of existing app.
-#     """
-#     log.debug('\n\nstarting config_slug()')
-#     log.debug(f'slug, ``{slug}``')
-#     if not request.user.userprofile.can_create_app:
-#         log.debug('user does not have permissions to create an app')
-#         resp = HttpResponse('You do not have permissions to configure this app.')
-#     else:
-#         log.debug('user has permissions to configure app')
-
-#         app_config = get_object_or_404(AppConfig, slug=slug)
-#         log.debug(f'app_config, ``{app_config}``')
-
-#         context = {'slug': slug}
-#         resp = render(request, 'config_slug.html', context)
-#     return resp
 
 
 @login_required
