@@ -10,7 +10,6 @@
 <title>Staff Form</title>
 
 <style>
-
     #form-title {
         margin-bottom: 3rem;
     }
@@ -32,9 +31,11 @@
     .form-group {
         display: grid;
         grid-template-columns: 250px auto; /* Labels take fixed width, inputs expand */
-        align-items: center;
+
+        /* align-items: center; */
+        align-items: start; /* Align labels to the top */;
+
         gap: 10px;
-        /* margin-bottom: 20px; */
         margin-bottom: 2rem;
     }
     
@@ -42,6 +43,15 @@
     label {
         text-align: right;
         margin-right: 10px;
+    }
+
+    /* Help text styling */
+    .help {
+        font-size: 0.9em;
+        color: #666;
+        text-align: right;
+        margin-top: 2px; 
+        margin-right: 14px;
     }
     
     /* Input, select, and textarea styling */
@@ -55,6 +65,15 @@
     .form-group input[type='checkbox'] {
         justify-self: start;
     }
+
+
+    /* Wraps the label and help text together */
+    .label-container {
+        display: flex;
+        flex-direction: column; /* Stack label and help text */
+        align-items: flex-end; /* Align both to the right */
+    }
+
     
     /* Error message styling */
     .errorlist {
@@ -101,7 +120,16 @@
             <div class="form-group">
                 {{ form.offer_department.label_tag }} {{ form.offer_department }}
                 {{ form.department_required.label_tag }} {{ form.department_required }}
-                {{ form.department_options.label_tag }} {{ form.department_options }}
+   {% comment %}{{ form.department_options.label_tag }} {{ form.department_options }}{% endcomment %}
+
+                <div class="label-container">
+                    {{ form.department_options.label_tag }}
+                    {% if form.department_options.help_text %}
+                        <p class="help">{{ form.department_options.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.department_options }}
+
             </div>
             <div class="form-group">
                 {{ form.offer_research_program.label_tag }} {{ form.offer_research_program }}
