@@ -31,33 +31,36 @@
         margin-bottom: 20px;
     }
     
-    /* Label styling - right-align, but limit width */
+    /* Label styling - right-align and prevent awkward wrapping */
     label {
         display: inline-block;
-        width: 250px; /* Adjust width as needed */
+        width: 250px; /* Adjust as needed */
         text-align: right;
+        white-space: nowrap; /* Prevent multi-line wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
         margin-right: 10px;
         vertical-align: middle;
+    }
+    
+    /* Ensure checkboxes and labels appear on the same line */
+    .form-group.checkbox-group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
     }
     
     /* Input, select, and textarea styling */
     input[type='text'], select, textarea {
         width: 100%;
         text-align: left;
+        max-width: 500px; /* Adjust for better alignment */
     }
     
     /* Checkbox alignment - ensure it stays inline with the label */
-    .form-group input[type='checkbox'] {
-        display: inline-block;
+    input[type='checkbox'] {
         margin-left: 10px;
-        vertical-align: middle;
-    }
-    
-    /* Ensure checkboxes and labels appear on the same line */
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-        gap: 10px;
     }
     
     /* Form field styling */
