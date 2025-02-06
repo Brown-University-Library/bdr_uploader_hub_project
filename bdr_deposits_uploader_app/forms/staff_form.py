@@ -23,6 +23,7 @@ class StaffForm(forms.Form):
         label='Department Options',
         choices=[('dept1', 'Department 1'), ('dept2', 'Department 2')],
         widget=forms.CheckboxSelectMultiple,
+        help_text='Select one or more departments',
     )
 
     offer_research_program = forms.BooleanField(required=False, label='Offer Research Program')
