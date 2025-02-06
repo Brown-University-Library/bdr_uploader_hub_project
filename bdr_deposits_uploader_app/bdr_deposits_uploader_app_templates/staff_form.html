@@ -8,41 +8,73 @@
 <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
 
 <title>Staff Form</title>
+
 <style>
+    /* General form styling */
     form {
         width: 800px;
         margin: auto;
     }
+    
+    /* Form section styling */
     .form-section {
         margin-bottom: 30px;
         padding-bottom: 10px;
         border-bottom: 2px solid #ccc;
     }
+    
+    /* Form group styling - keep elements stacked vertically */
     .form-group {
-        margin-bottom: 20px;
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
     }
-    .form-field {
-        margin-bottom: 10px;
-        display: block;
-    }
+    
+    /* Label styling - right-align, but limit width */
     label {
+        display: inline-block;
+        width: 250px; /* Adjust width as needed */
+        text-align: right;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+    
+    /* Input, select, and textarea styling */
+    input[type='text'], select, textarea {
+        width: 100%;
+        text-align: left;
+    }
+    
+    /* Checkbox alignment - ensure it stays inline with the label */
+    .form-group input[type='checkbox'] {
+        display: inline-block;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    
+    /* Ensure checkboxes and labels appear on the same line */
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    /* Form field styling */
+    .form-field {
         display: block;
-        width: 100%;
-        text-align: left;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
     }
-    input[type="text"], select, textarea {
-        text-align: left;
-        width: 100%;
-    }
+    
+    /* Error message styling */
     .errorlist {
         color: red;
         list-style-type: none;
         padding: 0;
     }
 </style>
+    
+
 {% endblock header_other %}
 <!-- /head -->
 
