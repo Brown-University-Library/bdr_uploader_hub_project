@@ -68,4 +68,14 @@ class StaffForm(forms.Form):
 
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
 
+    authorized_student_groups = forms.CharField(
+        required=False,
+        label='Authorized student grouper-groups',
+        help_text='Preferred to student-emails. <br>Example: "group:A | group:B"',
+        widget=forms.Textarea,
+    )
+    authorized_student_emails = forms.CharField(
+        required=False, label='Authorized student emails', help_text='Example: "email1 | email2"', widget=forms.Textarea
+    )
+
     ## end class StaffForm()

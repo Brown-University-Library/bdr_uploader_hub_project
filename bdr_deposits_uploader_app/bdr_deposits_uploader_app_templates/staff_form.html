@@ -120,7 +120,6 @@
             <div class="form-group">
                 {{ form.offer_department.label_tag }} {{ form.offer_department }}
                 {{ form.department_required.label_tag }} {{ form.department_required }}
-   {% comment %}{{ form.department_options.label_tag }} {{ form.department_options }}{% endcomment %}
 
                 <div class="label-container">
                     {{ form.department_options.label_tag }}
@@ -176,6 +175,27 @@
             <div class="form-group">
                 {{ form.invite_supplementary_files.label_tag }} {{ form.invite_supplementary_files }}
             </div>
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_groups.label_tag }}
+                    {% if form.authorized_student_groups.help_text %}
+                        <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_groups }}
+            </div>  
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_emails.label_tag }}
+                    {% if form.authorized_student_emails.help_text %}
+                        <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_emails }}
+            </div>  
+
         </div>
         
         <div class="form-field">
