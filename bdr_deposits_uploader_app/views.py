@@ -215,7 +215,7 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 resp = redirect(reverse('staff_form_success_url'))
         else:  # GET will display empty form
             form = StaffForm()
-            resp = render(request, 'staff_form.html', {'form': form, 'slug': slug})
+            resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
     return resp
 
 
