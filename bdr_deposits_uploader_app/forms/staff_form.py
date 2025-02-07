@@ -117,30 +117,51 @@ class StaffForm(forms.Form):
         if cleaned_data.get('degrees_required') and not cleaned_data.get('ask_for_degrees'):
             cleaned_data['ask_for_degrees'] = True
 
-        ## validate that when options are required, at least one option is selected.
+        ## validate that when options are offered, at least one option is selected.
 
-        if cleaned_data.get('offer_department') and cleaned_data.get('department_required'):
+        if cleaned_data.get('offer_department'):
             if not cleaned_data.get('department_options'):
                 self.add_error('department_options', 'At least one department must be selected.')
-        if cleaned_data.get('offer_research_program') and cleaned_data.get('research_program_required'):
+        if cleaned_data.get('offer_research_program'):
             if not cleaned_data.get('research_program_options'):
                 self.add_error('research_program_options', 'At least one research program must be selected.')
-        if cleaned_data.get('offer_license_options') and cleaned_data.get('license_required'):
+        if cleaned_data.get('offer_license_options'):
             if not cleaned_data.get('license_options'):
                 self.add_error('license_options', 'At least one license must be selected.')
             if not cleaned_data.get('license_default'):
                 self.add_error('license_default', 'A default license is required.')
-        if cleaned_data.get('offer_access_options') and cleaned_data.get('access_required'):
+        if cleaned_data.get('offer_access_options'):
             if not cleaned_data.get('access_options'):
                 self.add_error('access_options', 'At least one access option must be selected.')
             if not cleaned_data.get('access_default'):
                 self.add_error('access_default', 'A default access option is required.')
         if cleaned_data.get('offer_visibility_options'):
-            log.debug('HereA')
             if not cleaned_data.get('visibility_options'):
                 self.add_error('visibility_options', 'At least one visibility option must be selected.')
             if not cleaned_data.get('visibility_default'):
                 self.add_error('visibility_default', 'A default visibility option is required.')
+
+        ## if nothing is filled out, raise an error
+        if not any(
+            [
+                cleaned_data.get('offer_advisors_and_readers'),
+                cleaned_data.get('offer_team_members'),
+                cleaned_data.get('offer_faculty_mentors'),
+                cleaned_data.get('offer_authors'),
+                cleaned_data.get('offer_department'),
+                cleaned_data.get('offer_research_program'),
+                cleaned_data.get('offer_embargo_access'),
+                cleaned_data.get('offer_license_options'),
+                cleaned_data.get('offer_access_options'),
+                cleaned_data.get('offer_visibility_options'),
+                cleaned_data.get('ask_for_concentrations'),
+                cleaned_data.get('ask_for_degrees'),
+                cleaned_data.get('invite_supplementary_files'),
+                cleaned_data.get('authorized_student_groups'),
+                cleaned_data.get('authorized_student_emails'),
+            ]
+        ):
+            self.add_error(None, 'At least one field must be filled out.')
 
         log.debug(f'cleaned_data: {pprint.pformat(cleaned_data)}')
         return cleaned_data
