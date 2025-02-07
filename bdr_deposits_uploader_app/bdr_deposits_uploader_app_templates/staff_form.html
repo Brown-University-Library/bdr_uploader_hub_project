@@ -94,7 +94,21 @@
 
     <form method="post" action="{% url 'config_slug_url' slug=slug %}">
         {% csrf_token %}
-        
+
+        <!-- Display form errors -->
+        {% if form.errors %}
+            <p class="errorlist">Please correct the form errors below.</p>
+            {% for field in form %}
+                <ul class="errorlist">
+                    {% for error in field.errors %}
+                        <!-- <p class="error">Please correct the form-field errors below.</p> -->
+                        <li>• field: {{ field.label }}</li>
+                        <li>• error: {{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        {% endif %}
+
         <div class="form-section">
             <h3>Collaborator Options</h3>
             <div class="form-group">
@@ -157,7 +171,7 @@
             <div class="form-group">
                 {{ form.offer_visibility_options.label_tag }} {{ form.offer_visibility_options }}
                 {{ form.visibility_required.label_tag }} {{ form.visibility_required }}
-                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}
+                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}                          
                 {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
             </div>
         </div>
