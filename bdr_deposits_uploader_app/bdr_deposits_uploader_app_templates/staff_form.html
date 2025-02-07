@@ -10,6 +10,12 @@
 <title>Staff Form</title>
 
 <style>
+
+    a#back-link {
+        display: block;
+        margin-bottom: 2rem;
+    }
+    
     #form-title {
         margin-bottom: 3rem;
     }
@@ -98,6 +104,8 @@
 
 {% block main_content %}
 <section class="form-container">
+    <a id="back-link" href="{% url 'config_new_url' %}">(back to appps page)</a>
+
     <h2 id="form-title">Configure {{ slug }} app</h2>
 
     <form method="post" action="{% url 'config_slug_url' slug=slug %}">
