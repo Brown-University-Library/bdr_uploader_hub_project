@@ -80,6 +80,14 @@
         color: red;
         list-style-type: none;
         padding: 0;
+        margin-bottom: 1rem;
+    }
+    .form-errors {
+        border: 1px solid red;
+        padding-left: 1rem;
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+        margin-bottom: 3rem;
     }
 </style>     
 
@@ -95,18 +103,28 @@
     <form method="post" action="{% url 'config_slug_url' slug=slug %}">
         {% csrf_token %}
 
-        <!-- Display form errors -->
+        <!-- display form errors -->
         {% if form.errors %}
-            <p class="errorlist">Please correct the form errors below.</p>
-            {% for field in form %}
-                <ul class="errorlist">
-                    {% for error in field.errors %}
-                        <!-- <p class="error">Please correct the form-field errors below.</p> -->
-                        <li>• field: {{ field.label }}</li>
+            <div class="form-errors">
+                <p class="errorlist">Please correct the form errors below.</p>
+
+                <!-- if there is an error at the form-level, display it -->
+                {% for error in form.non_field_errors %}
+                    <ul class="errorlist">
                         <li>• error: {{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+                    </ul>
+                {% endfor %}
+
+                {% for field in form %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <!-- <p class="error">Please correct the form-field errors below.</p> -->
+                            <li>• field: {{ field.label }}</li>
+                            <li>• error: {{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
         {% endif %}
 
         <div class="form-section">
