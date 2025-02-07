@@ -207,12 +207,27 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         app_config = get_object_or_404(AppConfig, slug=slug)
         log.debug(f'app_config, ``{app_config}``')
         if request.method == 'POST':  # process submitted form
+            log.debug(f'POST data, ``{request.POST}``')
             form = StaffForm(request.POST)
+            log.debug('about to call is_valid()')
             if form.is_valid():
                 # Process the form data here.
                 # For instance, save configuration options, etc.
                 # Then redirect to a success page.
                 resp = redirect(reverse('staff_form_success_url'))
+            else:
+                log.debug('form is not valid')
+
+                ## log any errors, whether at form-level or at field-level
+                log.debug(f'form.errors, ``{form.errors}``')
+                log.debug(f'form.non_field_errors, ``{form.non_field_errors}``')
+                ## when logging field errors, be sure the log-message includes the field-name
+                for field in form:
+                    if field.errors:
+                        log.debug(f'field.errors, ``{field.errors}``')
+                        log.debug(f'field label, ``{field.label}``')
+
+                resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
         else:  # GET will display empty form
             form = StaffForm()
             resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
