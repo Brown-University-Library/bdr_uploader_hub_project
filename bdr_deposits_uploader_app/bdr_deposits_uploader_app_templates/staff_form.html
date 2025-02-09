@@ -72,7 +72,6 @@
         justify-self: start;
     }
 
-
     /* Wraps the label and help text together */
     .label-container {
         display: flex;
@@ -80,7 +79,6 @@
         align-items: flex-end; /* Align both to the right */
     }
 
-    
     /* Error message styling */
     .errorlist {
         color: red;
@@ -139,28 +137,58 @@
             <h3>Collaborator Options</h3>
             <div class="form-group">
                 {{ form.offer_advisors_and_readers.label_tag }} {{ form.offer_advisors_and_readers }}
-                {{ form.advisors_and_readers_required.label_tag }} {{ form.advisors_and_readers_required }}
+                <div class="label-container">
+                    {{ form.advisors_and_readers_required.label_tag }}
+                    {% if form.advisors_and_readers_required.help_text %}
+                        <p class="help">{{ form.advisors_and_readers_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.advisors_and_readers_required }}
             </div>
             <div class="form-group">
                 {{ form.offer_team_members.label_tag }} {{ form.offer_team_members }}
-                {{ form.team_members_required.label_tag }} {{ form.team_members_required }}
+                <div class="label-container">
+                    {{ form.team_members_required.label_tag }}
+                    {% if form.team_members_required.help_text %}
+                        <p class="help">{{ form.team_members_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.team_members_required }}
             </div>
             <div class="form-group">
                 {{ form.offer_faculty_mentors.label_tag }} {{ form.offer_faculty_mentors }}
-                {{ form.faculty_mentors_required.label_tag }} {{ form.faculty_mentors_required }}
+                <div class="label-container">
+                    {{ form.faculty_mentors_required.label_tag }}
+                    {% if form.faculty_mentors_required.help_text %}
+                        <p class="help">{{ form.faculty_mentors_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.faculty_mentors_required }}
             </div>
             <div class="form-group">
                 {{ form.offer_authors.label_tag }} {{ form.offer_authors }}
-                {{ form.authors_required.label_tag }} {{ form.authors_required }}
+                <div class="label-container">
+                    {{ form.authors_required.label_tag }}
+                    {% if form.authors_required.help_text %}
+                        <p class="help">{{ form.authors_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authors_required }}
             </div>
         </div>
         
         <div class="form-section">
             <h3>Department/Program Options</h3>
+
             <div class="form-group">
                 {{ form.offer_department.label_tag }} {{ form.offer_department }}
-                {{ form.department_required.label_tag }} {{ form.department_required }}
-
+                <div class="label-container">
+                    {{ form.department_required.label_tag }}
+                    {% if form.department_required.help_text %}
+                        <p class="help">{{ form.department_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.department_required }}
                 <div class="label-container">
                     {{ form.department_options.label_tag }}
                     {% if form.department_options.help_text %}
@@ -168,12 +196,26 @@
                     {% endif %}
                 </div>
                 {{ form.department_options }}
-
             </div>
+
             <div class="form-group">
                 {{ form.offer_research_program.label_tag }} {{ form.offer_research_program }}
-                {{ form.research_program_required.label_tag }} {{ form.research_program_required }}
-                {{ form.research_program_options.label_tag }} {{ form.research_program_options }}
+                <div class="label-container">
+                    {{ form.research_program_required.label_tag }}
+                    {% if form.research_program_required.help_text %}
+                        <p class="help">{{ form.research_program_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.research_program_required }}
+
+                <div class="label-container">
+                    {{ form.research_program_options.label_tag }}
+                    {% if form.research_program_options.help_text %}
+                        <p class="help">{{ form.research_program_options.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.research_program_options }}
+
             </div>
         </div>
         
@@ -184,19 +226,37 @@
             </div>
             <div class="form-group">
                 {{ form.offer_license_options.label_tag }} {{ form.offer_license_options }}
-                {{ form.license_required.label_tag }} {{ form.license_required }}
+                <div class="label-container">
+                    {{ form.license_required.label_tag }}
+                    {% if form.license_required.help_text %}
+                        <p class="help">{{ form.license_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.license_required }}
                 {{ form.license_options.label_tag }} {{ form.license_options }}
                 {{ form.license_default.label_tag }} {{ form.license_default }}
             </div>
             <div class="form-group">
                 {{ form.offer_access_options.label_tag }} {{ form.offer_access_options }}
-                {{ form.access_required.label_tag }} {{ form.access_required }}
+                <div class="label-container">
+                    {{ form.access_required.label_tag }}
+                    {% if form.access_required.help_text %}
+                        <p class="help">{{ form.access_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.access_required }}
                 {{ form.access_options.label_tag }} {{ form.access_options }}
                 {{ form.access_default.label_tag }} {{ form.access_default }}
             </div>
             <div class="form-group">
                 {{ form.offer_visibility_options.label_tag }} {{ form.offer_visibility_options }}
-                {{ form.visibility_required.label_tag }} {{ form.visibility_required }}
+                <div class="label-container">
+                    {{ form.visibility_required.label_tag }}
+                    {% if form.visibility_required.help_text %}
+                        <p class="help">{{ form.visibility_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.visibility_required }}
                 {{ form.visibility_options.label_tag }} {{ form.visibility_options }}                          
                 {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
             </div>
@@ -206,11 +266,23 @@
             <h3>Other Options</h3>
             <div class="form-group">
                 {{ form.ask_for_concentrations.label_tag }} {{ form.ask_for_concentrations }}
-                {{ form.concentrations_required.label_tag }} {{ form.concentrations_required }}
+                <div class="label-container">
+                    {{ form.concentrations_required.label_tag }}
+                    {% if form.concentrations_required.help_text %}
+                        <p class="help">{{ form.concentrations_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.concentrations_required }}
             </div>
             <div class="form-group">
                 {{ form.ask_for_degrees.label_tag }} {{ form.ask_for_degrees }}
-                {{ form.degrees_required.label_tag }} {{ form.degrees_required }}
+                <div class="label-container">
+                    {{ form.degrees_required.label_tag }}
+                    {% if form.degrees_required.help_text %}
+                        <p class="help">{{ form.degrees_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.degrees_required }}
             </div>
             <div class="form-group">
                 {{ form.invite_supplementary_files.label_tag }} {{ form.invite_supplementary_files }}
