@@ -192,93 +192,38 @@ def config_new(request) -> HttpResponse:
 
 @login_required
 def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
-    """
-    Enables coniguration of existing app.
-    """
     log.debug('\n\nstarting config_slug()')
     log.debug(f'slug, ``{slug}``')
-    ## check permissions --------------------------------------------
     if not request.user.userprofile.can_create_app:
         log.debug('user does not have permissions to create an app')
         resp = HttpResponse('You do not have permissions to configure this app.')
     else:
         log.debug('user has permissions to configure app')
-        ## get the app_config ---------------------------------------
         app_config = get_object_or_404(AppConfig, slug=slug)
         log.debug(f'app_config, ``{app_config}``')
-        if request.method == 'POST':  # process submitted form
+        if request.method == 'POST':
             log.debug(f'POST data, ``{request.POST}``')
             form = StaffForm(request.POST)
             log.debug('about to call is_valid()')
             if form.is_valid():
-                cd = form.cleaned_data
-
-                # Collaborators
-                app_config.offer_advisors_and_readers = cd.get('offer_advisors_and_readers', False)
-                app_config.advisors_and_readers_required = cd.get('advisors_and_readers_required', False)
-                app_config.offer_team_members = cd.get('offer_team_members', False)
-                app_config.team_members_required = cd.get('team_members_required', False)
-                app_config.offer_faculty_mentors = cd.get('offer_faculty_mentors', False)
-                app_config.faculty_mentors_required = cd.get('faculty_mentors_required', False)
-                app_config.offer_authors = cd.get('offer_authors', False)
-                app_config.authors_required = cd.get('authors_required', False)
-
-                # Department / Programs
-                app_config.offer_department = cd.get('offer_department', False)
-                app_config.department_required = cd.get('department_required', False)
-                dept_opts = cd.get('department_options')
-                app_config.department_options = ','.join(dept_opts) if dept_opts else ''
-                app_config.offer_research_program = cd.get('offer_research_program', False)
-                app_config.research_program_required = cd.get('research_program_required', False)
-                research_opts = cd.get('research_program_options')
-                app_config.research_program_options = ','.join(research_opts) if research_opts else ''
-
-                # Access Options
-                app_config.offer_embargo_access = cd.get('offer_embargo_access', False)
-                app_config.offer_license_options = cd.get('offer_license_options', False)
-                app_config.license_required = cd.get('license_required', False)
-                license_opts = cd.get('license_options')
-                app_config.license_options = ','.join(license_opts) if license_opts else ''
-                app_config.license_default = cd.get('license_default', '')
-                app_config.offer_access_options = cd.get('offer_access_options', False)
-                app_config.access_required = cd.get('access_required', False)
-                access_opts = cd.get('access_options')
-                app_config.access_options = ','.join(access_opts) if access_opts else ''
-                app_config.access_default = cd.get('access_default', '')
-                app_config.offer_visibility_options = cd.get('offer_visibility_options', False)
-                app_config.visibility_required = cd.get('visibility_required', False)
-                vis_opts = cd.get('visibility_options')
-                app_config.visibility_options = ','.join(vis_opts) if vis_opts else ''
-                app_config.visibility_default = cd.get('visibility_default', '')
-
-                # Other Options
-                app_config.ask_for_concentrations = cd.get('ask_for_concentrations', False)
-                app_config.concentrations_required = cd.get('concentrations_required', False)
-                app_config.ask_for_degrees = cd.get('ask_for_degrees', False)
-                app_config.degrees_required = cd.get('degrees_required', False)
-                app_config.invite_supplementary_files = cd.get('invite_supplementary_files', False)
-                app_config.authorized_student_groups = cd.get('authorized_student_groups', '')
-                app_config.authorized_student_emails = cd.get('authorized_student_emails', '')
-
-                # Save the updated configuration
+                # Save all the cleaned form data into the temp_config_json field.
+                app_config.temp_config_json = form.cleaned_data
                 app_config.save()
-
-                resp = redirect(reverse('staff_form_success_url'))
+                log.debug('Saved cleaned_data to app_config.temp_config_json')
+                resp = redirect(reverse('config_new_url'))
             else:
                 log.debug('form is not valid')
-
-                ## log any errors, whether at form-level or at field-level
                 log.debug(f'form.errors, ``{form.errors}``')
                 log.debug(f'form.non_field_errors, ``{form.non_field_errors}``')
-                ## when logging field errors, be sure the log-message includes the field-name
                 for field in form:
                     if field.errors:
-                        log.debug(f'field.errors, ``{field.errors}``')
-                        log.debug(f'field label, ``{field.label}``')
-
+                        log.debug(f'field.errors for {field.name}: {field.errors}')
+                        log.debug(f'field label: {field.label}')
                 resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
-        else:  # GET will display empty form
-            form = StaffForm()
+        else:
+            # Load existing JSON data to pre-populate the form.
+            initial_data = app_config.temp_config_json or {}
+            form = StaffForm(initial=initial_data)
             resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
     return resp
 
