@@ -10,6 +10,12 @@
 <title>Staff Form</title>
 
 <style>
+
+    a#back-link {
+        display: block;
+        margin-bottom: 2rem;
+    }
+    
     #form-title {
         margin-bottom: 3rem;
     }
@@ -80,6 +86,14 @@
         color: red;
         list-style-type: none;
         padding: 0;
+        margin-bottom: 1rem;
+    }
+    .form-errors {
+        border: 1px solid red;
+        padding-left: 1rem;
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+        margin-bottom: 3rem;
     }
 </style>     
 
@@ -90,11 +104,37 @@
 
 {% block main_content %}
 <section class="form-container">
+    <a id="back-link" href="{% url 'config_new_url' %}">(back to appps page)</a>
+
     <h2 id="form-title">Configure {{ slug }} app</h2>
 
     <form method="post" action="{% url 'config_slug_url' slug=slug %}">
         {% csrf_token %}
-        
+
+        <!-- display form errors -->
+        {% if form.errors %}
+            <div class="form-errors">
+                <p class="errorlist">Please correct the form errors below.</p>
+
+                <!-- if there is an error at the form-level, display it -->
+                {% for error in form.non_field_errors %}
+                    <ul class="errorlist">
+                        <li>• error: {{ error }}</li>
+                    </ul>
+                {% endfor %}
+
+                {% for field in form %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <!-- <p class="error">Please correct the form-field errors below.</p> -->
+                            <li>• field: {{ field.label }}</li>
+                            <li>• error: {{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="form-section">
             <h3>Collaborator Options</h3>
             <div class="form-group">
@@ -157,7 +197,7 @@
             <div class="form-group">
                 {{ form.offer_visibility_options.label_tag }} {{ form.offer_visibility_options }}
                 {{ form.visibility_required.label_tag }} {{ form.visibility_required }}
-                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}
+                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}                          
                 {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
             </div>
         </div>
