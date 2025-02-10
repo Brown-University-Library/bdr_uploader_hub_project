@@ -49,7 +49,7 @@ def get_student_upload_form_class(config_data: dict) -> type[forms.Form]:
             help_text='Select one or more research programs',
         )
 
-    ## access section ------------------------------------------------
+    ## Access section ------------------------------------------------
     if config_data.get('offer_license_options'):
         fields['license_options'] = forms.MultipleChoiceField(
             choices=[('license1', 'License 1'), ('license2', 'License 2')],
@@ -87,7 +87,7 @@ def get_student_upload_form_class(config_data: dict) -> type[forms.Form]:
             help_text='Enter the default visibility',
         )
 
-    ## other section -------------------------------------------------
+    ## Other section -------------------------------------------------
     if config_data.get('ask_for_concentrations'):
         fields['concentrations'] = forms.CharField(
             label='Concentrations',
@@ -103,14 +103,7 @@ def get_student_upload_form_class(config_data: dict) -> type[forms.Form]:
             label='Supplementary Files', required=False, help_text='Upload supplementary files if needed'
         )
 
-    # Always include these even if they might be blank in the staff config.
-    fields['authorized_student_groups'] = forms.CharField(
-        label='Authorized Student Groups', required=False, widget=forms.Textarea, help_text='Example: "group:A | group:B"'
-    )
-    fields['authorized_student_emails'] = forms.CharField(
-        label='Authorized Student Emails', required=False, widget=forms.Textarea, help_text='Example: "email1 | email2"'
-    )
-
-    # Dynamically create a new Form class.
+    ## dynamically create new Form class ----------------------------
     StudentUploadForm = type('StudentUploadForm', (forms.Form,), fields)
+
     return StudentUploadForm
