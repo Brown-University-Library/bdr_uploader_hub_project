@@ -192,44 +192,38 @@ def config_new(request) -> HttpResponse:
 
 @login_required
 def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
-    """
-    Enables coniguration of existing app.
-    """
     log.debug('\n\nstarting config_slug()')
     log.debug(f'slug, ``{slug}``')
-    ## check permissions --------------------------------------------
     if not request.user.userprofile.can_create_app:
         log.debug('user does not have permissions to create an app')
         resp = HttpResponse('You do not have permissions to configure this app.')
     else:
         log.debug('user has permissions to configure app')
-        ## get the app_config ---------------------------------------
         app_config = get_object_or_404(AppConfig, slug=slug)
         log.debug(f'app_config, ``{app_config}``')
-        if request.method == 'POST':  # process submitted form
+        if request.method == 'POST':
             log.debug(f'POST data, ``{request.POST}``')
             form = StaffForm(request.POST)
             log.debug('about to call is_valid()')
             if form.is_valid():
-                # Process the form data here.
-                # For instance, save configuration options, etc.
-                # Then redirect to a success page.
-                resp = redirect(reverse('staff_form_success_url'))
+                ## save all the cleaned form data into the temp_config_json field
+                app_config.temp_config_json = form.cleaned_data
+                app_config.save()
+                log.debug('Saved cleaned_data to app_config.temp_config_json')
+                resp = redirect(reverse('config_new_url'))
             else:
                 log.debug('form is not valid')
-
-                ## log any errors, whether at form-level or at field-level
                 log.debug(f'form.errors, ``{form.errors}``')
                 log.debug(f'form.non_field_errors, ``{form.non_field_errors}``')
-                ## when logging field errors, be sure the log-message includes the field-name
                 for field in form:
                     if field.errors:
-                        log.debug(f'field.errors, ``{field.errors}``')
-                        log.debug(f'field label, ``{field.label}``')
-
+                        log.debug(f'field.errors for {field.name}: {field.errors}')
+                        log.debug(f'field label: {field.label}')
                 resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
-        else:  # GET will display empty form
-            form = StaffForm()
+        else:  # GET
+            ## load existing data to pre-populate the form.
+            initial_data = app_config.temp_config_json or {}
+            form = StaffForm(initial=initial_data)
             resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
     return resp
 
