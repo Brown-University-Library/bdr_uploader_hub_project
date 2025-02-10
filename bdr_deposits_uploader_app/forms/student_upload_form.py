@@ -7,12 +7,25 @@ def get_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     """
     fields = {}
 
+    ## Basic Information section ------------------------------------
+    fields['title'] = forms.CharField(
+        label='Title',
+        required=config_data.get('title_required', False),
+        help_text='(required)',
+    )
+    fields['abstract'] = forms.CharField(
+        label='Abstract',
+        required=config_data.get('abstract_required', False),
+        help_text='(required)',
+        widget=forms.Textarea,
+    )
+
     ## Collaborators section ----------------------------------------
     if config_data.get('offer_advisors_and_readers'):
         fields['advisors_and_readers'] = forms.CharField(
             label='Advisors and Readers',
             required=config_data.get('advisors_and_readers_required', False),
-            help_text='Enter names or identifiers for advisors/readers',
+            help_text='Person1 | Persion2 | ...',
         )
     if config_data.get('offer_team_members'):
         fields['team_members'] = forms.CharField(

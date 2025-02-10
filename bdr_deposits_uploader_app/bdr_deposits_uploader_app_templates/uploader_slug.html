@@ -6,11 +6,13 @@
 <title>Student Upload</title>
 <style>
     a#back-link {
-        display: block;
+        /* display: block; */
         margin-bottom: 2rem;
+        display: inline;
     }
     
     #form-title {
+        margin-top: 2rem;
         margin-bottom: 3rem;
     }
 
@@ -80,8 +82,8 @@
 
 {% block main_content %}
 <section class="form-container">
-    <a id="back-link" href="{% url 'config_new_url' %}">(back to appps page)</a>
-    <h2 id="form-title">Student Upload Form</h2>
+    <a id="back-link" href="{% url 'config_new_url' %}">(back to appps page)</a> This will be a better back-link for students.
+    <h2 id="form-title">Student "{{ slug }}" Upload Form</h2>
     <form method="post" enctype="multipart/form-data" action="{% url 'upload_slug_url' slug=slug %}">
         {% csrf_token %}
         
@@ -106,27 +108,59 @@
         
         {# Group fields into sections (adjust groupings as needed) #}
         <div class="form-section">
+            <h3>Basic Information</h3>
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.title.label_tag }}
+                    {% if form.title.help_text %}
+                        <p class="help">{{ form.title.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.title }}
+            </div>
+            <div class="form-group">
+                <div class="label-container">
+                {{ form.abstract.label_tag }} 
+                {% if form.abstract.help_text %}
+                    <p class="help">{{ form.abstract.help_text|safe }}</p>
+                {% endif %}
+                </div>
+                {{ form.abstract }}
+            </div>
+        </div>
+
+        <div class="form-section">
             <h3>Collaborator Information</h3>
+
             {% if form.advisors_and_readers %}
             <div class="form-group">
-                {{ form.advisors_and_readers.label_tag }} {{ form.advisors_and_readers }}
-                {% if form.advisors_and_readers.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.advisors_and_readers.help_text|safe }}</p>
-                </div>
-                {% endif %}
+                    {{ form.advisors_and_readers.label_tag }}
+                    {% if form.advisors_and_readers.help_text %}
+                        <p class="help">{{ form.advisors_and_readers.help_text|safe }}</p>
+                    {% endif %}
+                </div>  
+                {{ form.advisors_and_readers }}
             </div>
             {% endif %}
+
             {% if form.team_members %}
             <div class="form-group">
-                {{ form.team_members.label_tag }} {{ form.team_members }}
-                {% if form.team_members.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.team_members.help_text|safe }}</p>
+                    {{ form.team_members.label_tag }}
+                    {% if form.team_members.help_text %}
+                        <p class="help">{{ form.team_members.help_text|safe }}</p>
+                    {% endif %}
                 </div>
-                {% endif %}
+                {{ form.team_members }}
             </div>
             {% endif %}
+
+
+
+
+
+
             {% if form.faculty_mentors %}
             <div class="form-group">
                 {{ form.faculty_mentors.label_tag }} {{ form.faculty_mentors }}
