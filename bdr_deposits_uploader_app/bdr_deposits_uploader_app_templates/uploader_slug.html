@@ -1,36 +1,299 @@
 {% extends "base.html" %}
 {% load static %}
-<!-- Template for templates 🙂
-     The html comments just help remember the overall structure of the page. -->
 
-<!-- html -->
+{% block header_other %}
+<link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
+<title>Student Upload</title>
+<style>
+    a#back-link {
+        display: block;
+        margin-bottom: 2rem;
+    }
+    
+    #form-title {
+        margin-bottom: 3rem;
+    }
 
-<!-- head -->
-{% block title %}
-<title>BDR Deposits Uploader</title>
-{% endblock title %}
+    form {
+        width: 800px;
+        margin: auto;
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #ccc;
+    }
+    
+    .form-group {
+        display: grid;
+        grid-template-columns: 250px auto;
+        align-items: start;
+        gap: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    label {
+        text-align: right;
+        margin-right: 10px;
+    }
 
-{% block header_other %}  <!-- custom-page CSS can go in here-->
-<link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/info.css' %}">
+    .help {
+        font-size: 0.9em;
+        color: #666;
+        text-align: right;
+        margin-top: 2px; 
+        margin-right: 14px;
+    }
+    
+    input[type='text'], select, textarea {
+        width: 100%;
+        text-align: left;
+        max-width: 500px;
+    }
+    
+    .form-group input[type='checkbox'] {
+        justify-self: start;
+    }
+
+    .label-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .errorlist {
+        color: red;
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+    .form-errors {
+        border: 1px solid red;
+        padding-left: 1rem;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 3rem;
+    }
+</style>
 {% endblock header_other %}
-<!-- /head -->
 
-<!-- body -->
-
-    <!-- header -->
-    <!-- /header -->
-
-    <!-- main -->
-    {% block main_content %}
-    <div class="info-section">
-        <h2>BDR Deposits Student Uploader Form — {{ slug }}</h2>
-        <p>This page will show the {{ slug }} upload form.</p>
-        <p></p>
-        <p>(Under development.)</p>
-    </div>
-    {% endblock main_content %}
-    <!-- /main -->
-
-<!-- /body -->
-
-<!-- /html -->
+{% block main_content %}
+<section class="form-container">
+    <a id="back-link" href="{% url 'config_new_url' %}">(back to appps page)</a>
+    <h2 id="form-title">Student Upload Form</h2>
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload_slug_url' slug=slug %}">
+        {% csrf_token %}
+        
+        {# Display non-field and field-specific errors #}
+        {% if form.errors %}
+        <div class="form-errors">
+            <p class="errorlist">Please correct the errors below.</p>
+            {% for error in form.non_field_errors %}
+            <ul class="errorlist">
+                <li>• error: {{ error }}</li>
+            </ul>
+            {% endfor %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                <ul class="errorlist">
+                    <li>• field: {{ field.label }} – error: {{ error }}</li>
+                </ul>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {# Group fields into sections (adjust groupings as needed) #}
+        <div class="form-section">
+            <h3>Collaborator Information</h3>
+            {% if form.advisors_and_readers %}
+            <div class="form-group">
+                {{ form.advisors_and_readers.label_tag }} {{ form.advisors_and_readers }}
+                {% if form.advisors_and_readers.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.advisors_and_readers.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.team_members %}
+            <div class="form-group">
+                {{ form.team_members.label_tag }} {{ form.team_members }}
+                {% if form.team_members.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.team_members.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.faculty_mentors %}
+            <div class="form-group">
+                {{ form.faculty_mentors.label_tag }} {{ form.faculty_mentors }}
+                {% if form.faculty_mentors.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.faculty_mentors.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.authors %}
+            <div class="form-group">
+                {{ form.authors.label_tag }} {{ form.authors }}
+                {% if form.authors.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.authors.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-section">
+            <h3>Department and Program Section</h3>
+            {% if form.department_options %}
+            <div class="form-group">
+                {{ form.department_options.label_tag }} {{ form.department_options }}
+                {% if form.department_options.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.department_options.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.research_program_options %}
+            <div class="form-group">
+                {{ form.research_program_options.label_tag }} {{ form.research_program_options }}
+                {% if form.research_program_options.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.research_program_options.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-section">
+            <h3>Access Section</h3>
+            {% if form.license_options %}
+            <div class="form-group">
+                {{ form.license_options.label_tag }} {{ form.license_options }}
+                {% if form.license_options.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.license_options.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.license_default %}
+            <div class="form-group">
+                {{ form.license_default.label_tag }} {{ form.license_default }}
+                {% if form.license_default.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.license_default.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.access_options %}
+            <div class="form-group">
+                {{ form.access_options.label_tag }} {{ form.access_options }}
+                {% if form.access_options.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.access_options.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.access_default %}
+            <div class="form-group">
+                {{ form.access_default.label_tag }} {{ form.access_default }}
+                {% if form.access_default.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.access_default.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.visibility_options %}
+            <div class="form-group">
+                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}
+                {% if form.visibility_options.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.visibility_options.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.visibility_default %}
+            <div class="form-group">
+                {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
+                {% if form.visibility_default.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.visibility_default.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-section">
+            <h3>Other Info</h3>
+            {% if form.concentrations %}
+            <div class="form-group">
+                {{ form.concentrations.label_tag }} {{ form.concentrations }}
+                {% if form.concentrations.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.concentrations.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.degrees %}
+            <div class="form-group">
+                {{ form.degrees.label_tag }} {{ form.degrees }}
+                {% if form.degrees.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.degrees.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.supplementary_files %}
+            <div class="form-group">
+                {{ form.supplementary_files.label_tag }} {{ form.supplementary_files }}
+                {% if form.supplementary_files.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.supplementary_files.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.authorized_student_groups %}
+            <div class="form-group">
+                {{ form.authorized_student_groups.label_tag }} {{ form.authorized_student_groups }}
+                {% if form.authorized_student_groups.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.authorized_student_emails %}
+            <div class="form-group">
+                {{ form.authorized_student_emails.label_tag }} {{ form.authorized_student_emails }}
+                {% if form.authorized_student_emails.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-field">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</section>
+{% endblock main_content %}
