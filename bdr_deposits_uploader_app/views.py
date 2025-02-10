@@ -206,7 +206,7 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
             form = StaffForm(request.POST)
             log.debug('about to call is_valid()')
             if form.is_valid():
-                # Save all the cleaned form data into the temp_config_json field.
+                ## save all the cleaned form data into the temp_config_json field
                 app_config.temp_config_json = form.cleaned_data
                 app_config.save()
                 log.debug('Saved cleaned_data to app_config.temp_config_json')
@@ -220,8 +220,8 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                         log.debug(f'field.errors for {field.name}: {field.errors}')
                         log.debug(f'field label: {field.label}')
                 resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
-        else:
-            # Load existing JSON data to pre-populate the form.
+        else:  # GET
+            ## load existing data to pre-populate the form.
             initial_data = app_config.temp_config_json or {}
             form = StaffForm(initial=initial_data)
             resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
