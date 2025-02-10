@@ -15,6 +15,7 @@ from django.urls import reverse
 from django.utils import text
 
 from bdr_deposits_uploader_app.forms.staff_form import StaffForm
+from bdr_deposits_uploader_app.forms.student_upload_form import get_student_upload_form_class
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
@@ -228,19 +229,19 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     return resp
 
 
-@login_required
-def staff_form_success(request) -> HttpResponse:
-    """
-    Displays a success message after a staff form is submitted.
-    """
-    log.debug('\n\nstarting staff_form_success()')
-    return HttpResponse('Form submitted successfully; option to view the student form will be available here.')
+# @login_required
+# def staff_form_success(request) -> HttpResponse:
+#     """
+#     Displays a success message after a staff form is submitted.
+#     """
+#     log.debug('\n\nstarting staff_form_success()')
+#     return HttpResponse('Form submitted successfully; option to view the student form will be available here.')
 
 
 @login_required
 def upload(request) -> HttpResponse:
     """
-    Displays the upload app.
+    Default info landing page for student-login.
     """
     log.debug('\n\nstarting upload()')
     log.debug(f'user, ``{request.user}``')
@@ -251,21 +252,43 @@ def upload(request) -> HttpResponse:
 
 
 @login_required
-def upload_slug(request, slug) -> HttpResponse:
+def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     """
     Displays the upload app.
     """
     log.debug('\n\nstarting upload_slug()')
     log.debug(f'slug, ``{slug}``')
 
-    # if slug not in request.user.userprofile.can_view_these_apps:
-    #     return HttpResponse('You do not have permissions to view this app.')
+    ## load staff-config data ---------------------------------------
+    app_config = get_object_or_404(AppConfig, slug=slug)
+    config_data = app_config.temp_config_json
 
-    context = {
-        'slug': slug,
-        'username': request.user.first_name,
-    }
-    return render(request, 'uploader_slug.html', context)
+    ## build form based on staff-config data ------------------------
+    StudentUploadForm = get_student_upload_form_class(config_data)
+
+    ## handle POST and GET ------------------------------------------
+    if request.method == 'POST':
+        form = StudentUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Process the valid student-upload data, e.g., save to your UploadInfo model.
+            # ...
+            resp: HttpResponseRedirect = redirect(reverse('upload_successful_url'))
+    else:
+        form = StudentUploadForm()
+        resp: HttpResponse = render(
+            request, 'uploader_slug.html', {'form': form, 'slug': slug, 'username': request.user.first_name}
+        )
+    return resp
+
+
+def upload_successful(request) -> HttpResponse:
+    """
+    Displays a success message after a student form is submitted.
+    """
+    log.debug('\n\nstarting upload_successful()')
+    return HttpResponse(
+        'Student form submitted successfully; info that staff will be notified to review and ingest the upload will go here.'
+    )
 
 
 # -------------------------------------------------------------------
