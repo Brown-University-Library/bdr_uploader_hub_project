@@ -164,6 +164,9 @@ class StaffForm(forms.Form):
             if not cleaned_data.get('visibility_default'):
                 self.add_error('visibility_default', 'A default visibility option is required.')
 
+        ## other validation -----------------------------------------
+        ## TODO- VALIDATE COLLECTION_TITLE
+
         ## if nothing is filled out, raise an error
         if not any(
             [
