@@ -29,16 +29,9 @@ class StaffForm(forms.Form):
     )
 
     ## Form section - Department ------------------------------------
-    offer_department = forms.BooleanField(required=False, label='Offer Department')
+    offer_department = forms.BooleanField(required=False, label='Offer Department input')
     department_required = forms.BooleanField(
         required=False, label='Department required', help_text='auto-selects `Offer...` on save'
-    )
-    department_options = forms.MultipleChoiceField(
-        required=False,
-        label='Department Options',
-        choices=[('dept1', 'Department 1'), ('dept2', 'Department 2')],
-        widget=forms.CheckboxSelectMultiple,
-        help_text='select one or more departments',
     )
 
     offer_research_program = forms.BooleanField(required=False, label='Offer Research Program')
@@ -99,13 +92,13 @@ class StaffForm(forms.Form):
     authorized_student_groups = forms.CharField(
         required=False,
         label='Authorized student groups',
-        help_text='Example: "group:A | group:B"',
+        help_text='group:A | group:B | ...',
         widget=forms.Textarea,
     )
     authorized_student_emails = forms.CharField(
         required=False,
         label='Authorized student emails',
-        help_text='Example: "email1 | email2"',
+        help_text='email1 | email2 | ...',
         widget=forms.Textarea,
     )
 
@@ -145,9 +138,9 @@ class StaffForm(forms.Form):
 
         ## validate that when options are offered, at least one option is selected.
 
-        if cleaned_data.get('offer_department'):
-            if not cleaned_data.get('department_options'):
-                self.add_error('department_options', 'At least one department must be selected.')
+        # if cleaned_data.get('offer_department'):
+        #     if not cleaned_data.get('department_options'):
+        #         self.add_error('department_options', 'At least one department must be selected.')
         if cleaned_data.get('offer_research_program'):
             if not cleaned_data.get('research_program_options'):
                 self.add_error('research_program_options', 'At least one research program must be selected.')

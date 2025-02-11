@@ -46,13 +46,20 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
 
     ## Department & Research Program section ------------------------
     if config_data.get('offer_department'):
-        fields['department_options'] = forms.MultipleChoiceField(
-            choices=[('dept1', 'Department 1'), ('dept2', 'Department 2')],
-            widget=forms.CheckboxSelectMultiple,
-            label='Department Options',
+        # fields['department_options'] = forms.MultipleChoiceField(
+        #     choices=[('dept1', 'Department 1'), ('dept2', 'Department 2')],
+        #     widget=forms.CheckboxSelectMultiple,
+        #     label='Department Options',
+        #     required=config_data.get('department_required', False),
+        #     help_text='Select one or more departments',
+        # )
+
+        fields['department'] = forms.CharField(
+            label='Department(s)',
             required=config_data.get('department_required', False),
-            help_text='Select one or more departments',
+            help_text='Dept1 | Dept2 | ...',
         )
+
     if config_data.get('offer_research_program'):
         fields['research_program_options'] = forms.MultipleChoiceField(
             choices=[('prog1', 'Program 1'), ('prog2', 'Program 2')],

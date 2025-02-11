@@ -189,11 +189,6 @@
             </div>
             {% endif %}
 
-
-
-
-
-
             {% if form.faculty_mentors %}
             <div class="form-group">
                 {{ form.faculty_mentors.label_tag }} {{ form.faculty_mentors }}
@@ -204,6 +199,7 @@
                 {% endif %}
             </div>
             {% endif %}
+
             {% if form.authors %}
             <div class="form-group">
                 {{ form.authors.label_tag }} {{ form.authors }}
@@ -218,6 +214,7 @@
         
         <div class="form-section">
             <h3>Department and Program Section</h3>
+
             {% if form.department_options %}
             <div class="form-group">
                 {{ form.department_options.label_tag }} {{ form.department_options }}
@@ -228,6 +225,23 @@
                 {% endif %}
             </div>
             {% endif %}
+
+
+            {% if form.department %}
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.department.label_tag }}
+                    {% if form.department.help_text %}
+                        <p class="help">{{ form.department.help_text|safe }}</p>
+                    {% endif %}
+                </div>  
+                {{ form.department }}
+            </div>
+            {% endif %}
+
+
+
+
             {% if form.research_program_options %}
             <div class="form-group">
                 {{ form.research_program_options.label_tag }} {{ form.research_program_options }}
