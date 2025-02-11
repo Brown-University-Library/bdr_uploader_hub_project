@@ -1,7 +1,7 @@
 from django import forms
 
 
-def get_student_upload_form_class(config_data: dict) -> type[forms.Form]:
+def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     """
     Dynamically creates and returns a StudentUploadForm class based on the staff-config form data.
     """

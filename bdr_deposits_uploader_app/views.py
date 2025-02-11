@@ -5,6 +5,7 @@ import pprint
 from urllib import parse
 from urllib.parse import quote
 
+import django
 import trio
 from django.conf import settings as project_settings
 from django.contrib import auth
@@ -15,7 +16,7 @@ from django.urls import reverse
 from django.utils import text
 
 from bdr_deposits_uploader_app.forms.staff_form import StaffForm
-from bdr_deposits_uploader_app.forms.student_upload_form import get_student_upload_form_class
+from bdr_deposits_uploader_app.forms.student_upload_form import make_student_upload_form_class
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
@@ -254,7 +255,7 @@ def upload(request) -> HttpResponse:
 @login_required
 def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     """
-    Displays the upload app.
+    Displays the student-upload-form.
     """
     log.debug('\n\nstarting upload_slug()')
     log.debug(f'slug, ``{slug}``')
@@ -263,20 +264,35 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     app_config = get_object_or_404(AppConfig, slug=slug)
     config_data = app_config.temp_config_json
 
+    ## prep other form data -----------------------------------------
+    depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
+    depositor_email: str = request.user.email
+    deposit_iso_date: str = datetime.datetime.now().isoformat()
+
     ## build form based on staff-config data ------------------------
-    StudentUploadForm = get_student_upload_form_class(config_data)
+    # StudentUploadForm = get_student_upload_form_class(config_data)
+    StudentUploadForm: django.forms.forms.DeclarativeFieldsMetaclass = make_student_upload_form_class(config_data)
+    log.debug(f'type(StudentUploadForm), ``{type(StudentUploadForm)}``')
 
     ## handle POST and GET ------------------------------------------
     if request.method == 'POST':
         form = StudentUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            # Process the valid student-upload data, e.g., save to your UploadInfo model.
-            # ...
+            # TODO: Process the valid student-upload data, e.g., save to UploadInfo model.
             resp: HttpResponseRedirect = redirect(reverse('upload_successful_url'))
     else:
         form = StudentUploadForm()
         resp: HttpResponse = render(
-            request, 'uploader_slug.html', {'form': form, 'slug': slug, 'username': request.user.first_name}
+            request,
+            'uploader_slug.html',
+            {
+                'form': form,
+                'slug': slug,
+                'username': request.user.first_name,
+                'depositor_fullname': depositor_fullname,
+                'depositor_email': depositor_email,
+                'deposit_iso_date': deposit_iso_date,
+            },
         )
     return resp
 
