@@ -133,8 +133,34 @@
             </div>
         {% endif %}
 
+
+        <div class="form-section">
+            <h3>Basics</h3>
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.collection_pid.label_tag }}
+                    {% if form.collection_pid.help_text %}
+                        <p class="help">{{ form.collection_pid.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.collection_pid }}
+            </div>
+            <div class="form-group">
+                <div class="label-container">
+                {{ form.collection_title.label_tag }} 
+                    {% if form.collection_title.help_text %}
+                        <p class="help">{{ form.collection_title.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.collection_title }}
+            </div>
+            
+        </div>  
+
         <div class="form-section">
             <h3>Collaborator Options</h3>
+
             <div class="form-group">
                 {{ form.offer_advisors_and_readers.label_tag }} {{ form.offer_advisors_and_readers }}
                 <div class="label-container">
@@ -207,7 +233,6 @@
                     {% endif %}
                 </div>
                 {{ form.research_program_required }}
-
                 <div class="label-container">
                     {{ form.research_program_options.label_tag }}
                     {% if form.research_program_options.help_text %}
@@ -215,9 +240,8 @@
                     {% endif %}
                 </div>
                 {{ form.research_program_options }}
-
             </div>
-        </div>
+        </div>  <!-- end of form-section -->
         
         <div class="form-section">
             <h3>Access Options</h3>
@@ -260,7 +284,7 @@
                 {{ form.visibility_options.label_tag }} {{ form.visibility_options }}                          
                 {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
             </div>
-        </div>
+        </div>  <!-- end of form-section -->
         
         <div class="form-section">
             <h3>Other Options</h3>
@@ -308,7 +332,7 @@
                 {{ form.authorized_student_emails }}
             </div>  
 
-        </div>
+        </div>  <!-- end of form-section -->
         
         <div class="form-field">
             <input type="submit" value="Submit">

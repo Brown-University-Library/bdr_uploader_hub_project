@@ -7,6 +7,10 @@ log = logging.getLogger(__name__)
 
 
 class StaffForm(forms.Form):
+    ## Basics section -----------------------------------------------
+    collection_pid = forms.CharField(required=True, label='Collection PID')
+    collection_title = forms.CharField(required=True, label='Collection Title', help_text='PID sanity-check')
+
     ## Form section - Collaborators ---------------------------------
     offer_advisors_and_readers = forms.BooleanField(required=False, label='Offer advisors/readers')
     advisors_and_readers_required = forms.BooleanField(
