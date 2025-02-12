@@ -5,6 +5,15 @@ from django import forms
 
 log = logging.getLogger(__name__)
 
+ALL_LICENSES: list[tuple[str, str]] = [
+    ('license1', 'License 1'),
+    ('license2', 'License 2'),
+    ('license3', 'License 3'),
+    ('license4', 'License 4'),
+    ('license5', 'License 5'),
+    ('license6', 'License 6'),
+]
+
 
 def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     """
@@ -75,18 +84,18 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
         log.debug(f'RP-field after adding field: ``{pprint.pformat(fields["research_program"].__dict__)}``')
 
     ## Access section ------------------------------------------------
+
     if config_data.get('offer_license_options'):
-        fields['license_options'] = forms.MultipleChoiceField(
-            choices=[('license1', 'License 1'), ('license2', 'License 2')],
+        selected_license_keys = config_data.get('license_options', [])
+        selected_choices = [choice for choice in ALL_LICENSES if choice[0] in selected_license_keys]
+        fields['license_options'] = forms.ChoiceField(
+            choices=selected_choices,
             label='License Options',
             required=config_data.get('license_required', False),
-            help_text='Select at least one license',
+            help_text='select a license',
+            initial='license5',
         )
-        fields['license_default'] = forms.CharField(
-            label='License Default',
-            required=config_data.get('license_required', False),
-            help_text='Enter the default license',
-        )
+
     if config_data.get('offer_access_options'):
         fields['access_options'] = forms.MultipleChoiceField(
             choices=[('access1', 'Access 1'), ('access2', 'Access 2')],
