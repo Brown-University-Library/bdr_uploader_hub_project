@@ -97,6 +97,8 @@
     <form method="post" enctype="multipart/form-data" action="{% url 'upload_slug_url' slug=slug %}">
         {% csrf_token %}
         
+        <!-- display form errors -------------------------------- -->
+
         {# Display non-field and field-specific errors #}
         {% if form.errors %}
         <div class="form-errors">
@@ -116,7 +118,8 @@
         </div>
         {% endif %}
         
-        {# Group fields into sections (adjust groupings as needed) #}
+        <!-- form-fields ---------------------------------------- -->
+
         <div class="form-section">
             <h3>Basic Information</h3>
             <!-- non-editable data ------------------------------ -->
@@ -160,7 +163,8 @@
                 </div>
                 {{ form.abstract }}
             </div>
-        </div>
+
+        </div>  <!-- end of form section -->
 
         <div class="form-section">
             <h3>Collaborator Information</h3>
@@ -210,22 +214,11 @@
                 {% endif %}
             </div>
             {% endif %}
-        </div>
+
+        </div>  <!-- end of form section -->
         
         <div class="form-section">
             <h3>Department and Program Section</h3>
-
-            {% if form.department_options %}
-            <div class="form-group">
-                {{ form.department_options.label_tag }} {{ form.department_options }}
-                {% if form.department_options.help_text %}
-                <div class="label-container">
-                    <p class="help">{{ form.department_options.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-
 
             {% if form.department %}
             <div class="form-group">
@@ -239,23 +232,23 @@
             </div>
             {% endif %}
 
-
-
-
-            {% if form.research_program_options %}
+            {% if form.research_program %}
             <div class="form-group">
-                {{ form.research_program_options.label_tag }} {{ form.research_program_options }}
-                {% if form.research_program_options.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.research_program_options.help_text|safe }}</p>
-                </div>
-                {% endif %}
+                    {{ form.research_program.label_tag }}
+                    {% if form.research_program.help_text %}
+                        <p class="help">{{ form.research_program.help_text|safe }}</p>
+                    {% endif %}
+                </div>  
+                {{ form.department }}
             </div>
             {% endif %}
-        </div>
-        
+
+        </div>  <!-- end of form section -->
+
         <div class="form-section">
             <h3>Access Section</h3>
+
             {% if form.license_options %}
             <div class="form-group">
                 {{ form.license_options.label_tag }} {{ form.license_options }}
@@ -266,6 +259,7 @@
                 {% endif %}
             </div>
             {% endif %}
+
             {% if form.license_default %}
             <div class="form-group">
                 {{ form.license_default.label_tag }} {{ form.license_default }}
@@ -276,6 +270,7 @@
                 {% endif %}
             </div>
             {% endif %}
+
             {% if form.access_options %}
             <div class="form-group">
                 {{ form.access_options.label_tag }} {{ form.access_options }}
@@ -286,6 +281,7 @@
                 {% endif %}
             </div>
             {% endif %}
+
             {% if form.access_default %}
             <div class="form-group">
                 {{ form.access_default.label_tag }} {{ form.access_default }}
@@ -296,6 +292,7 @@
                 {% endif %}
             </div>
             {% endif %}
+
             {% if form.visibility_options %}
             <div class="form-group">
                 {{ form.visibility_options.label_tag }} {{ form.visibility_options }}
@@ -306,6 +303,7 @@
                 {% endif %}
             </div>
             {% endif %}
+            
             {% if form.visibility_default %}
             <div class="form-group">
                 {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
@@ -316,7 +314,8 @@
                 {% endif %}
             </div>
             {% endif %}
-        </div>
+            
+        </div>  <!-- end of form section -->
         
         <div class="form-section">
             <h3>Other Info</h3>

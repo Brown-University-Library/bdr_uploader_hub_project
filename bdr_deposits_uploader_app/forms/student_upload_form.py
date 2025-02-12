@@ -61,12 +61,18 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
         )
 
     if config_data.get('offer_research_program'):
-        fields['research_program_options'] = forms.MultipleChoiceField(
-            choices=[('prog1', 'Program 1'), ('prog2', 'Program 2')],
-            widget=forms.CheckboxSelectMultiple,
-            label='Research Program Options',
+        # fields['research_program_options'] = forms.MultipleChoiceField(
+        #     choices=[('prog1', 'Program 1'), ('prog2', 'Program 2')],
+        #     widget=forms.CheckboxSelectMultiple,
+        #     label='Research Program Options',
+        #     required=config_data.get('research_program_required', False),
+        #     help_text='Select one or more research programs',
+        # )
+
+        fields['research_program'] = forms.CharField(
+            label='Research Program(s)',
             required=config_data.get('research_program_required', False),
-            help_text='Select one or more research programs',
+            help_text='Program1 | Program2 | ...',
         )
 
     ## Access section ------------------------------------------------
