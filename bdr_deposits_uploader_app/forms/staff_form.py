@@ -135,12 +135,6 @@ class StaffForm(forms.Form):
 
         ## validate that when options are offered, at least one option is selected.
 
-        # if cleaned_data.get('offer_department'):
-        #     if not cleaned_data.get('department_options'):
-        #         self.add_error('department_options', 'At least one department must be selected.')
-        if cleaned_data.get('offer_research_program'):
-            if not cleaned_data.get('research_program_options'):
-                self.add_error('research_program_options', 'At least one research program must be selected.')
         if cleaned_data.get('offer_license_options'):
             if not cleaned_data.get('license_options'):
                 self.add_error('license_options', 'At least one license must be selected.')
