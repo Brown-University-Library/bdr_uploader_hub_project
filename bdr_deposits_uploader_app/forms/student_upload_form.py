@@ -95,7 +95,7 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
             choices=selected_license_choices,
             label='License Options',
             required=config_data.get('license_required', False),
-            help_text='select or leave default',
+            help_text='select, or leave default',
             initial=selected_license_default,
         )
 
