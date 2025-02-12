@@ -44,33 +44,51 @@ class StaffForm(forms.Form):
     )
 
     ## Form section - Access ----------------------------------------
-    offer_embargo_access = forms.BooleanField(required=False, label='Offer embargo-access for two years')
+    offer_embargo_access = forms.BooleanField(required=False, label='Offer 2-year embargo')
 
     offer_license_options = forms.BooleanField(required=False, label='Offer license options')
     license_required = forms.BooleanField(
         required=False, label='License required', help_text='auto-selects `Offer...` on save'
     )
-    license_options = forms.MultipleChoiceField(
-        required=False, label='License Options', choices=[('license1', 'License 1'), ('license2', 'License 2')]
-    )
+    license_list = [
+        ('license1', 'License 1'),
+        ('license2', 'License 2'),
+        ('license3', 'License 3'),
+        ('license4', 'License 4'),
+        ('license5', 'License 5'),
+        ('license6', 'License 6'),
+    ]  # (value, label)
+    license_options = forms.MultipleChoiceField(required=False, label='License Options', choices=license_list)
     license_default = forms.CharField(required=False, label='License Default')
 
+    access_list = [
+        ('access1', 'Access 1'),
+        ('access2', 'Access 2'),
+        ('access3', 'Access 3'),
+        ('access4', 'Access 4'),
+        ('access5', 'Access 5'),
+        ('access6', 'Access 6'),
+    ]  # (value, label)
     offer_access_options = forms.BooleanField(required=False, label='Offer access options')
     access_required = forms.BooleanField(
         required=False, label='Access required', help_text='auto-selects `Offer...` on save'
     )
-    access_options = forms.MultipleChoiceField(
-        required=False, label='Access Options', choices=[('access1', 'Access 1'), ('access2', 'Access 2')]
-    )
+    access_options = forms.MultipleChoiceField(required=False, label='Access Options', choices=access_list)
     access_default = forms.CharField(required=False, label='Access Default')
 
+    visibility_list = [
+        ('vis1', 'Visibility 1'),
+        ('vis2', 'Visibility 2'),
+        ('vis3', 'Visibility 3'),
+        ('vis4', 'Visibility 4'),
+        ('vis5', 'Visibility 5'),
+        ('vis6', 'Visibility 6'),
+    ]  # (value, label)
     offer_visibility_options = forms.BooleanField(required=False, label='Offer visibility options')
     visibility_required = forms.BooleanField(
         required=False, label='Visibility required', help_text='auto-selects `Offer...` on save'
     )
-    visibility_options = forms.MultipleChoiceField(
-        required=False, label='Visibility Options', choices=[('vis1', 'Visibility 1'), ('vis2', 'Visibility 2')]
-    )
+    visibility_options = forms.MultipleChoiceField(required=False, label='Visibility Options', choices=visibility_list)
     visibility_default = forms.CharField(required=False, label='Visibility Default')
 
     ## Form section - Other -----------------------------------------
