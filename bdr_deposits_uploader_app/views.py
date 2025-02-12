@@ -37,16 +37,13 @@ def info(request) -> HttpResponse:
     """
     log.debug('\n\nstarting info()')
     log.debug(f'user, ``{request.user}``')
-    ## prep data ----------------------------------------------------
-    # context = { 'message': 'Hello, world.' }
-    context = {
-        'quote': 'The best life is the one in which the creative impulses play the largest part and the possessive impulses the smallest.',
-        'author': 'Bertrand Russell',
-    }
-    if request.user.is_authenticated:
-        context['username'] = request.user.first_name
+
+    ## clear django-session -----------------------------------------
+    auth.logout(request)  # TODO: consider forcing shib logout here
+
     ## prep response ------------------------------------------------
-    if request.GET.get('format', '') == 'json':
+    context = {}
+    if request.GET.get('format', '') == 'json':  # TODO: remove this
         log.debug('building json response')
         resp = HttpResponse(
             json.dumps(context, sort_keys=True, indent=2),
@@ -56,6 +53,33 @@ def info(request) -> HttpResponse:
         log.debug('building template response')
         resp = render(request, 'info.html', context)
     return resp
+
+
+# def info(request) -> HttpResponse:
+#     """
+#     The "about" view.
+#     Can get here from 'info' url, and the root-url redirects here.
+#     """
+#     log.debug('\n\nstarting info()')
+#     log.debug(f'user, ``{request.user}``')
+#     ## prep data ----------------------------------------------------
+#     context = {
+#         'quote': 'The best life is the one in which the creative impulses play the largest part and the possessive impulses the smallest.',
+#         'author': 'Bertrand Russell',
+#     }
+#     if request.user.is_authenticated:
+#         context['username'] = request.user.first_name
+#     ## prep response ------------------------------------------------
+#     if request.GET.get('format', '') == 'json':
+#         log.debug('building json response')
+#         resp = HttpResponse(
+#             json.dumps(context, sort_keys=True, indent=2),
+#             content_type='application/json; charset=utf-8',
+#         )
+#     else:
+#         log.debug('building template response')
+#         resp = render(request, 'info.html', context)
+#     return resp
 
 
 def pre_login(request) -> HttpResponseRedirect:
