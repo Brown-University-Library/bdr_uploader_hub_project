@@ -1,10 +1,18 @@
+import logging
+import pprint
+
 from django import forms
+
+log = logging.getLogger(__name__)
 
 
 def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     """
     Dynamically creates and returns a StudentUploadForm class based on the staff-config form data.
     """
+    log.debug('starting make_student_upload_form_class()')
+    log.debug(f'config_data: {pprint.pformat(config_data)}')
+
     fields = {}
 
     ## Basic Information section ------------------------------------
@@ -21,12 +29,16 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     )
 
     ## Collaborators section ----------------------------------------
+    rq_AR = config_data.get('advisors_and_readers_required', False)
+    log.debug(f'rq_AR, ``{rq_AR}``')
     if config_data.get('offer_advisors_and_readers'):
         fields['advisors_and_readers'] = forms.CharField(
             label='Advisors and Readers',
             required=config_data.get('advisors_and_readers_required', False),
-            help_text='Person1 | Persion2 | ...',
+            help_text='Person1 | Person2 | ...',
         )
+        log.debug(f'AR-field after adding field: ``{pprint.pformat(fields["advisors_and_readers"].__dict__)}``')
+
     if config_data.get('offer_team_members'):
         fields['team_members'] = forms.CharField(
             label='Team Members',
@@ -46,34 +58,21 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
 
     ## Department & Research Program section ------------------------
     if config_data.get('offer_department'):
-        # fields['department_options'] = forms.MultipleChoiceField(
-        #     choices=[('dept1', 'Department 1'), ('dept2', 'Department 2')],
-        #     widget=forms.CheckboxSelectMultiple,
-        #     label='Department Options',
-        #     required=config_data.get('department_required', False),
-        #     help_text='Select one or more departments',
-        # )
-
         fields['department'] = forms.CharField(
             label='Department(s)',
             required=config_data.get('department_required', False),
             help_text='Dept1 | Dept2 | ...',
         )
 
+    rq_RP = config_data.get('research_program_required', False)
+    log.debug(f'rq_RP, ``{rq_RP}``')
     if config_data.get('offer_research_program'):
-        # fields['research_program_options'] = forms.MultipleChoiceField(
-        #     choices=[('prog1', 'Program 1'), ('prog2', 'Program 2')],
-        #     widget=forms.CheckboxSelectMultiple,
-        #     label='Research Program Options',
-        #     required=config_data.get('research_program_required', False),
-        #     help_text='Select one or more research programs',
-        # )
-
         fields['research_program'] = forms.CharField(
             label='Research Program(s)',
             required=config_data.get('research_program_required', False),
             help_text='Program1 | Program2 | ...',
         )
+        log.debug(f'RP-field after adding field: ``{pprint.pformat(fields["research_program"].__dict__)}``')
 
     ## Access section ------------------------------------------------
     if config_data.get('offer_license_options'):
