@@ -249,27 +249,25 @@
         <div class="form-section">
             <h3>Access Section</h3>
 
+
             {% if form.license_options %}
             <div class="form-group">
-                {{ form.license_options.label_tag }} {{ form.license_options }}
-                {% if form.license_options.help_text %}
                 <div class="label-container">
+                {{ form.license_options.label_tag }} 
+                {% if form.license_options.help_text %}
                     <p class="help">{{ form.license_options.help_text|safe }}</p>
-                </div>
                 {% endif %}
+                </div>
+                {{ form.license_options }}
             </div>
             {% endif %}
 
-            {% if form.license_default %}
-            <div class="form-group">
-                {{ form.license_default.label_tag }} {{ form.license_default }}
-                {% if form.license_default.help_text %}
-                <div class="label-container">
-                    <p class="help">{{ form.license_default.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
+
+
+
+
+
+
 
             {% if form.access_options %}
             <div class="form-group">
