@@ -59,7 +59,22 @@ class StaffForm(forms.Form):
         ('license6', 'License 6'),
     ]  # (value, label)
     license_options = forms.MultipleChoiceField(required=False, label='License Options', choices=license_list)
-    license_default = forms.CharField(required=False, label='License Default')
+    # license_default = forms.CharField(required=False, label='License Default')
+    license_default_choices = [
+        ('ERR', 'Unselected'),
+        ('license1', 'License 1'),
+        ('license2', 'License 2'),
+        ('license3', 'License 3'),
+        ('license4', 'License 4'),
+        ('license5', 'License 5'),
+        ('license6', 'License 6'),
+    ]  # (value, label)
+    license_default = forms.ChoiceField(
+        choices=license_default_choices,
+        label='License default',
+        required=False,
+        help_text='select default license',
+    )
 
     access_list = [
         ('access1', 'Access 1'),
@@ -158,6 +173,13 @@ class StaffForm(forms.Form):
                 self.add_error('license_options', 'At least one license must be selected.')
             if not cleaned_data.get('license_default'):
                 self.add_error('license_default', 'A default license is required.')
+
+            log.debug(f'selected license options: {cleaned_data.get("license_options")}')
+            log.debug(f'license_default: {cleaned_data.get("license_default")}')
+
+            if cleaned_data.get('license_default') not in cleaned_data.get('license_options'):
+                self.add_error('license_default', 'Invalid default license selected.')
+
         if cleaned_data.get('offer_access_options'):
             if not cleaned_data.get('access_options'):
                 self.add_error('access_options', 'At least one access option must be selected.')
