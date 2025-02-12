@@ -42,13 +42,6 @@ class StaffForm(forms.Form):
     research_program_required = forms.BooleanField(
         required=False, label='Research Program required', help_text='auto-selects `Offer...` on save'
     )
-    research_program_options = forms.MultipleChoiceField(
-        required=False,
-        label='Research Program Options',
-        choices=[('prog1', 'Program 1'), ('prog2', 'Program 2')],
-        widget=forms.CheckboxSelectMultiple,
-        help_text='select one or more programs',
-    )
 
     ## Form section - Access ----------------------------------------
     offer_embargo_access = forms.BooleanField(required=False, label='Offer embargo-access for two years')
