@@ -86,14 +86,17 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     ## Access section ------------------------------------------------
 
     if config_data.get('offer_license_options'):
-        selected_license_keys = config_data.get('license_options', [])
-        selected_choices = [choice for choice in ALL_LICENSES if choice[0] in selected_license_keys]
+        selected_license_keys: list[str] = config_data.get('license_options', [])
+        selected_license_choices: list[tuple[str, str]] = [
+            choice for choice in ALL_LICENSES if choice[0] in selected_license_keys
+        ]
+        selected_license_default: str = config_data.get('license_default')
         fields['license_options'] = forms.ChoiceField(
-            choices=selected_choices,
+            choices=selected_license_choices,
             label='License Options',
             required=config_data.get('license_required', False),
-            help_text='select a license',
-            initial='license5',
+            help_text='select or leave default',
+            initial=selected_license_default,
         )
 
     if config_data.get('offer_access_options'):
