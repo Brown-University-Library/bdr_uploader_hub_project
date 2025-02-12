@@ -76,20 +76,20 @@ class StaffForm(forms.Form):
         help_text='select default license',
     )
 
-    access_list = [
-        ('access1', 'Access 1'),
-        ('access2', 'Access 2'),
-        ('access3', 'Access 3'),
-        ('access4', 'Access 4'),
-        ('access5', 'Access 5'),
-        ('access6', 'Access 6'),
-    ]  # (value, label)
-    offer_access_options = forms.BooleanField(required=False, label='Offer access options')
-    access_required = forms.BooleanField(
-        required=False, label='Access required', help_text='auto-selects `Offer...` on save'
-    )
-    access_options = forms.MultipleChoiceField(required=False, label='Access Options', choices=access_list)
-    access_default = forms.CharField(required=False, label='Access Default')
+    # access_list = [
+    #     ('access1', 'Access 1'),
+    #     ('access2', 'Access 2'),
+    #     ('access3', 'Access 3'),
+    #     ('access4', 'Access 4'),
+    #     ('access5', 'Access 5'),
+    #     ('access6', 'Access 6'),
+    # ]  # (value, label)
+    # offer_access_options = forms.BooleanField(required=False, label='Offer access options')
+    # access_required = forms.BooleanField(
+    #     required=False, label='Access required', help_text='auto-selects `Offer...` on save'
+    # )
+    # access_options = forms.MultipleChoiceField(required=False, label='Access Options', choices=access_list)
+    # access_default = forms.CharField(required=False, label='Access Default')
 
     visibility_list = [
         ('vis1', 'Visibility 1'),
@@ -156,8 +156,8 @@ class StaffForm(forms.Form):
         ## access ---------------------------------------------------
         if cleaned_data.get('license_required') and not cleaned_data.get('offer_license_options'):
             cleaned_data['offer_license_options'] = True
-        if cleaned_data.get('access_required') and not cleaned_data.get('offer_access_options'):
-            cleaned_data['offer_access_options'] = True
+        # if cleaned_data.get('access_required') and not cleaned_data.get('offer_access_options'):
+        #     cleaned_data['offer_access_options'] = True
         if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
             cleaned_data['offer_visibility_options'] = True
         ## other ----------------------------------------------------
