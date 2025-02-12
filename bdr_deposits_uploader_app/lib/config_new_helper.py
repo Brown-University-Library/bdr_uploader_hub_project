@@ -1,7 +1,7 @@
 import logging
 from urllib.parse import urlencode
 
-from django.db.models.query import QuerySet  # for type-hint
+from django.db.models.functions import Lower
 from django.urls import reverse
 
 from bdr_deposits_uploader_app.models import AppConfig
@@ -9,33 +9,33 @@ from bdr_deposits_uploader_app.models import AppConfig
 log = logging.getLogger(__name__)
 
 
-def get_existing_names_and_slugs() -> list[tuple[str, ...]]:
-    """
-    Returns a list of app names.
-    Called by views.hlpr_check_name_and_slug().
-    Example: say `apps` is:
-        [
-            ('App1', 'app1-slug'),
-            ('App2', 'app2-slug'),
-            ('App3', 'app3-slug'),
-        ]
-        ...then `names` would be:
-        ('App1', 'App2', 'App3'),  # All the 'name' values
+# def get_existing_names_and_slugs() -> list[tuple[str, ...]]:
+#     """
+#     Returns a list of app names.
+#     Called by views.hlpr_check_name_and_slug().
+#     Example: say `apps` is:
+#         [
+#             ('App1', 'app1-slug'),
+#             ('App2', 'app2-slug'),
+#             ('App3', 'app3-slug'),
+#         ]
+#         ...then `names` would be:
+#         ('App1', 'App2', 'App3'),  # All the 'name' values
 
-        ...and `slugs` would be:
-        ('app1-slug', 'app2-slug', 'app3-slug'),  # All the 'slug' values
-    """
-    apps: QuerySet = AppConfig.objects.values_list('name', 'slug')
-    names: tuple[str, ...]  # elipsis indicates the tuple can contain any number of elements
-    slugs: tuple[str, ...]
-    if not apps:
-        names = ()
-        slugs = ()
-    else:
-        names, slugs = zip(*apps)  # zip is an iterator that aggregates elements from each of the iterables
-    log.debug(f'names, ``{names}``')
-    log.debug(f'slugs, ``{slugs}``')
-    return [names, slugs]
+#         ...and `slugs` would be:
+#         ('app1-slug', 'app2-slug', 'app3-slug'),  # All the 'slug' values
+#     """
+#     apps: QuerySet = AppConfig.objects.values_list('name', 'slug')
+#     names: tuple[str, ...]  # elipsis indicates the tuple can contain any number of elements
+#     slugs: tuple[str, ...]
+#     if not apps:
+#         names = ()
+#         slugs = ()
+#     else:
+#         names, slugs = zip(*apps)  # zip is an iterator that aggregates elements from each of the iterables
+#     log.debug(f'names, ``{names}``')
+#     log.debug(f'slugs, ``{slugs}``')
+#     return [names, slugs]
 
 
 def get_configs() -> list:
@@ -45,7 +45,8 @@ def get_configs() -> list:
     """
     log.debug('starting get_configs()')
     existing_app_data: list = []
-    apps = AppConfig.objects.all()
+
+    apps = AppConfig.objects.order_by(Lower('name'))
     if apps:
         app_label = apps[0]._meta.app_label
         log.debug(f'app_label, ``{app_label}``')
