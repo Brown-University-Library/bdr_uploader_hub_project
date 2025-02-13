@@ -28,9 +28,10 @@
     
     /* Form section styling */
     .form-section {
-        margin-bottom: 30px;
-        padding-bottom: 10px;
+        padding-bottom: .5rem;  /* space before the border-bottom line */
         border-bottom: 2px solid #ccc;
+        margin-top: 3rem;
+        margin-bottom: 2rem;  /* space after the border-bottom line */
     }
     
     /* Form group styling - align labels and inputs properly */
@@ -109,7 +110,8 @@
     <form method="post" action="{% url 'config_slug_url' slug=slug %}">
         {% csrf_token %}
 
-        <!-- display form errors -->
+        <!-- display form errors -------------------------------- -->
+
         {% if form.errors %}
             <div class="form-errors">
                 <p class="errorlist">Please correct the form errors below.</p>
@@ -133,8 +135,66 @@
             </div>
         {% endif %}
 
+        <!-- form-fields ---------------------------------------- -->
+
+        <div class="form-section">
+            <h3>Basics</h3>
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.collection_pid.label_tag }}
+                    {% if form.collection_pid.help_text %}
+                        <p class="help">{{ form.collection_pid.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.collection_pid }}
+            </div>
+
+            <div class="form-group">
+                <div class="label-container">
+                {{ form.collection_title.label_tag }} 
+                    {% if form.collection_title.help_text %}
+                        <p class="help">{{ form.collection_title.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.collection_title }}
+            </div>
+
+            <div class="form-group">
+                <div class="label-container">
+                {{ form.staff_to_notify.label_tag }} 
+                    {% if form.staff_to_notify.help_text %}
+                        <p class="help">{{ form.staff_to_notify.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.staff_to_notify }}
+            </div>
+            
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_groups.label_tag }}
+                    {% if form.authorized_student_groups.help_text %}
+                        <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_groups }}
+            </div>  
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_emails.label_tag }}
+                    {% if form.authorized_student_emails.help_text %}
+                        <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_emails }}
+            </div>  
+            
+        </div>  <!-- end of form-section -->
+
         <div class="form-section">
             <h3>Collaborator Options</h3>
+
             <div class="form-group">
                 {{ form.offer_advisors_and_readers.label_tag }} {{ form.offer_advisors_and_readers }}
                 <div class="label-container">
@@ -189,13 +249,6 @@
                     {% endif %}
                 </div>
                 {{ form.department_required }}
-                <div class="label-container">
-                    {{ form.department_options.label_tag }}
-                    {% if form.department_options.help_text %}
-                        <p class="help">{{ form.department_options.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-                {{ form.department_options }}
             </div>
 
             <div class="form-group">
@@ -207,17 +260,9 @@
                     {% endif %}
                 </div>
                 {{ form.research_program_required }}
-
-                <div class="label-container">
-                    {{ form.research_program_options.label_tag }}
-                    {% if form.research_program_options.help_text %}
-                        <p class="help">{{ form.research_program_options.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-                {{ form.research_program_options }}
-
             </div>
-        </div>
+
+        </div>  <!-- end of form-section -->
         
         <div class="form-section">
             <h3>Access Options</h3>
@@ -260,7 +305,7 @@
                 {{ form.visibility_options.label_tag }} {{ form.visibility_options }}                          
                 {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
             </div>
-        </div>
+        </div>  <!-- end of form-section -->
         
         <div class="form-section">
             <h3>Other Options</h3>
@@ -288,31 +333,14 @@
                 {{ form.invite_supplementary_files.label_tag }} {{ form.invite_supplementary_files }}
             </div>
 
-            <div class="form-group">
-                <div class="label-container">
-                    {{ form.authorized_student_groups.label_tag }}
-                    {% if form.authorized_student_groups.help_text %}
-                        <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-                {{ form.authorized_student_groups }}
-            </div>  
-
-            <div class="form-group">
-                <div class="label-container">
-                    {{ form.authorized_student_emails.label_tag }}
-                    {% if form.authorized_student_emails.help_text %}
-                        <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-                {{ form.authorized_student_emails }}
-            </div>  
-
-        </div>
+        </div>  <!-- end of form-section -->
         
+        <!-- submit-button -------------------------------------- -->
+
         <div class="form-field">
             <input type="submit" value="Submit">
         </div>
+        
     </form>
 </section>
 {% endblock main_content %}

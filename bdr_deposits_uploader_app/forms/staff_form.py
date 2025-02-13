@@ -7,6 +7,30 @@ log = logging.getLogger(__name__)
 
 
 class StaffForm(forms.Form):
+    ## Basics section -----------------------------------------------
+    collection_pid = forms.CharField(required=True, label='Collection PID')
+    collection_title = forms.CharField(required=True, label='Collection Title', help_text='PID sanity-check')
+    staff_to_notify = forms.CharField(
+        required=True,
+        label='Staff to notify on ingest',
+        help_text='email1 | email2 | ...',
+    )
+
+    authorized_student_groups = forms.CharField(
+        required=False,
+        label='Authorized student groups',
+        help_text='group:A | group:B | ...',
+        widget=forms.Textarea(
+            attrs={'rows': 5}
+        ),  # or I could say widget=forms.Textarea(attrs={'class': 'textarea'}), and then style it in css
+    )
+    authorized_student_emails = forms.CharField(
+        required=False,
+        label='Authorized student emails',
+        help_text='email1 | email2 | ...',
+        widget=forms.Textarea(attrs={'rows': 5}),
+    )
+
     ## Form section - Collaborators ---------------------------------
     offer_advisors_and_readers = forms.BooleanField(required=False, label='Offer advisors/readers')
     advisors_and_readers_required = forms.BooleanField(
@@ -29,59 +53,57 @@ class StaffForm(forms.Form):
     )
 
     ## Form section - Department ------------------------------------
-    offer_department = forms.BooleanField(required=False, label='Offer Department')
+    offer_department = forms.BooleanField(required=False, label='Offer Department input')
     department_required = forms.BooleanField(
         required=False, label='Department required', help_text='auto-selects `Offer...` on save'
-    )
-    department_options = forms.MultipleChoiceField(
-        required=False,
-        label='Department Options',
-        choices=[('dept1', 'Department 1'), ('dept2', 'Department 2')],
-        widget=forms.CheckboxSelectMultiple,
-        help_text='select one or more departments',
     )
 
     offer_research_program = forms.BooleanField(required=False, label='Offer Research Program')
     research_program_required = forms.BooleanField(
         required=False, label='Research Program required', help_text='auto-selects `Offer...` on save'
     )
-    research_program_options = forms.MultipleChoiceField(
-        required=False,
-        label='Research Program Options',
-        choices=[('prog1', 'Program 1'), ('prog2', 'Program 2')],
-        widget=forms.CheckboxSelectMultiple,
-        help_text='select one or more programs',
-    )
 
     ## Form section - Access ----------------------------------------
-    offer_embargo_access = forms.BooleanField(required=False, label='Offer embargo-access for two years')
+    offer_embargo_access = forms.BooleanField(required=False, label='Offer 2-year embargo')
 
     offer_license_options = forms.BooleanField(required=False, label='Offer license options')
     license_required = forms.BooleanField(
         required=False, label='License required', help_text='auto-selects `Offer...` on save'
     )
-    license_options = forms.MultipleChoiceField(
-        required=False, label='License Options', choices=[('license1', 'License 1'), ('license2', 'License 2')]
+    license_list = [
+        ('all_rights_reserved', 'All Rights Reserved'),
+        ('CC_BY', 'Attribution (CC BY)'),
+        ('CC_BY-SA', 'Attribution-ShareAlike (CC BY-SA)'),
+        ('CC_BY-NC-SA', 'Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'),
+        ('CC_BY-NC-ND', 'Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)'),
+        ('CC_BY-NC', 'Attribution-NonCommercial (CC BY-NC)'),
+        ('CC_BY-ND', 'Attribution-NoDerivatives (CC BY-ND)'),
+        ('CC0', '"No Rights Reserved" Creative Commons Zero (CC0)'),
+    ]  # (value, label)
+    license_options = forms.MultipleChoiceField(required=False, label='License Options', choices=license_list)
+    license_default_choices = [('ERR', 'Unselected')] + license_list
+    license_default = forms.ChoiceField(
+        choices=license_default_choices,
+        label='License default',
+        required=False,
+        help_text='select default license',
     )
-    license_default = forms.CharField(required=False, label='License Default')
-
-    offer_access_options = forms.BooleanField(required=False, label='Offer access options')
-    access_required = forms.BooleanField(
-        required=False, label='Access required', help_text='auto-selects `Offer...` on save'
-    )
-    access_options = forms.MultipleChoiceField(
-        required=False, label='Access Options', choices=[('access1', 'Access 1'), ('access2', 'Access 2')]
-    )
-    access_default = forms.CharField(required=False, label='Access Default')
 
     offer_visibility_options = forms.BooleanField(required=False, label='Offer visibility options')
     visibility_required = forms.BooleanField(
         required=False, label='Visibility required', help_text='auto-selects `Offer...` on save'
     )
-    visibility_options = forms.MultipleChoiceField(
-        required=False, label='Visibility Options', choices=[('vis1', 'Visibility 1'), ('vis2', 'Visibility 2')]
+    visibility_list = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+        ('brown_only_discoverable', 'Brown Only but discoverable'),
+        ('brown_only_not_discoverable', 'Brown Only not discoverable'),
+    ]  # (value, label)
+    visibility_options = forms.MultipleChoiceField(required=False, label='Visibility Options', choices=visibility_list)
+    visibility_default_choices = [('ERR', 'Unselected')] + visibility_list
+    visibility_default = forms.ChoiceField(
+        choices=visibility_default_choices, label='Visibility Default', required=False, help_text='select default visibility'
     )
-    visibility_default = forms.CharField(required=False, label='Visibility Default')
 
     ## Form section - Other -----------------------------------------
     ask_for_concentrations = forms.BooleanField(required=False, label='Ask for concentrations')
@@ -95,19 +117,6 @@ class StaffForm(forms.Form):
     )
 
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
-
-    authorized_student_groups = forms.CharField(
-        required=False,
-        label='Authorized student groups',
-        help_text='Example: "group:A | group:B"',
-        widget=forms.Textarea,
-    )
-    authorized_student_emails = forms.CharField(
-        required=False,
-        label='Authorized student emails',
-        help_text='Example: "email1 | email2"',
-        widget=forms.Textarea,
-    )
 
     def clean(self):
         log.debug('starting StaffForm.clean()')
@@ -133,8 +142,8 @@ class StaffForm(forms.Form):
         ## access ---------------------------------------------------
         if cleaned_data.get('license_required') and not cleaned_data.get('offer_license_options'):
             cleaned_data['offer_license_options'] = True
-        if cleaned_data.get('access_required') and not cleaned_data.get('offer_access_options'):
-            cleaned_data['offer_access_options'] = True
+        # if cleaned_data.get('access_required') and not cleaned_data.get('offer_access_options'):
+        #     cleaned_data['offer_access_options'] = True
         if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
             cleaned_data['offer_visibility_options'] = True
         ## other ----------------------------------------------------
@@ -145,27 +154,28 @@ class StaffForm(forms.Form):
 
         ## validate that when options are offered, at least one option is selected.
 
-        if cleaned_data.get('offer_department'):
-            if not cleaned_data.get('department_options'):
-                self.add_error('department_options', 'At least one department must be selected.')
-        if cleaned_data.get('offer_research_program'):
-            if not cleaned_data.get('research_program_options'):
-                self.add_error('research_program_options', 'At least one research program must be selected.')
         if cleaned_data.get('offer_license_options'):
             if not cleaned_data.get('license_options'):
                 self.add_error('license_options', 'At least one license must be selected.')
             if not cleaned_data.get('license_default'):
                 self.add_error('license_default', 'A default license is required.')
-        if cleaned_data.get('offer_access_options'):
-            if not cleaned_data.get('access_options'):
-                self.add_error('access_options', 'At least one access option must be selected.')
-            if not cleaned_data.get('access_default'):
-                self.add_error('access_default', 'A default access option is required.')
+            log.debug(f'selected license options: {cleaned_data.get("license_options", "")}')
+            log.debug(f'license_default: {cleaned_data.get("license_default", "")}')
+            if cleaned_data.get('license_default', '') not in cleaned_data.get('license_options', ''):
+                self.add_error('license_default', 'Default license must be one of the selected license options.')
+
         if cleaned_data.get('offer_visibility_options'):
             if not cleaned_data.get('visibility_options'):
-                self.add_error('visibility_options', 'At least one visibility option must be selected.')
+                self.add_error('visibility_options', 'At least one visibility-option must be selected.')
             if not cleaned_data.get('visibility_default'):
-                self.add_error('visibility_default', 'A default visibility option is required.')
+                self.add_error('visibility_default', 'A default visibility-option is required.')
+            if cleaned_data.get('visibility_default', '') not in cleaned_data.get('visibility_options', ''):
+                self.add_error(
+                    'visibility_default', 'Default visibility-option must be one of the selected visibility-options.'
+                )
+
+        ## other validation -----------------------------------------
+        ## TODO- VALIDATE COLLECTION_TITLE
 
         ## if nothing is filled out, raise an error
         if not any(
