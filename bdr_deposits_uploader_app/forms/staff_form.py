@@ -51,24 +51,17 @@ class StaffForm(forms.Form):
         required=False, label='License required', help_text='auto-selects `Offer...` on save'
     )
     license_list = [
-        ('license1', 'License 1'),
-        ('license2', 'License 2'),
-        ('license3', 'License 3'),
-        ('license4', 'License 4'),
-        ('license5', 'License 5'),
-        ('license6', 'License 6'),
+        ('all_rights_reserved', 'All Rights Reserved'),
+        ('CC_BY', 'Attribution (CC BY)'),
+        ('CC_BY-SA', 'Attribution-ShareAlike (CC BY-SA)'),
+        ('CC_BY-NC-SA', 'Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'),
+        ('CC_BY-NC-ND', 'Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)'),
+        ('CC_BY-NC', 'Attribution-NonCommercial (CC BY-NC)'),
+        ('CC_BY-ND', 'Attribution-NoDerivatives (CC BY-ND)'),
+        ('CC0', '"No Rights Reserved" Creative Commons Zero (CC0)'),
     ]  # (value, label)
     license_options = forms.MultipleChoiceField(required=False, label='License Options', choices=license_list)
-    # license_default = forms.CharField(required=False, label='License Default')
-    license_default_choices = [
-        ('ERR', 'Unselected'),
-        ('license1', 'License 1'),
-        ('license2', 'License 2'),
-        ('license3', 'License 3'),
-        ('license4', 'License 4'),
-        ('license5', 'License 5'),
-        ('license6', 'License 6'),
-    ]  # (value, label)
+    license_default_choices = [('ERR', 'Unselected')] + license_list
     license_default = forms.ChoiceField(
         choices=license_default_choices,
         label='License default',
@@ -76,35 +69,21 @@ class StaffForm(forms.Form):
         help_text='select default license',
     )
 
-    # access_list = [
-    #     ('access1', 'Access 1'),
-    #     ('access2', 'Access 2'),
-    #     ('access3', 'Access 3'),
-    #     ('access4', 'Access 4'),
-    #     ('access5', 'Access 5'),
-    #     ('access6', 'Access 6'),
-    # ]  # (value, label)
-    # offer_access_options = forms.BooleanField(required=False, label='Offer access options')
-    # access_required = forms.BooleanField(
-    #     required=False, label='Access required', help_text='auto-selects `Offer...` on save'
-    # )
-    # access_options = forms.MultipleChoiceField(required=False, label='Access Options', choices=access_list)
-    # access_default = forms.CharField(required=False, label='Access Default')
-
-    visibility_list = [
-        ('vis1', 'Visibility 1'),
-        ('vis2', 'Visibility 2'),
-        ('vis3', 'Visibility 3'),
-        ('vis4', 'Visibility 4'),
-        ('vis5', 'Visibility 5'),
-        ('vis6', 'Visibility 6'),
-    ]  # (value, label)
     offer_visibility_options = forms.BooleanField(required=False, label='Offer visibility options')
     visibility_required = forms.BooleanField(
         required=False, label='Visibility required', help_text='auto-selects `Offer...` on save'
     )
+    visibility_list = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+        ('brown_only_discoverable', 'Brown Only but discoverable'),
+        ('brown_only_not_discoverable', 'Brown Only not discoverable'),
+    ]  # (value, label)
     visibility_options = forms.MultipleChoiceField(required=False, label='Visibility Options', choices=visibility_list)
-    visibility_default = forms.CharField(required=False, label='Visibility Default')
+    visibility_default_choices = [('ERR', 'Unselected')] + visibility_list
+    visibility_default = forms.ChoiceField(
+        choices=visibility_default_choices, label='Visibility Default', required=False, help_text='select default visibility'
+    )
 
     ## Form section - Other -----------------------------------------
     ask_for_concentrations = forms.BooleanField(required=False, label='Ask for concentrations')
@@ -173,23 +152,20 @@ class StaffForm(forms.Form):
                 self.add_error('license_options', 'At least one license must be selected.')
             if not cleaned_data.get('license_default'):
                 self.add_error('license_default', 'A default license is required.')
+            log.debug(f'selected license options: {cleaned_data.get("license_options", "")}')
+            log.debug(f'license_default: {cleaned_data.get("license_default", "")}')
+            if cleaned_data.get('license_default', '') not in cleaned_data.get('license_options', ''):
+                self.add_error('license_default', 'Default license must be one of the selected license options.')
 
-            log.debug(f'selected license options: {cleaned_data.get("license_options")}')
-            log.debug(f'license_default: {cleaned_data.get("license_default")}')
-
-            if cleaned_data.get('license_default') not in cleaned_data.get('license_options'):
-                self.add_error('license_default', 'Invalid default license selected.')
-
-        if cleaned_data.get('offer_access_options'):
-            if not cleaned_data.get('access_options'):
-                self.add_error('access_options', 'At least one access option must be selected.')
-            if not cleaned_data.get('access_default'):
-                self.add_error('access_default', 'A default access option is required.')
         if cleaned_data.get('offer_visibility_options'):
             if not cleaned_data.get('visibility_options'):
-                self.add_error('visibility_options', 'At least one visibility option must be selected.')
+                self.add_error('visibility_options', 'At least one visibility-option must be selected.')
             if not cleaned_data.get('visibility_default'):
-                self.add_error('visibility_default', 'A default visibility option is required.')
+                self.add_error('visibility_default', 'A default visibility-option is required.')
+            if cleaned_data.get('visibility_default', '') not in cleaned_data.get('visibility_options', ''):
+                self.add_error(
+                    'visibility_default', 'Default visibility-option must be one of the selected visibility-options.'
+                )
 
         ## other validation -----------------------------------------
         ## TODO- VALIDATE COLLECTION_TITLE
