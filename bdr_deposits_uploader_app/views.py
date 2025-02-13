@@ -286,6 +286,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 'depositor_fullname': depositor_fullname,
                 'depositor_email': depositor_email,
                 'deposit_iso_date': deposit_iso_date,
+                'app_name': app_config.name,
             },
         )
     return resp
