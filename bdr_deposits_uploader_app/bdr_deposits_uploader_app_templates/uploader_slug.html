@@ -249,7 +249,6 @@
         <div class="form-section">
             <h3>Access Section</h3>
 
-
             {% if form.license_options %}
             <div class="form-group">
                 <div class="label-container">
@@ -262,7 +261,6 @@
             </div>
             {% endif %}
 
-
             {% if form.visibility_options %}
             <div class="form-group">
                 <div class="label-container">
@@ -274,18 +272,7 @@
                 {{ form.visibility_options }}
             </div>
             {% endif %}
-            
-            {% if form.visibility_default %}
-            <div class="form-group">
-                {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
-                {% if form.visibility_default.help_text %}
-                <div class="label-container">
-                    <p class="help">{{ form.visibility_default.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-            
+                        
         </div>  <!-- end of form section -->
         
         <div class="form-section">
