@@ -6,12 +6,21 @@ from django import forms
 log = logging.getLogger(__name__)
 
 ALL_LICENSES: list[tuple[str, str]] = [
-    ('license1', 'License 1'),
-    ('license2', 'License 2'),
-    ('license3', 'License 3'),
-    ('license4', 'License 4'),
-    ('license5', 'License 5'),
-    ('license6', 'License 6'),
+    ('all_rights_reserved', 'All Rights Reserved'),
+    ('CC_BY', 'Attribution (CC BY)'),
+    ('CC_BY-SA', 'Attribution-ShareAlike (CC BY-SA)'),
+    ('CC_BY-NC-SA', 'Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'),
+    ('CC_BY-NC-ND', 'Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)'),
+    ('CC_BY-NC', 'Attribution-NonCommercial (CC BY-NC)'),
+    ('CC_BY-ND', 'Attribution-NoDerivatives (CC BY-ND)'),
+    ('CC0', '"No Rights Reserved" Creative Commons Zero (CC0)'),
+]
+
+ALL_VISIBILITIES: list[tuple[str, str]] = [
+    ('public', 'Public'),
+    ('private', 'Private'),
+    ('brown_only_discoverable', 'Brown Only but discoverable'),
+    ('brown_only_not_discoverable', 'Brown Only not discoverable'),
 ]
 
 
@@ -84,7 +93,6 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
         log.debug(f'RP-field after adding field: ``{pprint.pformat(fields["research_program"].__dict__)}``')
 
     ## Access section ------------------------------------------------
-
     if config_data.get('offer_license_options'):
         selected_license_keys: list[str] = config_data.get('license_options', [])
         selected_license_choices: list[tuple[str, str]] = [
@@ -99,29 +107,18 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
             initial=selected_license_default,
         )
 
-    if config_data.get('offer_access_options'):
-        fields['access_options'] = forms.MultipleChoiceField(
-            choices=[('access1', 'Access 1'), ('access2', 'Access 2')],
-            label='Access Options',
-            required=config_data.get('access_required', False),
-            help_text='Select at least one access option',
-        )
-        fields['access_default'] = forms.CharField(
-            label='Access Default',
-            required=config_data.get('access_required', False),
-            help_text='Enter the default access option',
-        )
     if config_data.get('offer_visibility_options'):
-        fields['visibility_options'] = forms.MultipleChoiceField(
-            choices=[('vis1', 'Visibility 1'), ('vis2', 'Visibility 2')],
+        selected_visibility_keys: list[str] = config_data.get('visibility_options', [])
+        selected_visibility_choices: list[tuple[str, str]] = [
+            choice for choice in ALL_VISIBILITIES if choice[0] in selected_visibility_keys
+        ]
+        selected_visibility_default: str = config_data.get('visibility_default')
+        fields['visibility_options'] = forms.ChoiceField(
+            choices=selected_visibility_choices,
             label='Visibility Options',
             required=config_data.get('visibility_required', False),
-            help_text='Select at least one visibility option',
-        )
-        fields['visibility_default'] = forms.CharField(
-            label='Visibility Default',
-            required=config_data.get('visibility_required', False),
-            help_text='Enter the default visibility',
+            help_text='select, or leave default',
+            initial=selected_visibility_default,
         )
 
     ## Other section -------------------------------------------------

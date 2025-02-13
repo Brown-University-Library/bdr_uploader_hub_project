@@ -253,52 +253,25 @@
             {% if form.license_options %}
             <div class="form-group">
                 <div class="label-container">
-                {{ form.license_options.label_tag }} 
-                {% if form.license_options.help_text %}
-                    <p class="help">{{ form.license_options.help_text|safe }}</p>
-                {% endif %}
+                    {{ form.license_options.label_tag }} 
+                    {% if form.license_options.help_text %}
+                        <p class="help">{{ form.license_options.help_text|safe }}</p>
+                    {% endif %}
                 </div>
                 {{ form.license_options }}
             </div>
             {% endif %}
 
 
-
-
-
-
-
-
-            {% if form.access_options %}
-            <div class="form-group">
-                {{ form.access_options.label_tag }} {{ form.access_options }}
-                {% if form.access_options.help_text %}
-                <div class="label-container">
-                    <p class="help">{{ form.access_options.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-
-            {% if form.access_default %}
-            <div class="form-group">
-                {{ form.access_default.label_tag }} {{ form.access_default }}
-                {% if form.access_default.help_text %}
-                <div class="label-container">
-                    <p class="help">{{ form.access_default.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-
             {% if form.visibility_options %}
             <div class="form-group">
-                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}
-                {% if form.visibility_options.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.visibility_options.help_text|safe }}</p>
+                    {{ form.visibility_options.label_tag }} 
+                    {% if form.visibility_options.help_text %}
+                        <p class="help">{{ form.visibility_options.help_text|safe }}</p>
+                    {% endif %}
                 </div>
-                {% endif %}
+                {{ form.visibility_options }}
             </div>
             {% endif %}
             
