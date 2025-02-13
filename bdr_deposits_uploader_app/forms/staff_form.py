@@ -10,6 +10,26 @@ class StaffForm(forms.Form):
     ## Basics section -----------------------------------------------
     collection_pid = forms.CharField(required=True, label='Collection PID')
     collection_title = forms.CharField(required=True, label='Collection Title', help_text='PID sanity-check')
+    staff_to_notify = forms.CharField(
+        required=True,
+        label='Staff to notify on ingest',
+        help_text='email1 | email2 | ...',
+    )
+
+    authorized_student_groups = forms.CharField(
+        required=False,
+        label='Authorized student groups',
+        help_text='group:A | group:B | ...',
+        widget=forms.Textarea(
+            attrs={'rows': 5}
+        ),  # or I could say widget=forms.Textarea(attrs={'class': 'textarea'}), and then style it in css
+    )
+    authorized_student_emails = forms.CharField(
+        required=False,
+        label='Authorized student emails',
+        help_text='email1 | email2 | ...',
+        widget=forms.Textarea(attrs={'rows': 5}),
+    )
 
     ## Form section - Collaborators ---------------------------------
     offer_advisors_and_readers = forms.BooleanField(required=False, label='Offer advisors/readers')
@@ -97,19 +117,6 @@ class StaffForm(forms.Form):
     )
 
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
-
-    authorized_student_groups = forms.CharField(
-        required=False,
-        label='Authorized student groups',
-        help_text='group:A | group:B | ...',
-        widget=forms.Textarea,
-    )
-    authorized_student_emails = forms.CharField(
-        required=False,
-        label='Authorized student emails',
-        help_text='email1 | email2 | ...',
-        widget=forms.Textarea,
-    )
 
     def clean(self):
         log.debug('starting StaffForm.clean()')

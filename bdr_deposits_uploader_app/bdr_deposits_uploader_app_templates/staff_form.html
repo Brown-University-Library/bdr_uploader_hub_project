@@ -28,9 +28,10 @@
     
     /* Form section styling */
     .form-section {
-        margin-bottom: 30px;
-        padding-bottom: 10px;
+        padding-bottom: .5rem;  /* space before the border-bottom line */
         border-bottom: 2px solid #ccc;
+        margin-top: 3rem;
+        margin-bottom: 2rem;  /* space after the border-bottom line */
     }
     
     /* Form group styling - align labels and inputs properly */
@@ -148,6 +149,7 @@
                 </div>
                 {{ form.collection_pid }}
             </div>
+
             <div class="form-group">
                 <div class="label-container">
                 {{ form.collection_title.label_tag }} 
@@ -157,6 +159,36 @@
                 </div>
                 {{ form.collection_title }}
             </div>
+
+            <div class="form-group">
+                <div class="label-container">
+                {{ form.staff_to_notify.label_tag }} 
+                    {% if form.staff_to_notify.help_text %}
+                        <p class="help">{{ form.staff_to_notify.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.staff_to_notify }}
+            </div>
+            
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_groups.label_tag }}
+                    {% if form.authorized_student_groups.help_text %}
+                        <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_groups }}
+            </div>  
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.authorized_student_emails.label_tag }}
+                    {% if form.authorized_student_emails.help_text %}
+                        <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.authorized_student_emails }}
+            </div>  
             
         </div>  <!-- end of form-section -->
 
@@ -300,26 +332,6 @@
             <div class="form-group">
                 {{ form.invite_supplementary_files.label_tag }} {{ form.invite_supplementary_files }}
             </div>
-
-            <div class="form-group">
-                <div class="label-container">
-                    {{ form.authorized_student_groups.label_tag }}
-                    {% if form.authorized_student_groups.help_text %}
-                        <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-                {{ form.authorized_student_groups }}
-            </div>  
-
-            <div class="form-group">
-                <div class="label-container">
-                    {{ form.authorized_student_emails.label_tag }}
-                    {% if form.authorized_student_emails.help_text %}
-                        <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-                {{ form.authorized_student_emails }}
-            </div>  
 
         </div>  <!-- end of form-section -->
         
