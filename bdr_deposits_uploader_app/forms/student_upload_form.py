@@ -36,12 +36,12 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     ## Basic Information section ------------------------------------
     fields['title'] = forms.CharField(
         label='Title',
-        required=config_data.get('title_required', False),
+        required=True,
         help_text='(required)',
     )
     fields['abstract'] = forms.CharField(
         label='Abstract',
-        required=config_data.get('abstract_required', False),
+        required=True,
         help_text='(required)',
         widget=forms.Textarea,
     )

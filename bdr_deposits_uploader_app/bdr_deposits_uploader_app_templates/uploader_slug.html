@@ -22,9 +22,10 @@
     }
     
     .form-section {
-        margin-bottom: 30px;
-        padding-bottom: 10px;
+        padding-bottom: .5rem;  /* space before the border-bottom line */
         border-bottom: 2px solid #ccc;
+        margin-top: 3rem;
+        margin-bottom: 2rem;  /* space after the border-bottom line */
     }
     
     .form-group {
@@ -218,7 +219,7 @@
         </div>  <!-- end of form section -->
         
         <div class="form-section">
-            <h3>Department and Program Section</h3>
+            <h3>Department and Program Info</h3>
 
             {% if form.department %}
             <div class="form-group">
@@ -247,7 +248,7 @@
         </div>  <!-- end of form section -->
 
         <div class="form-section">
-            <h3>Access Section</h3>
+            <h3>Access Info</h3>
 
             {% if form.license_options %}
             <div class="form-group">
