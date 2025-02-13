@@ -173,8 +173,6 @@ def config_new(request) -> HttpResponse:
     if not request.user.userprofile.can_create_app:
         log.debug(f'user ``{request.user}`` does not have permissions to create an app')
         return HttpResponse('You do not have permissions to create an app.')
-    # dummy_data: list = config_new_helper.get_recent_configs()
-    # log.debug(f'dummy_data, ``{pprint.pformat(dummy_data)}``')
     apps_data: list = config_new_helper.get_configs()
     log.debug(f'apps_data, ``{pprint.pformat(apps_data)}``')
     hlpr_check_name_and_slug_url = reverse('hlpr_check_name_and_slug_url')
@@ -182,7 +180,6 @@ def config_new(request) -> HttpResponse:
     context = {
         'hlpr_check_name_and_slug_url': hlpr_check_name_and_slug_url,
         'hlpr_generate_slug_url': hlpr_generate_slug_url,
-        # 'recent_apps': dummy_data,
         'recent_apps': apps_data,
         'username': request.user.first_name,
     }
@@ -200,6 +197,7 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         log.debug('user has permissions to configure app')
         app_config = get_object_or_404(AppConfig, slug=slug)
         log.debug(f'app_config, ``{app_config}``')
+        log.debug(f'app_config, ``{app_config.__dict__}``')
         if request.method == 'POST':
             log.debug(f'POST data, ``{request.POST}``')
             form = StaffForm(request.POST)
@@ -218,22 +216,21 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                     if field.errors:
                         log.debug(f'field.errors for {field.name}: {field.errors}')
                         log.debug(f'field label: {field.label}')
-                resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
+                resp = render(
+                    request,
+                    'staff_form.html',
+                    {'form': form, 'slug': slug, 'username': request.user.first_name},
+                )
         else:  # GET
             ## load existing data to pre-populate the form.
             initial_data = app_config.temp_config_json or {}
             form = StaffForm(initial=initial_data)
-            resp = render(request, 'staff_form.html', {'form': form, 'slug': slug, 'username': request.user.first_name})
+            resp = render(
+                request,
+                'staff_form.html',
+                {'form': form, 'slug': slug, 'app_name': app_config.name, 'username': request.user.first_name},
+            )
     return resp
-
-
-# @login_required
-# def staff_form_success(request) -> HttpResponse:
-#     """
-#     Displays a success message after a staff form is submitted.
-#     """
-#     log.debug('\n\nstarting staff_form_success()')
-#     return HttpResponse('Form submitted successfully; option to view the student form will be available here.')
 
 
 @login_required
@@ -289,6 +286,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 'depositor_fullname': depositor_fullname,
                 'depositor_email': depositor_email,
                 'deposit_iso_date': deposit_iso_date,
+                'app_name': app_config.name,
             },
         )
     return resp

@@ -17,7 +17,7 @@
     <!-- main -->
         {% block main_content %}
         <section class="form-section">
-            <h2>Create new deposits app</h2>
+            <h2>Staff: create new deposits app</h2>
             <!-- <form id="new-app-form" hx-post="/hlpr_check_name_and_slug/" hx-target="#response" hx-swap="innerHTML"> -->
             <form id="new-app-form" hx-post="{{hlpr_check_name_and_slug_url}}" hx-target="#response" hx-swap="innerHTML">
                 {% csrf_token %}
