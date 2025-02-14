@@ -6,24 +6,6 @@ from django.conf import settings
 
 log = logging.getLogger(__name__)
 
-# ALL_LICENSES: list[tuple[str, str]] = [
-#     ('all_rights_reserved', 'All Rights Reserved'),
-#     ('CC_BY', 'Attribution (CC BY)'),
-#     ('CC_BY-SA', 'Attribution-ShareAlike (CC BY-SA)'),
-#     ('CC_BY-NC-SA', 'Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'),
-#     ('CC_BY-NC-ND', 'Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)'),
-#     ('CC_BY-NC', 'Attribution-NonCommercial (CC BY-NC)'),
-#     ('CC_BY-ND', 'Attribution-NoDerivatives (CC BY-ND)'),
-#     ('CC0', '"No Rights Reserved" Creative Commons Zero (CC0)'),
-# ]
-
-ALL_VISIBILITIES: list[tuple[str, str]] = [
-    ('public', 'Public'),
-    ('private', 'Private'),
-    ('brown_only_discoverable', 'Brown Only but discoverable'),
-    ('brown_only_not_discoverable', 'Brown Only not discoverable'),
-]
-
 
 def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     """
@@ -97,7 +79,7 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     if config_data.get('offer_license_options'):
         selected_license_keys: list[str] = config_data.get('license_options', [])
         selected_license_choices: list[tuple[str, str]] = [
-            choice for choice in settings.ALL_LICENSES if choice[0] in selected_license_keys
+            choice for choice in settings.ALL_LICENSE_OPTIONS if choice[0] in selected_license_keys
         ]
         selected_license_default: str = config_data.get('license_default')
         fields['license_options'] = forms.ChoiceField(
@@ -111,7 +93,7 @@ def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
     if config_data.get('offer_visibility_options'):
         selected_visibility_keys: list[str] = config_data.get('visibility_options', [])
         selected_visibility_choices: list[tuple[str, str]] = [
-            choice for choice in ALL_VISIBILITIES if choice[0] in selected_visibility_keys
+            choice for choice in settings.ALL_VISIBILITY_OPTIONS if choice[0] in selected_visibility_keys
         ]
         selected_visibility_default: str = config_data.get('visibility_default')
         fields['visibility_options'] = forms.ChoiceField(

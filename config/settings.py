@@ -209,8 +209,14 @@ TEST_SHIB_META_DCT: dict = json.loads(os.environ['TEST_SHIB_META_DCT_JSON'])
 SHIB_SP_LOGIN_URL: str = os.environ['SHIB_SP_LOGIN_URL']
 SHIB_IDP_LOGOUT_URL: str = os.environ['SHIB_IDP_LOGOUT_URL']
 
-all_licenses_json: str = os.environ['ALL_LICENSES']
+all_licenses_json: str = os.environ['ALL_LICENSE_OPTIONS_JSON']
 licenses_list: list = json.loads(all_licenses_json)
-ALL_LICENSES: list[tuple[str, str]] = [
+ALL_LICENSE_OPTIONS: list[tuple[str, str]] = [
     tuple(item) for item in licenses_list
 ]  # creates, eg: [('all_rights_reserved', 'All Rights Reserved'), ('CC_BY', 'Attribution (CC BY)'), etc.]
+
+all_visibilities_json: str = os.environ['ALL_VISIBILITY_OPTIONS_JSON']
+visibilities_list: list = json.loads(all_visibilities_json)
+ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = [
+    tuple(item) for item in visibilities_list
+]  # creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]

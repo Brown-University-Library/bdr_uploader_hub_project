@@ -71,20 +71,10 @@ class StaffForm(forms.Form):
     license_required = forms.BooleanField(
         required=False, label='License required', help_text='auto-selects `Offer...` on save'
     )
-    # license_list = [
-    #     ('all_rights_reserved', 'All Rights Reserved'),
-    #     ('CC_BY', 'Attribution (CC BY)'),
-    #     ('CC_BY-SA', 'Attribution-ShareAlike (CC BY-SA)'),
-    #     ('CC_BY-NC-SA', 'Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'),
-    #     ('CC_BY-NC-ND', 'Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)'),
-    #     ('CC_BY-NC', 'Attribution-NonCommercial (CC BY-NC)'),
-    #     ('CC_BY-ND', 'Attribution-NoDerivatives (CC BY-ND)'),
-    #     ('CC0', '"No Rights Reserved" Creative Commons Zero (CC0)'),
-    # ]  # (value, label)
-    # license_options = forms.MultipleChoiceField(required=False, label='License Options', choices=license_list)
-    # license_default_choices = [('ERR', 'Unselected')] + license_list
-    license_options = forms.MultipleChoiceField(required=False, label='License Options', choices=settings.ALL_LICENSES)
-    license_default_choices = [('ERR', 'Unselected')] + settings.ALL_LICENSES
+    license_options = forms.MultipleChoiceField(
+        required=False, label='License Options', choices=settings.ALL_LICENSE_OPTIONS
+    )
+    license_default_choices = [('ERR', 'Unselected')] + settings.ALL_LICENSE_OPTIONS
     license_default = forms.ChoiceField(
         choices=license_default_choices,
         label='License default',
@@ -96,14 +86,10 @@ class StaffForm(forms.Form):
     visibility_required = forms.BooleanField(
         required=False, label='Visibility required', help_text='auto-selects `Offer...` on save'
     )
-    visibility_list = [
-        ('public', 'Public'),
-        ('private', 'Private'),
-        ('brown_only_discoverable', 'Brown Only but discoverable'),
-        ('brown_only_not_discoverable', 'Brown Only not discoverable'),
-    ]  # (value, label)
-    visibility_options = forms.MultipleChoiceField(required=False, label='Visibility Options', choices=visibility_list)
-    visibility_default_choices = [('ERR', 'Unselected')] + visibility_list
+    visibility_options = forms.MultipleChoiceField(
+        required=False, label='Visibility Options', choices=settings.ALL_VISIBILITY_OPTIONS
+    )
+    visibility_default_choices = [('ERR', 'Unselected')] + settings.ALL_VISIBILITY_OPTIONS
     visibility_default = forms.ChoiceField(
         choices=visibility_default_choices, label='Visibility Default', required=False, help_text='select default visibility'
     )
