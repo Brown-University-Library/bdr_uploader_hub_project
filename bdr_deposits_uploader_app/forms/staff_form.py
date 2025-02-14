@@ -2,6 +2,7 @@ import logging
 import pprint
 
 from django import forms
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 
@@ -70,18 +71,10 @@ class StaffForm(forms.Form):
     license_required = forms.BooleanField(
         required=False, label='License required', help_text='auto-selects `Offer...` on save'
     )
-    license_list = [
-        ('all_rights_reserved', 'All Rights Reserved'),
-        ('CC_BY', 'Attribution (CC BY)'),
-        ('CC_BY-SA', 'Attribution-ShareAlike (CC BY-SA)'),
-        ('CC_BY-NC-SA', 'Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'),
-        ('CC_BY-NC-ND', 'Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)'),
-        ('CC_BY-NC', 'Attribution-NonCommercial (CC BY-NC)'),
-        ('CC_BY-ND', 'Attribution-NoDerivatives (CC BY-ND)'),
-        ('CC0', '"No Rights Reserved" Creative Commons Zero (CC0)'),
-    ]  # (value, label)
-    license_options = forms.MultipleChoiceField(required=False, label='License Options', choices=license_list)
-    license_default_choices = [('ERR', 'Unselected')] + license_list
+    license_options = forms.MultipleChoiceField(
+        required=False, label='License Options', choices=settings.ALL_LICENSE_OPTIONS
+    )
+    license_default_choices = [('ERR', 'Unselected')] + settings.ALL_LICENSE_OPTIONS
     license_default = forms.ChoiceField(
         choices=license_default_choices,
         label='License default',
@@ -93,14 +86,10 @@ class StaffForm(forms.Form):
     visibility_required = forms.BooleanField(
         required=False, label='Visibility required', help_text='auto-selects `Offer...` on save'
     )
-    visibility_list = [
-        ('public', 'Public'),
-        ('private', 'Private'),
-        ('brown_only_discoverable', 'Brown Only but discoverable'),
-        ('brown_only_not_discoverable', 'Brown Only not discoverable'),
-    ]  # (value, label)
-    visibility_options = forms.MultipleChoiceField(required=False, label='Visibility Options', choices=visibility_list)
-    visibility_default_choices = [('ERR', 'Unselected')] + visibility_list
+    visibility_options = forms.MultipleChoiceField(
+        required=False, label='Visibility Options', choices=settings.ALL_VISIBILITY_OPTIONS
+    )
+    visibility_default_choices = [('ERR', 'Unselected')] + settings.ALL_VISIBILITY_OPTIONS
     visibility_default = forms.ChoiceField(
         choices=visibility_default_choices, label='Visibility Default', required=False, help_text='select default visibility'
     )
@@ -142,8 +131,6 @@ class StaffForm(forms.Form):
         ## access ---------------------------------------------------
         if cleaned_data.get('license_required') and not cleaned_data.get('offer_license_options'):
             cleaned_data['offer_license_options'] = True
-        # if cleaned_data.get('access_required') and not cleaned_data.get('offer_access_options'):
-        #     cleaned_data['offer_access_options'] = True
         if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
             cleaned_data['offer_visibility_options'] = True
         ## other ----------------------------------------------------
@@ -163,6 +150,10 @@ class StaffForm(forms.Form):
             log.debug(f'license_default: {cleaned_data.get("license_default", "")}')
             if cleaned_data.get('license_default', '') not in cleaned_data.get('license_options', ''):
                 self.add_error('license_default', 'Default license must be one of the selected license options.')
+        if cleaned_data.get('license_options') and not cleaned_data.get('offer_license_options'):
+            self.add_error('offer_license_options', 'License options must be offered if selected.')
+        if cleaned_data.get('license_default') and not cleaned_data.get('offer_license_options'):
+            self.add_error('offer_license_options', 'License options must be offered if a default license is selected.')
 
         if cleaned_data.get('offer_visibility_options'):
             if not cleaned_data.get('visibility_options'):
@@ -173,6 +164,12 @@ class StaffForm(forms.Form):
                 self.add_error(
                     'visibility_default', 'Default visibility-option must be one of the selected visibility-options.'
                 )
+        if cleaned_data.get('visibility_options') and not cleaned_data.get('offer_visibility_options'):
+            self.add_error('offer_visibility_options', 'Visibility options must be offered if selected.')
+        if cleaned_data.get('visibility_default') and not cleaned_data.get('offer_visibility_options'):
+            self.add_error(
+                'offer_visibility_options', 'Visibility options must be offered if a default visibility is selected.'
+            )
 
         ## other validation -----------------------------------------
         ## TODO- VALIDATE COLLECTION_TITLE
