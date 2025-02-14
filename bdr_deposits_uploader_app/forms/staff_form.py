@@ -131,8 +131,6 @@ class StaffForm(forms.Form):
         ## access ---------------------------------------------------
         if cleaned_data.get('license_required') and not cleaned_data.get('offer_license_options'):
             cleaned_data['offer_license_options'] = True
-        # if cleaned_data.get('access_required') and not cleaned_data.get('offer_access_options'):
-        #     cleaned_data['offer_access_options'] = True
         if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
             cleaned_data['offer_visibility_options'] = True
         ## other ----------------------------------------------------
@@ -152,6 +150,10 @@ class StaffForm(forms.Form):
             log.debug(f'license_default: {cleaned_data.get("license_default", "")}')
             if cleaned_data.get('license_default', '') not in cleaned_data.get('license_options', ''):
                 self.add_error('license_default', 'Default license must be one of the selected license options.')
+        if cleaned_data.get('license_options') and not cleaned_data.get('offer_license_options'):
+            self.add_error('offer_license_options', 'License options must be offered if selected.')
+        if cleaned_data.get('license_default') and not cleaned_data.get('offer_license_options'):
+            self.add_error('offer_license_options', 'License options must be offered if a default license is selected.')
 
         if cleaned_data.get('offer_visibility_options'):
             if not cleaned_data.get('visibility_options'):
@@ -162,6 +164,12 @@ class StaffForm(forms.Form):
                 self.add_error(
                     'visibility_default', 'Default visibility-option must be one of the selected visibility-options.'
                 )
+        if cleaned_data.get('visibility_options') and not cleaned_data.get('offer_visibility_options'):
+            self.add_error('offer_visibility_options', 'Visibility options must be offered if selected.')
+        if cleaned_data.get('visibility_default') and not cleaned_data.get('offer_visibility_options'):
+            self.add_error(
+                'offer_visibility_options', 'Visibility options must be offered if a default visibility is selected.'
+            )
 
         ## other validation -----------------------------------------
         ## TODO- VALIDATE COLLECTION_TITLE
