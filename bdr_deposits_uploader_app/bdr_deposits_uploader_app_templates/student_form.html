@@ -93,9 +93,9 @@
 
 {% block main_content %}
 <section class="form-container">
-    <a id="back-link" href="{% url 'config_new_url' %}">(back to appps page)</a> This will be a better back-link for students.
+    <a id="back-link" href="{% url 'staff_config_new_url' %}">(back to apps page)</a> This will be a better back-link for students.
     <h2 id="form-title">Student "{{ app_name }}" upload-form</h2>
-    <form method="post" enctype="multipart/form-data" action="{% url 'upload_slug_url' slug=slug %}">
+    <form method="post" enctype="multipart/form-data" action="{% url 'student_upload_slug_url' slug=slug %}">
         {% csrf_token %}
         
         <!-- display form errors -------------------------------- -->

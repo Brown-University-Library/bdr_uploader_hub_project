@@ -7,11 +7,11 @@ from django.conf import settings
 log = logging.getLogger(__name__)
 
 
-def make_student_upload_form_class(config_data: dict) -> type[forms.Form]:
+def make_student_form_class(config_data: dict) -> type[forms.Form]:
     """
     Dynamically creates and returns a StudentUploadForm class based on the staff-config form data.
     """
-    log.debug('starting make_student_upload_form_class()')
+    log.debug('starting make_student_form_class()')
     log.debug(f'config_data: {pprint.pformat(config_data)}')
 
     fields = {}
