@@ -219,7 +219,7 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 resp = render(
                     request,
                     'staff_form.html',
-                    {'form': form, 'slug': slug, 'username': request.user.first_name},
+                    {'form': form, 'slug': slug, 'app_name': app_config.name, 'username': request.user.first_name},
                 )
         else:  # GET
             ## load existing data to pre-populate the form.
