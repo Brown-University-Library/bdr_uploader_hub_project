@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import text
 
 from bdr_deposits_uploader_app.forms.staff_form import StaffForm
-from bdr_deposits_uploader_app.forms.student_upload_form import make_student_upload_form_class
+from bdr_deposits_uploader_app.forms.student_form import make_student_form_class
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
@@ -104,15 +104,15 @@ def pre_login(request) -> HttpResponseRedirect:
         log.debug('logout_status cleared')
         ## build IDP-shib-login-url ---------------------------------
         if type_value == 'staff':
-            full_authenticated_new_url = f'{request.scheme}://{request.get_host()}{reverse("config_new_url")}'
+            full_authenticated_new_url = f'{request.scheme}://{request.get_host()}{reverse("staff_config_new_url")}'
         elif type_value == 'student':
-            full_authenticated_new_url = f'{request.scheme}://{request.get_host()}{reverse("upload_url")}'
-        log.debug(f'full_config_new_url, ``{full_authenticated_new_url}``')
+            full_authenticated_new_url = f'{request.scheme}://{request.get_host()}{reverse("student_upload_url")}'
+        log.debug(f'full_staff_config_new_url, ``{full_authenticated_new_url}``')
         if request.get_host() == '127.0.0.1:8000':  # eases local development
             redirect_url = full_authenticated_new_url
         else:
-            encoded_full_config_new_url = parse.quote(full_authenticated_new_url, safe='')
-            redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_config_new_url}'
+            encoded_full_staff_config_new_url = parse.quote(full_authenticated_new_url, safe='')
+            redirect_url = f'{project_settings.SHIB_SP_LOGIN_URL}?target={encoded_full_staff_config_new_url}'
     log.debug(f'redirect_url, ``{redirect_url}``')
     return HttpResponseRedirect(redirect_url)
 
@@ -207,7 +207,7 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 app_config.temp_config_json = form.cleaned_data
                 app_config.save()
                 log.debug('Saved cleaned_data to app_config.temp_config_json')
-                resp = redirect(reverse('config_new_url'))
+                resp = redirect(reverse('staff_config_new_url'))
             else:
                 log.debug('form is not valid')
                 log.debug(f'form.errors, ``{form.errors}``')
@@ -264,8 +264,8 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     deposit_iso_date: str = datetime.datetime.now().isoformat()
 
     ## build form based on staff-config data ------------------------
-    # StudentUploadForm = get_student_upload_form_class(config_data)
-    StudentUploadForm: django.forms.forms.DeclarativeFieldsMetaclass = make_student_upload_form_class(config_data)
+    # StudentUploadForm = get_student_form_class(config_data)
+    StudentUploadForm: django.forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
     log.debug(f'type(StudentUploadForm), ``{type(StudentUploadForm)}``')
 
     ## handle POST and GET ------------------------------------------
@@ -278,7 +278,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         form = StudentUploadForm()
         resp: HttpResponse = render(
             request,
-            'uploader_slug.html',
+            'student_form.html',
             {
                 'form': form,
                 'slug': slug,
@@ -367,7 +367,7 @@ def hlpr_check_name_and_slug(request) -> HttpResponse | JsonResponse:
         raise Exception(message)
     log.debug('returning redirect')
     # redirect_url = '/version/'
-    redirect_url = reverse('config_slug_url', args=[slug])
+    redirect_url = reverse('staff_config_slug_url', args=[slug])
     log.debug(f'redirect_url, ``{redirect_url}``')
 
     response = JsonResponse({'redirect': redirect_url})

@@ -61,8 +61,8 @@ def get_configs() -> list:
             app_data['name'] = app.name
             submission_count_for_app = app.submission_set.count()
             app_data['items_count'] = submission_count_for_app
-            app_data['config_link'] = f'{reverse("config_slug_url", args=[app.slug])}'
-            app_data['upload_link'] = f'{reverse("upload_slug_url", args=[app.slug])}'
+            app_data['config_link'] = f'{reverse("staff_config_slug_url", args=[app.slug])}'
+            app_data['upload_link'] = f'{reverse("student_upload_slug_url", args=[app.slug])}'
             # app_data['admin_link'] = reverse(
             #     f'admin:{app_label}_{model_name}_change', args=[app.id]
             # )  # works, but not what I want
@@ -100,8 +100,8 @@ def get_configs() -> list:
 #         app_data['name'] = app.name
 #         submission_count_for_app = app.submission_set.count()
 #         app_data['items_count'] = submission_count_for_app
-#         app_data['config_link'] = f'{reverse("config_slug_url", args=[app.slug])}'
-#         app_data['upload_link'] = f'{reverse("upload_slug_url", args=[app.slug])}'
+#         app_data['config_link'] = f'{reverse("staff_config_slug_url", args=[app.slug])}'
+#         app_data['upload_link'] = f'{reverse("student_upload_slug_url", args=[app.slug])}'
 #         # app_data['admin_link'] = reverse(
 #         #     f'admin:{app_label}_{model_name}_change', args=[app.id]
 #         # )  # works, but not what I want
@@ -128,36 +128,36 @@ def get_configs() -> list:
 #             'mod_date': '2024-12-03 16:29:59.746846',
 #             'name': 'Med-School Posters',
 #             'items_count': 250,
-#             'config_link': f'{reverse("config_slug_url", args=["med-school-posters"])}',
-#             'upload_link': f'{reverse("upload_slug_url", args=["med-school-posters"])}',
+#             'config_link': f'{reverse("staff_config_slug_url", args=["med-school-posters"])}',
+#             'upload_link': f'{reverse("student_upload_slug_url", args=["med-school-posters"])}',
 #         },
 #         {
 #             'mod_date': '2024-11-03 16:29:59.746846',
 #             'name': 'UTRA Posters',
 #             'items_count': 5000,
-#             'config_link': f'{reverse("config_slug_url", args=["utra-posters"])}',
-#             'upload_link': f'{reverse("upload_slug_url", args=["utra-posters"])}',
+#             'config_link': f'{reverse("staff_config_slug_url", args=["utra-posters"])}',
+#             'upload_link': f'{reverse("student_upload_slug_url", args=["utra-posters"])}',
 #         },
 #         {
 #             'mod_date': '2024-10-03 16:29:59.746846',
 #             'name': 'Watson Capstones',
 #             'items_count': 75,
-#             'config_link': f'{reverse("config_slug_url", args=["watson-capstones"])}',
-#             'upload_link': f'{reverse("upload_slug_url", args=["watson-capstones"])}',
+#             'config_link': f'{reverse("staff_config_slug_url", args=["watson-capstones"])}',
+#             'upload_link': f'{reverse("student_upload_slug_url", args=["watson-capstones"])}',
 #         },
 #         {
 #             'mod_date': '2024-11-04 16:29:59.746846',
 #             'name': 'BDH Oral Histories',
 #             'items_count': 100,
-#             'config_link': f'{reverse("config_slug_url", args=["bdh-oral-histories"])}',
-#             'upload_link': f'{reverse("upload_slug_url", args=["bdh-oral-histories"])}',
+#             'config_link': f'{reverse("staff_config_slug_url", args=["bdh-oral-histories"])}',
+#             'upload_link': f'{reverse("student_upload_slug_url", args=["bdh-oral-histories"])}',
 #         },
 #         {
 #             'mod_date': '2024-08-03 16:29:59.746846',
 #             'name': 'Rites & Reason Images',
 #             'items_count': 125,
-#             'config_link': f'{reverse("config_slug_url", args=["rites-reason-images"])}',
-#             'upload_link': f'{reverse("upload_slug_url", args=["rites-reason-images"])}',
+#             'config_link': f'{reverse("staff_config_slug_url", args=["rites-reason-images"])}',
+#             'upload_link': f'{reverse("student_upload_slug_url", args=["rites-reason-images"])}',
 #         },
 #     ]
 #     ## sort dict by date descending
