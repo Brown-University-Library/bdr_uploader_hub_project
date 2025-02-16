@@ -197,6 +197,11 @@ class StaffForm(forms.Form):
         ## if nothing is filled out, raise an error
         if not any(
             [
+                cleaned_data.get('collection_pid'),
+                cleaned_data.get('collection_title'),
+                cleaned_data.get('staff_to_notify'),
+                cleaned_data.get('authorized_student_groups'),
+                cleaned_data.get('authorized_student_emails'),
                 cleaned_data.get('offer_advisors_and_readers'),
                 cleaned_data.get('offer_team_members'),
                 cleaned_data.get('offer_faculty_mentors'),
