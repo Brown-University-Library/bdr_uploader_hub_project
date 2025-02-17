@@ -141,7 +141,9 @@ class StaffForm(forms.Form):
                 self.add_error('authorized_student_emails', 'At least one email is required.')
             invalid_emails = []
             for email in emails:
-                if not email.startswith('email:'):
+                try:
+                    validate_email(email)
+                except ValidationError:
                     invalid_emails.append(email)
             if invalid_emails:
                 self.add_error('authorized_student_emails', f'Invalid email(s): {", ".join(invalid_emails)}')
