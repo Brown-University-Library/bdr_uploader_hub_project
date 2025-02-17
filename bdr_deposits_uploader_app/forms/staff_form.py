@@ -125,7 +125,6 @@ class StaffForm(forms.Form):
             emails = [email.strip() for email in data.split('|') if email.strip()]
             if not emails:
                 self.add_error('staff_to_notify', 'At least one email is required.')
-
             invalid_emails = []
             for email in emails:
                 try:
@@ -134,6 +133,18 @@ class StaffForm(forms.Form):
                     invalid_emails.append(email)
             if invalid_emails:
                 self.add_error('staff_to_notify', f'Invalid email(s): {", ".join(invalid_emails)}')
+
+        if cleaned_data.get('authorized_student_emails', ''):
+            data = cleaned_data.get('authorized_student_emails', '')
+            emails = [email.strip() for email in data.split('|') if email.strip()]
+            if not emails:
+                self.add_error('authorized_student_emails', 'At least one email is required.')
+            invalid_emails = []
+            for email in emails:
+                if not email.startswith('email:'):
+                    invalid_emails.append(email)
+            if invalid_emails:
+                self.add_error('authorized_student_emails', f'Invalid email(s): {", ".join(invalid_emails)}')
 
         ## collaborators fields -------------------------------------
         if cleaned_data.get('advisors_and_readers_required') and not cleaned_data.get('offer_advisors_and_readers'):
@@ -201,6 +212,9 @@ class StaffForm(forms.Form):
             cleaned_data['ask_for_degrees'] = True
 
         ## other validation -----------------------------------------
+
+        if not cleaned_data.get('authorized_student_groups') and not cleaned_data.get('authorized_student_emails'):
+            self.add_error(None, 'At least one student group or email must be provided.')
 
         ## if nothing is filled out, raise an error
         if not any(
