@@ -165,7 +165,11 @@ class StaffForm(forms.Form):
                 self.add_error('license_default', 'Default license must be one of the selected license options.')
         if cleaned_data.get('license_options') and not cleaned_data.get('offer_license_options'):
             self.add_error('offer_license_options', 'License options must be offered if selected.')
-        if cleaned_data.get('license_default') and not cleaned_data.get('offer_license_options'):
+        if (
+            cleaned_data.get('license_default')
+            and cleaned_data.get('license_default') != 'ERR'
+            and not cleaned_data.get('offer_license_options')
+        ):
             self.add_error('offer_license_options', 'License options must be offered if a default license is selected.')
 
         if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
@@ -181,7 +185,11 @@ class StaffForm(forms.Form):
                 )
         if cleaned_data.get('visibility_options') and not cleaned_data.get('offer_visibility_options'):
             self.add_error('offer_visibility_options', 'Visibility options must be offered if selected.')
-        if cleaned_data.get('visibility_default') and not cleaned_data.get('offer_visibility_options'):
+        if (
+            cleaned_data.get('visibility_default')
+            and cleaned_data.get('visibility_default') != 'ERR'
+            and not cleaned_data.get('offer_visibility_options')
+        ):
             self.add_error(
                 'offer_visibility_options', 'Visibility options must be offered if a default visibility is selected.'
             )
