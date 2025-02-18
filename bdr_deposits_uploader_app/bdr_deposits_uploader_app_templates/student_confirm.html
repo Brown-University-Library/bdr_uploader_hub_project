@@ -64,7 +64,7 @@
     <div class="form-section">
       {% for key, value in student_data.items %}
         <div class="form-group">
-          <strong>{{ key|capfirst }}:</strong> <span class="form-control-static">{{ value }}</span>
+          <strong>{{ key|title }}:</strong> <span class="form-control-static">{{ value }}</span>
         </div>
       {% endfor %}
     </div>
