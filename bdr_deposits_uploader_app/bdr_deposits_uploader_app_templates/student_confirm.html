@@ -5,92 +5,54 @@
 <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
 <title>Confirm Submission</title>
 
+
 <style>
     a#back-link {
-        /* display: block; */
         margin-bottom: 2rem;
         display: inline;
     }
     
-    #form-title {
-        margin-top: 2rem;
-        margin-bottom: 3rem;
-    }
-
     form {
         width: 800px;
         margin: auto;
     }
     
     .form-section {
-        padding-bottom: .5rem;  /* space before the border-bottom line */
+        padding-bottom: 0.5rem; /* space before the border-bottom line */
         border-bottom: 2px solid #ccc;
-        margin-top: 3rem;
-        margin-bottom: 2rem;  /* space after the border-bottom line */
+        margin: 3rem 0 2rem;   /* top and bottom margins */
     }
     
     .form-group {
         display: grid;
-        /* grid-template-columns: 250px auto; */
-        grid-template-columns: 300px auto;
+        grid-template-columns: 200px auto;
         align-items: start;
         gap: 10px;
         margin-bottom: 2rem;
     }
     
-    label {
+    /* Right-align the label (wrapped in a <strong> tag) */
+    .form-group strong {
         text-align: right;
-        margin-right: 10px;
-    }
-
-    .help {
-        font-size: 0.9em;
-        color: #666;
-        text-align: right;
-        margin-top: 2px; 
-        margin-right: 14px;
+        display: block;
     }
     
-    input[type='text'], select, textarea {
-        width: 100%;
-        text-align: left;
-        max-width: 500px;
-    }
-    
-    .form-group input[type='checkbox'] {
-        justify-self: start;
-    }
-
-    .label-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-    }
-
-    .errorlist {
-        color: red;
-        list-style-type: none;
-        padding: 0;
-        margin-bottom: 1rem;
-    }
-
-    .form-errors {
-        border: 1px solid red;
-        padding-left: 1rem;
-        padding-top: 0;
-        padding-bottom: 0;
-        margin-bottom: 3rem;
-    }
-
     .form-control-static {
         display: block;
         width: 100%;
         text-align: left;
         max-width: 500px;
-        margin: 0; 
+        margin-left: 1rem;
     }
-    
+
+    button {
+        margin-right: 1rem;
+    }
 </style>
+  
+
+
+
 
 {% endblock header_other %}
 
