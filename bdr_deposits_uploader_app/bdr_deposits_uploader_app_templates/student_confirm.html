@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header_other %}
+  <link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
+  <title>Review Your Submission</title>
+{% endblock header_other %}
+
+{% block main_content %}
+<section class="form-container">
+  <h2>Review Your Submission for "{{ app_name }}"</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-section">
+      {% for key, value in student_data.items %}
+        <div class="form-group">
+          <strong>{{ key|capfirst }}:</strong> <span class="form-control-static">{{ value }}</span>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="form-field">
+      <button type="submit" name="confirm" class="btn-primary">Confirm</button>
+      <button type="submit" name="edit" class="btn-primary">Edit</button>
+    </div>
+  </form>
+</section>
+{% endblock main_content %}

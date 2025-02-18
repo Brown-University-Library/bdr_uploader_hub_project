@@ -11,8 +11,9 @@ urlpatterns = [
     path('logout/', views.logout, name='logout_url'),
     path('staff_config/new/', views.config_new, name='staff_config_new_url'),
     path('staff_config/<str:slug>/', views.config_slug, name='staff_config_slug_url'),
-    path('student_upload/', views.upload, name='student_upload_url'),
-    path('student_upload/<str:slug>/', views.upload_slug, name='student_upload_slug_url'),
+    path('student_upload/', views.upload, name='student_upload_url'),  # page where student will seep possible upload-apps
+    path('student_upload/<str:slug>/', views.upload_slug, name='student_upload_slug_url'),  # the chosen student-upload-form
+    path('student_confirm/<str:slug>/', views.student_confirm, name='student_confirm_url'),  # upload-form confirmation
     path('upload_successful/', views.upload_successful, name='upload_successful_url'),  # not yet implemented
     ## htmx helpers -------------------------------------------------
     path('hlpr_generate_slug/', views.hlpr_generate_slug, name='hlpr_generate_slug_url'),
