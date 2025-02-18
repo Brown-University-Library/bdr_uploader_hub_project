@@ -273,6 +273,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         form = StudentUploadForm(request.POST, request.FILES)
         if form.is_valid():
             # TODO: Process the valid student-upload data, e.g., save to UploadInfo model.
+            request.session['student_form_data'] = form.cleaned_data
             resp: HttpResponseRedirect = redirect(reverse('upload_successful_url'))
     else:  # GET
         ## see if there's form session data to pre-populate the form
