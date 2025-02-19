@@ -47,18 +47,28 @@ class Submission(models.Model):
     app = models.ForeignKey(AppConfig, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=255)
     abstract = models.TextField()
-    upload = models.FileField(blank=True)
+    advisors_and_readers = models.CharField(max_length=255, blank=True, null=True)
+    team_members = models.CharField(max_length=255, blank=True, null=True)
+    faculty_mentors = models.CharField(max_length=255, blank=True, null=True)
+    authors = models.CharField(max_length=255, blank=True, null=True)
+    department = models.CharField(max_length=255, blank=True, null=True)
+    research_program = models.CharField(max_length=255, blank=True, null=True)
+    license_options = models.CharField(max_length=100, blank=True, null=True)
+    visibility_options = models.CharField(max_length=100, blank=True, null=True)
+    concentrations = models.CharField(max_length=255, blank=True, null=True)
+    degrees = models.CharField(max_length=255, blank=True, null=True)
+    supplementary_files = models.FileField(upload_to='submissions/', blank=True, null=True)
+    # Optionally, you may want to keep the original file info fields if needed:
     original_file_name = models.CharField(max_length=255, blank=True, null=True)
-    checksum_type = models.CharField(max_length=100, null=True, blank=True)
-    checksum = models.CharField(max_length=255, null=True, blank=True)
-    student_eppn = models.CharField(max_length=255, null=True, blank=True)
-    student_email = models.CharField(max_length=255, null=True, blank=True)
+    checksum_type = models.CharField(max_length=100, blank=True, null=True)
+    checksum = models.CharField(max_length=255, blank=True, null=True)
+    student_eppn = models.CharField(max_length=255, blank=True, null=True)
+    student_email = models.CharField(max_length=255, blank=True, null=True)
+    # Store the entire cleaned form data as JSON for debugging or auditing.
     temp_submission_json = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        title_short = self.title
-        if len(self.title) > 10:
-            title_short = f'{self.title[0:10]}...'
+        title_short = self.title if len(self.title) <= 10 else f'{self.title[:10]}...'
         return title_short
