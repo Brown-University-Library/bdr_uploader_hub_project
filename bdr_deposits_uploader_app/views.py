@@ -2,6 +2,8 @@ import datetime
 import json
 import logging
 import pprint
+import uuid
+from pathlib import Path
 from urllib import parse
 from urllib.parse import quote
 
@@ -10,6 +12,8 @@ import trio
 from django.conf import settings as project_settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -244,6 +248,28 @@ def upload(request) -> HttpResponse:
         'username': request.user.first_name,
     }
     return render(request, 'uploader_select.html', context)
+
+
+## helper: handle uploaded file immediately
+def handle_uploaded_file(file_field) -> Path:
+    ## define staging directory using pathlib.Path and default storage location
+    base_dir = Path(default_storage.location)
+    staging_dir = base_dir / 'temp_uploads'
+    staging_dir.mkdir(parents=True, exist_ok=True)
+
+    ## generate unique filename with original extension
+    ext = Path(file_field.name).suffix
+    filename = f'{uuid.uuid4().hex}{ext}'
+    file_path = staging_dir / filename
+
+    ## compute relative path with respect to base_dir for storage.save()
+    relative_path = file_path.relative_to(base_dir)
+    saved_path = default_storage.save(str(relative_path), ContentFile(file_field.read()))
+
+    ## return resolved absolute path
+    res_abs_pth = (base_dir / saved_path).resolve()
+    log.debug(f'res_abs_pth, ``{res_abs_pth}``')
+    return res_abs_pth
 
 
 @login_required
