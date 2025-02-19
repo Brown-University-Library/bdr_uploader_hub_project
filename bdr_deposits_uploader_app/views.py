@@ -273,9 +273,16 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         form = StudentUploadForm(request.POST, request.FILES)
         if form.is_valid():
             # TODO: Process the valid student-upload data, e.g., save to UploadInfo model.
-            resp: HttpResponseRedirect = redirect(reverse('upload_successful_url'))
-    else:
-        form = StudentUploadForm()
+            request.session['student_form_data'] = form.cleaned_data
+            # resp: HttpResponseRedirect = redirect(reverse('upload_successful_url'))
+            resp: HttpResponseRedirect = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
+    else:  # GET
+        ## see if there's form session data to pre-populate the form
+        initial_data = request.session.get('student_form_data', {})
+        form = StudentUploadForm(initial=initial_data)
+        request.session['student_form_data'] = {}  # clear the session data
+        ## render the form
+        form = StudentUploadForm(initial=initial_data)
         resp: HttpResponse = render(
             request,
             'student_form.html',
@@ -290,6 +297,40 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
             },
         )
     return resp
+
+
+@login_required
+def student_confirm(request, slug):
+    """
+    Displays the student-upload confirmation page.
+    """
+    log.debug('\n\nstarting student_confirm()')
+
+    ## retrieve stored data from session.
+    student_data = request.session.get('student_form_data')
+    if not student_data:
+        ## No data saved; redirect back to upload form.
+        return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
+
+    if request.method == 'POST':
+        if 'confirm' in request.POST:
+            ## confirmed, so create Submission record
+            # app_config = get_object_or_404(AppConfig, slug=slug)
+            # submission = Submission.objects.create(app=app_config, **student_data)
+            ## clear the session data after processing.
+            del request.session['student_form_data']
+            return redirect('upload_successful_url')  # redirect to student-form success page
+        elif 'edit' in request.POST:
+            ## send back to student-upload-form
+            return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
+    else:
+        # Render a template that shows the submitted data read-only.
+        context = {
+            'student_data': student_data,
+            'slug': slug,
+            'app_name': get_object_or_404(AppConfig, slug=slug).name,
+        }
+        return render(request, 'student_confirm.html', context)
 
 
 def upload_successful(request) -> HttpResponse:

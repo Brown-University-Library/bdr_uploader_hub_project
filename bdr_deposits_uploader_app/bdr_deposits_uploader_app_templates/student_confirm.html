@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header_other %}
+<link rel="stylesheet" href="{% static 'bdr_deposits_uploader_app/css/common.css' %}">
+<title>Confirm Submission</title>
+
+
+<style>
+    a#back-link {
+        margin-bottom: 2rem;
+        display: inline;
+    }
+    
+    form {
+        width: 800px;
+        margin: auto;
+    }
+    
+    .form-section {
+        padding-bottom: 0.5rem; /* space before the border-bottom line */
+        border-bottom: 2px solid #ccc;
+        margin: 3rem 0 2rem;   /* top and bottom margins */
+    }
+    
+    .form-group {
+        display: grid;
+        grid-template-columns: 200px auto;
+        align-items: start;
+        gap: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    /* Right-align the label (wrapped in a <strong> tag) */
+    .form-group strong {
+        text-align: right;
+        display: block;
+    }
+    
+    .form-control-static {
+        display: block;
+        width: 100%;
+        text-align: left;
+        max-width: 500px;
+        margin-left: 1rem;
+    }
+
+    button {
+        margin-right: 1rem;
+    }
+</style>
+  
+
+
+
+
+{% endblock header_other %}
+
+{% block main_content %}
+<section class="form-container">
+  <h2>Review Your Submission for "{{ app_name }}"</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-section">
+      {% for key, value in student_data.items %}
+        <div class="form-group">
+          <strong>{{ key|title }}:</strong> <span class="form-control-static">{{ value }}</span>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="form-field">
+      <button type="submit" name="confirm" class="btn-primary">Confirm</button>
+      <button type="submit" name="edit" class="btn-primary">Edit</button>
+    </div>
+  </form>
+</section>
+{% endblock main_content %}
