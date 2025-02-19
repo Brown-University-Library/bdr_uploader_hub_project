@@ -20,7 +20,7 @@ from bdr_deposits_uploader_app.forms.student_form import make_student_form_class
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
-from bdr_deposits_uploader_app.models import AppConfig
+from bdr_deposits_uploader_app.models import AppConfig, Submission
 
 log = logging.getLogger(__name__)
 
@@ -306,18 +306,36 @@ def student_confirm(request, slug):
     """
     log.debug('\n\nstarting student_confirm()')
 
-    ## retrieve stored data from session.
+    ## retrieve stored data from session
     student_data = request.session.get('student_form_data')
     if not student_data:
-        ## No data saved; redirect back to upload form.
+        ## no data saved; redirect back to upload form
         return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
 
     if request.method == 'POST':
         if 'confirm' in request.POST:
             ## confirmed, so create Submission record
-            # app_config = get_object_or_404(AppConfig, slug=slug)
-            # submission = Submission.objects.create(app=app_config, **student_data)
-            ## clear the session data after processing.
+            app_config = get_object_or_404(AppConfig, slug=slug)
+            submission = Submission.objects.create(
+                abstract=student_data.get('abstract'),
+                advisors_and_readers=student_data.get('advisors_and_readers'),
+                app=app_config,
+                authors=student_data.get('authors'),
+                concentrations=student_data.get('concentrations'),
+                degrees=student_data.get('degrees'),
+                department=student_data.get('department'),
+                faculty_mentors=student_data.get('faculty_mentors'),
+                license_options=student_data.get('license_options'),
+                research_program=student_data.get('research_program'),
+                team_members=student_data.get('team_members'),
+                title=student_data.get('title'),
+                visibility_options=student_data.get('visibility_options'),
+                ## file-handling stubbed below for now; will be updated
+                supplementary_files=student_data.get('supplementary_files'),  # will be updated
+                temp_submission_json=student_data,
+            )
+            log.debug(f'submission created-and-saved successfully, ``{submission}``')
+            ## clear the session data after processing
             del request.session['student_form_data']
             return redirect('upload_successful_url')  # redirect to student-form success page
         elif 'edit' in request.POST:

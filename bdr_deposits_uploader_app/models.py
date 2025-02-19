@@ -44,28 +44,34 @@ class Submission(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ## basics -------------------------------------------------------
     app = models.ForeignKey(AppConfig, on_delete=models.CASCADE, null=True)
+    student_eppn = models.CharField(max_length=255, blank=True, null=True)
+    student_email = models.CharField(max_length=255, blank=True, null=True)
     title = models.CharField(max_length=255)
     abstract = models.TextField()
+    ## collaborators ------------------------------------------------
     advisors_and_readers = models.CharField(max_length=255, blank=True, null=True)
     team_members = models.CharField(max_length=255, blank=True, null=True)
     faculty_mentors = models.CharField(max_length=255, blank=True, null=True)
     authors = models.CharField(max_length=255, blank=True, null=True)
+    ## departments/programs -----------------------------------------
     department = models.CharField(max_length=255, blank=True, null=True)
     research_program = models.CharField(max_length=255, blank=True, null=True)
+    ## access and visibility -----------------------------------------
     license_options = models.CharField(max_length=100, blank=True, null=True)
     visibility_options = models.CharField(max_length=100, blank=True, null=True)
+    ## other --------------------------------------------------------
     concentrations = models.CharField(max_length=255, blank=True, null=True)
     degrees = models.CharField(max_length=255, blank=True, null=True)
+    ## file stuff ---------------------------------------------------
     supplementary_files = models.FileField(upload_to='submissions/', blank=True, null=True)
-    # Optionally, you may want to keep the original file info fields if needed:
     original_file_name = models.CharField(max_length=255, blank=True, null=True)
     checksum_type = models.CharField(max_length=100, blank=True, null=True)
     checksum = models.CharField(max_length=255, blank=True, null=True)
-    student_eppn = models.CharField(max_length=255, blank=True, null=True)
-    student_email = models.CharField(max_length=255, blank=True, null=True)
-    # Store the entire cleaned form data as JSON for debugging or auditing.
+    ## form-data ----------------------------------------------------
     temp_submission_json = models.JSONField(default=dict, blank=True)
+    ## timestamps ---------------------------------------------------
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
