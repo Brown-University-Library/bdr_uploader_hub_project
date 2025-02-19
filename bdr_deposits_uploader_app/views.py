@@ -290,9 +290,8 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     deposit_iso_date: str = datetime.datetime.now().isoformat()
 
     ## build form based on staff-config data ------------------------
-    # StudentUploadForm = get_student_form_class(config_data)
     StudentUploadForm: django.forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
-    log.debug(f'type(StudentUploadForm), ``{type(StudentUploadForm)}``')
+
     ## handle POST and GET ------------------------------------------
     if request.method == 'POST':
         log.debug('handling POST')
@@ -300,18 +299,15 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
 
         if form.is_valid():
             cleaned_data = form.cleaned_data.copy()
+            log.debug(f'cleaned_data, ``{pprint.pformat(cleaned_data)}``')
             uploaded_file = cleaned_data.get('main_file')
             if uploaded_file:
-                saved_path = handle_uploaded_file(uploaded_file)
-                ## replace file object with file path in session data
-                cleaned_data['main_file'] = saved_path
+                ## store file-path, not file-obj, in session --------
+                saved_path: Path = handle_uploaded_file(uploaded_file)
+                cleaned_data['main_file'] = str(saved_path)
             request.session['student_form_data'] = cleaned_data
             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
 
-        # if form.is_valid():
-        #     request.session['student_form_data'] = form.cleaned_data
-        #     log.debug('form valid; redirecting to confirm page')
-        #     resp: HttpResponseRedirect = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
     else:  # GET
         ## see if there's form session data to pre-populate the form
         initial_data = request.session.get('student_form_data', {})
