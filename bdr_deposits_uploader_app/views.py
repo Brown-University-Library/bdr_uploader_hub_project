@@ -14,6 +14,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -250,26 +251,63 @@ def upload(request) -> HttpResponse:
     return render(request, 'uploader_select.html', context)
 
 
+# ## helper: handle uploaded file immediately
+# def handle_uploaded_file(file_field) -> Path:
+#     ## define staging directory using pathlib.Path and default storage location
+#     base_dir = Path(default_storage.location)
+#     staging_dir = base_dir / 'temp_uploads'
+#     staging_dir.mkdir(parents=True, exist_ok=True)
+
+#     ## generate unique filename with original extension
+#     ext = Path(file_field.name).suffix
+#     filename = f'{uuid.uuid4().hex}{ext}'
+#     file_path = staging_dir / filename
+
+#     ## compute relative path with respect to base_dir for storage.save()
+#     relative_path = file_path.relative_to(base_dir)
+#     saved_path = default_storage.save(str(relative_path), ContentFile(file_field.read()))
+
+#     ## return resolved absolute path
+#     res_abs_pth = (base_dir / saved_path).resolve()
+#     log.debug(f'res_abs_pth, ``{res_abs_pth}``')
+#     return res_abs_pth
+
+
 ## helper: handle uploaded file immediately
-def handle_uploaded_file(file_field) -> Path:
-    ## define staging directory using pathlib.Path and default storage location
-    base_dir = Path(default_storage.location)
-    staging_dir = base_dir / 'temp_uploads'
+def handle_uploaded_file(file_field: UploadedFile) -> Path:
+    ## use storage directory directly since MEDIA_ROOT includes it
+    staging_dir: Path = Path(default_storage.location)
     staging_dir.mkdir(parents=True, exist_ok=True)
+    log.debug(f'staging_dir, ``{staging_dir}``')
 
     ## generate unique filename with original extension
-    ext = Path(file_field.name).suffix
-    filename = f'{uuid.uuid4().hex}{ext}'
-    file_path = staging_dir / filename
+    extension: str = Path(file_field.name).suffix
+    filename: str = f'{uuid.uuid4().hex}{extension}'
+    file_path: Path = staging_dir / filename
+    log.debug(f'file_path, ``{file_path}``')
 
-    ## compute relative path with respect to base_dir for storage.save()
-    relative_path = file_path.relative_to(base_dir)
-    saved_path = default_storage.save(str(relative_path), ContentFile(file_field.read()))
+    ## compute relative path (since MEDIA_ROOT is the base, this is just the filename)
+    """
+    Apparently it's good to go through this relative-path rigamarole
+    because using default_storage.save() is supposed to be good, and it needs a relative path.
+    """
+    relative_path: Path = file_path.relative_to(staging_dir)
+    log.debug(f'relative_path, ``{relative_path}``')
 
-    ## return resolved absolute path
-    res_abs_pth = (base_dir / saved_path).resolve()
-    log.debug(f'res_abs_pth, ``{res_abs_pth}``')
-    return res_abs_pth
+    ## read file content and wrap in ContentFile
+    file_content: bytes = file_field.read()
+    content_file: ContentFile = ContentFile(file_content)
+
+    ## convert the relative path to string for default_storage.save
+    relative_path_str: str = str(relative_path)
+    ## save the file using the default storage and get the saved path
+    saved_path: str = default_storage.save(relative_path_str, content_file)
+    log.debug(f'saved_path, ``{saved_path}``')
+
+    ## return the absolute, resolved path to the saved file
+    final_path: Path = (staging_dir / saved_path).resolve()
+    log.debug(f'final_path, ``{final_path}``')
+    return final_path
 
 
 @login_required
@@ -301,9 +339,10 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
             cleaned_data = form.cleaned_data.copy()
             log.debug(f'cleaned_data, ``{pprint.pformat(cleaned_data)}``')
             uploaded_file = cleaned_data.get('main_file')
+            log.debug(f'type(uploaded_file), ``{type(uploaded_file)}``')
             if uploaded_file:
-                ## store file-path, not file-obj, in session --------
-                saved_path: Path = handle_uploaded_file(uploaded_file)
+                ## store modified-path, not file-obj, in session ----
+                saved_path: Path = handle_uploaded_file(uploaded_file)  # path like `uuid4hex.ext`
                 cleaned_data['main_file'] = str(saved_path)
             request.session['student_form_data'] = cleaned_data
             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
