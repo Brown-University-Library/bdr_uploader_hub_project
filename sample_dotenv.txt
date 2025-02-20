@@ -1,0 +1,102 @@
+## ============================================================================
+## standard project-level envar settings
+## ============================================================================
+
+## for info on settings: <https://docs.djangoproject.com/en/4.2/ref/settings/>
+
+SECRET_KEY="example_secret_key"
+
+DEBUG_JSON="true"
+
+ADMINS_JSON='
+    [
+      [ "exampleFirst exampleLast", "example@domain.edu" ],
+      [ "exampleFirst2 exampleLast2", "example2@domain.edu" ]
+    ]'
+
+ALLOWED_HOSTS_JSON='[]'
+CSRF_TRUSTED_ORIGINS_JSON='[]'
+
+DATABASES_JSON='
+    {
+      "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "HOST": "",
+        "NAME": "../DBs/bdr_deposits_uploader_project.sqlite",
+        "PASSWORD": "",
+        "PORT": "",
+        "USER": ""
+      }
+    }
+    '
+
+STATIC_URL="/static/"
+STATIC_ROOT="/tmp/"  # setting used by collectstatic command; not used by runserver
+
+## user uploaded file destination -----------------------------------
+MEDIA_ROOT = "/path/to/project_stuff/staged_uploads/"
+
+SERVER_EMAIL="donotreply_foo-project@domain.edu"
+EMAIL_HOST="localhost"
+EMAIL_PORT="1026"  # will be converted to int in settings.py
+## Want to see emails on your localbox? In a different terminal, run: ```python3 -m smtpd -n -c DebuggingServer localhost:1026```
+## ...and then access `http://127.0.0.1:8000/error_check/' to trigger an email.
+
+LOG_PATH="../logs/bdr_deposits_uploader_project.log"
+LOG_LEVEL="DEBUG"
+
+LOGIN_URL='http://127.0.0.1:8000/shib_login/'
+
+
+## ============================================================================
+## app envar settings
+## ============================================================================
+
+## localhost shib-testing -------------------------------------------
+
+## has config permissions -----------------------
+## (use this to test the app with a user who HAS permissions to create a new config -- i.e., a staff member)
+TEST_SHIB_META_DCT_JSON='{
+  "Shibboleth-eppn": "staffperson@domain.edu",
+  "Shibboleth-givenName": "StaffFirst",
+  "Shibboleth-mail": "staff_email@domain.edu",
+  "Shibboleth-sn": "StaffLast",
+  "shib-groups-key": "aa:bb:cc;dd:ee:ff;the:group;gg:hh"
+}'
+
+## no config permissions ------------------------
+## (use this to test the app with a user who does NOT have permissions to create a new config -- i.e., a student)
+# TEST_SHIB_META_DCT_JSON='{
+#   "Shibboleth-eppn": "studentperson@domain.edu",
+#   "Shibboleth-givenName": "StudentFirst",
+#   "Shibboleth-mail": "student_email@domain.edu",
+#   "Shibboleth-sn": "StudentLast",
+#   "shib-groups-key": "aa:bb:cc;dd:ee:ff;the:group;gg:hh"
+# }'
+
+SHIB_SP_LOGIN_URL="https://server.domain.edu/Shibboleth.sso/Login"  # not used in local-development
+SHIB_IDP_LOGOUT_URL="https://sso.domain.edu/idp/shib_logout.jsp"  # not used in local-development
+
+## form options -----------------------------------------------------
+## ( these will probably eventually be stored in db tables, so staff can edit them )
+## ( django pattern: ['value-stored-in-db', 'displayed-text'] )
+
+ALL_LICENSE_OPTIONS_JSON='[
+    ["all_rights_reserved", "All Rights Reserved"], 
+    ["CC_BY", "Attribution (CC BY)"], 
+    ["CC_BY-SA", "Attribution-ShareAlike (CC BY-SA)"], 
+    ["CC_BY-NC-SA", "Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)"], 
+    ["CC_BY-NC-ND", "Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)"], 
+    ["CC_BY-NC", "Attribution-NonCommercial (CC BY-NC)"], 
+    ["CC_BY-ND", "Attribution-NoDerivatives (CC BY-ND)"], 
+    ["CC0", "\"No Rights Reserved\" Creative Commons Zero (CC0)"]
+]'
+
+ALL_VISIBILITY_OPTIONS_JSON = '[
+    ["public", "Public"],
+    ["private", "Private"],
+    ["brown_only_discoverable", "Brown Only but discoverable"],
+    ["brown_only_not_discoverable", "Brown Only not discoverable"]
+]'  
+
+## end --------------------------------------------------------------
