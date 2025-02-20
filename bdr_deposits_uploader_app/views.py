@@ -350,66 +350,6 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     return resp
 
 
-# @login_required
-# def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
-#     """
-#     Displays the student-upload-form.
-#     """
-#     log.debug('\n\nstarting upload_slug()')
-#     log.debug(f'slug, ``{slug}``')
-
-#     ## load staff-config data ---------------------------------------
-#     app_config = get_object_or_404(AppConfig, slug=slug)
-#     config_data = app_config.temp_config_json
-
-#     ## prep other form data -----------------------------------------
-#     depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
-#     depositor_email: str = request.user.email
-#     deposit_iso_date: str = datetime.datetime.now().isoformat()
-
-#     ## build form based on staff-config data ------------------------
-#     StudentUploadForm: django.forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
-
-#     ## handle POST and GET ------------------------------------------
-#     if request.method == 'POST':
-#         log.debug('handling POST')
-#         form = StudentUploadForm(request.POST, request.FILES)
-
-#         if form.is_valid():
-#             cleaned_data = form.cleaned_data.copy()
-#             log.debug(f'cleaned_data, ``{pprint.pformat(cleaned_data)}``')
-#             uploaded_file = cleaned_data.get('main_file')
-#             log.debug(f'type(uploaded_file), ``{type(uploaded_file)}``')
-#             if uploaded_file:
-#                 ## store modified-path, not file-obj, in session ----
-#                 saved_path: Path = handle_uploaded_file(uploaded_file)  # path like `uuid4hex.ext`
-#                 cleaned_data['main_file'] = str(saved_path)
-#             request.session['student_form_data'] = cleaned_data
-#             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
-
-#     else:  # GET
-#         ## see if there's form session data to pre-populate the form
-#         initial_data = request.session.get('student_form_data', {})
-#         form = StudentUploadForm(initial=initial_data)
-#         request.session['student_form_data'] = {}  # clear the session data
-#         ## render the form
-#         form = StudentUploadForm(initial=initial_data)
-#         resp: HttpResponse = render(
-#             request,
-#             'student_form.html',
-#             {
-#                 'form': form,
-#                 'slug': slug,
-#                 'username': request.user.first_name,
-#                 'depositor_fullname': depositor_fullname,
-#                 'depositor_email': depositor_email,
-#                 'deposit_iso_date': deposit_iso_date,
-#                 'app_name': app_config.name,
-#             },
-#         )
-#     return resp
-
-
 @login_required
 def student_confirm(request, slug):
     """
@@ -428,21 +368,34 @@ def student_confirm(request, slug):
             ## confirmed, so create Submission record
             app_config = get_object_or_404(AppConfig, slug=slug)
             submission = Submission.objects.create(
-                abstract=student_data.get('abstract'),
-                advisors_and_readers=student_data.get('advisors_and_readers'),
+                ## basics -------------------------------------------
                 app=app_config,
+                student_eppn=request.user.username,
+                student_email=request.user.email,
+                title=student_data.get('title'),
+                abstract=student_data.get('abstract'),
+                ## collaborators ------------------------------------
+                advisors_and_readers=student_data.get('advisors_and_readers'),
+                team_members=student_data.get('team_members'),
+                faculty_mentors=student_data.get('faculty_mentors'),
                 authors=student_data.get('authors'),
+                ## departments/programs ------------------------------
+                department=student_data.get('department'),
+                research_program=student_data.get('research_program'),
+                ## access and visibility -----------------------------
+                license_options=student_data.get('license_options'),
+                visibility_options=student_data.get('visibility_options'),
+                ## other --------------------------------------------
                 concentrations=student_data.get('concentrations'),
                 degrees=student_data.get('degrees'),
-                department=student_data.get('department'),
-                faculty_mentors=student_data.get('faculty_mentors'),
-                license_options=student_data.get('license_options'),
-                research_program=student_data.get('research_program'),
-                team_members=student_data.get('team_members'),
-                title=student_data.get('title'),
-                visibility_options=student_data.get('visibility_options'),
-                ## file-handling stubbed below for now; will be updated
-                supplementary_files=student_data.get('supplementary_files'),  # will be updated
+                ## file-stuff ---------------------------------------
+                primary_file=student_data.get('staged_file_path'),
+                supplementary_files=student_data.get('supplementary_files'),
+                original_file_name=student_data.get('original_file_name'),
+                staged_file_name=student_data.get('staged_file_path').split('/')[-1],
+                checksum_type=student_data.get('checksum_type'),
+                checksum=student_data.get('checksum'),
+                ## form-data ----------------------------------------
                 temp_submission_json=student_data,
             )
             log.debug(f'submission created-and-saved successfully, ``{submission}``')
