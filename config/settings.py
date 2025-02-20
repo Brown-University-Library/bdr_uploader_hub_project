@@ -141,6 +141,9 @@ SERVER_EMAIL = os.environ['SERVER_EMAIL']
 EMAIL_HOST = os.environ['EMAIL_HOST']
 EMAIL_PORT = int(os.environ['EMAIL_PORT'])
 
+## user uploaded files ----------------------------------------------
+MEDIA_ROOT = os.environ['MEDIA_ROOT']
+# MEDIA_URL = os.environ['MEDIA_URL']  # not yet
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

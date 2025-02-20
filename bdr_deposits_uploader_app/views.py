@@ -2,6 +2,8 @@ import datetime
 import json
 import logging
 import pprint
+import uuid
+from pathlib import Path
 from urllib import parse
 from urllib.parse import quote
 
@@ -10,6 +12,9 @@ import trio
 from django.conf import settings as project_settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -20,7 +25,7 @@ from bdr_deposits_uploader_app.forms.student_form import make_student_form_class
 from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
-from bdr_deposits_uploader_app.models import AppConfig
+from bdr_deposits_uploader_app.models import AppConfig, Submission
 
 log = logging.getLogger(__name__)
 
@@ -246,6 +251,43 @@ def upload(request) -> HttpResponse:
     return render(request, 'uploader_select.html', context)
 
 
+## helper: handle uploaded file immediately
+def handle_uploaded_file(file_field: UploadedFile) -> Path:
+    ## use storage directory directly since MEDIA_ROOT includes it
+    staging_dir: Path = Path(default_storage.location)
+    staging_dir.mkdir(parents=True, exist_ok=True)
+    log.debug(f'staging_dir, ``{staging_dir}``')
+
+    ## generate unique filename with original extension
+    extension: str = Path(file_field.name).suffix
+    filename: str = f'{uuid.uuid4().hex}{extension}'
+    file_path: Path = staging_dir / filename
+    log.debug(f'file_path, ``{file_path}``')
+
+    ## compute relative path (since MEDIA_ROOT is the base, this is just the filename)
+    """
+    Apparently it's good to go through this relative-path rigamarole
+    because using default_storage.save() is supposed to be good, and it needs a relative path.
+    """
+    relative_path: Path = file_path.relative_to(staging_dir)
+    log.debug(f'relative_path, ``{relative_path}``')
+
+    ## read file content and wrap in ContentFile
+    file_content: bytes = file_field.read()
+    content_file: ContentFile = ContentFile(file_content)
+
+    ## convert the relative path to string for default_storage.save
+    relative_path_str: str = str(relative_path)
+    ## save the file using the default storage and get the saved path
+    saved_path: str = default_storage.save(relative_path_str, content_file)
+    log.debug(f'saved_path, ``{saved_path}``')
+
+    ## return the absolute, resolved path to the saved file
+    final_path: Path = (staging_dir / saved_path).resolve()
+    log.debug(f'final_path, ``{final_path}``')
+    return final_path
+
+
 @login_required
 def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     """
@@ -264,18 +306,27 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     deposit_iso_date: str = datetime.datetime.now().isoformat()
 
     ## build form based on staff-config data ------------------------
-    # StudentUploadForm = get_student_form_class(config_data)
     StudentUploadForm: django.forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
-    log.debug(f'type(StudentUploadForm), ``{type(StudentUploadForm)}``')
 
     ## handle POST and GET ------------------------------------------
     if request.method == 'POST':
+        log.debug('handling POST')
         form = StudentUploadForm(request.POST, request.FILES)
+
         if form.is_valid():
-            # TODO: Process the valid student-upload data, e.g., save to UploadInfo model.
-            request.session['student_form_data'] = form.cleaned_data
-            # resp: HttpResponseRedirect = redirect(reverse('upload_successful_url'))
-            resp: HttpResponseRedirect = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
+            cleaned_data = form.cleaned_data.copy()
+            log.debug(f'cleaned_data from copy, ``{pprint.pformat(cleaned_data)}``')
+            uploaded_file = cleaned_data.get('main_file')
+            log.debug(f'type(uploaded_file), ``{type(uploaded_file)}``')
+            if uploaded_file:
+                cleaned_data['original_file_name'] = uploaded_file.name  # for confirmation-display
+                ## store uuid-path, not file-obj, in session --------
+                saved_path: Path = handle_uploaded_file(uploaded_file)  # path like `uuid4hex.ext`
+                cleaned_data['staged_file_path'] = str(saved_path)  # for Submission record, not for confirmation-display
+                del cleaned_data['main_file']  # remove the file-obj from the cleaned_data
+            request.session['student_form_data'] = cleaned_data
+            resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
+
     else:  # GET
         ## see if there's form session data to pre-populate the form
         initial_data = request.session.get('student_form_data', {})
@@ -306,18 +357,49 @@ def student_confirm(request, slug):
     """
     log.debug('\n\nstarting student_confirm()')
 
-    ## retrieve stored data from session.
+    ## retrieve stored data from session
     student_data = request.session.get('student_form_data')
     if not student_data:
-        ## No data saved; redirect back to upload form.
+        ## no data saved; redirect back to upload form
         return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
 
     if request.method == 'POST':
         if 'confirm' in request.POST:
             ## confirmed, so create Submission record
-            # app_config = get_object_or_404(AppConfig, slug=slug)
-            # submission = Submission.objects.create(app=app_config, **student_data)
-            ## clear the session data after processing.
+            app_config = get_object_or_404(AppConfig, slug=slug)
+            submission = Submission.objects.create(
+                ## basics -------------------------------------------
+                app=app_config,
+                student_eppn=request.user.username,
+                student_email=request.user.email,
+                title=student_data.get('title'),
+                abstract=student_data.get('abstract'),
+                ## collaborators ------------------------------------
+                advisors_and_readers=student_data.get('advisors_and_readers'),
+                team_members=student_data.get('team_members'),
+                faculty_mentors=student_data.get('faculty_mentors'),
+                authors=student_data.get('authors'),
+                ## departments/programs ------------------------------
+                department=student_data.get('department'),
+                research_program=student_data.get('research_program'),
+                ## access and visibility -----------------------------
+                license_options=student_data.get('license_options'),
+                visibility_options=student_data.get('visibility_options'),
+                ## other --------------------------------------------
+                concentrations=student_data.get('concentrations'),
+                degrees=student_data.get('degrees'),
+                ## file-stuff ---------------------------------------
+                primary_file=student_data.get('staged_file_path'),
+                supplementary_files=student_data.get('supplementary_files'),
+                original_file_name=student_data.get('original_file_name'),
+                staged_file_name=student_data.get('staged_file_path').split('/')[-1],
+                checksum_type=student_data.get('checksum_type'),
+                checksum=student_data.get('checksum'),
+                ## form-data ----------------------------------------
+                temp_submission_json=student_data,
+            )
+            log.debug(f'submission created-and-saved successfully, ``{submission}``')
+            ## clear the session data after processing
             del request.session['student_form_data']
             return redirect('upload_successful_url')  # redirect to student-form success page
         elif 'edit' in request.POST:
