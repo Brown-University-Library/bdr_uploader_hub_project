@@ -251,28 +251,6 @@ def upload(request) -> HttpResponse:
     return render(request, 'uploader_select.html', context)
 
 
-# ## helper: handle uploaded file immediately
-# def handle_uploaded_file(file_field) -> Path:
-#     ## define staging directory using pathlib.Path and default storage location
-#     base_dir = Path(default_storage.location)
-#     staging_dir = base_dir / 'temp_uploads'
-#     staging_dir.mkdir(parents=True, exist_ok=True)
-
-#     ## generate unique filename with original extension
-#     ext = Path(file_field.name).suffix
-#     filename = f'{uuid.uuid4().hex}{ext}'
-#     file_path = staging_dir / filename
-
-#     ## compute relative path with respect to base_dir for storage.save()
-#     relative_path = file_path.relative_to(base_dir)
-#     saved_path = default_storage.save(str(relative_path), ContentFile(file_field.read()))
-
-#     ## return resolved absolute path
-#     res_abs_pth = (base_dir / saved_path).resolve()
-#     log.debug(f'res_abs_pth, ``{res_abs_pth}``')
-#     return res_abs_pth
-
-
 ## helper: handle uploaded file immediately
 def handle_uploaded_file(file_field: UploadedFile) -> Path:
     ## use storage directory directly since MEDIA_ROOT includes it
@@ -337,13 +315,15 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
 
         if form.is_valid():
             cleaned_data = form.cleaned_data.copy()
-            log.debug(f'cleaned_data, ``{pprint.pformat(cleaned_data)}``')
+            log.debug(f'cleaned_data from copy, ``{pprint.pformat(cleaned_data)}``')
             uploaded_file = cleaned_data.get('main_file')
             log.debug(f'type(uploaded_file), ``{type(uploaded_file)}``')
             if uploaded_file:
-                ## store modified-path, not file-obj, in session ----
+                cleaned_data['original_file_name'] = uploaded_file.name  # for confirmation-display
+                ## store uuid-path, not file-obj, in session --------
                 saved_path: Path = handle_uploaded_file(uploaded_file)  # path like `uuid4hex.ext`
-                cleaned_data['main_file'] = str(saved_path)
+                cleaned_data['staged_file_path'] = str(saved_path)  # for Submission record, not for confirmation-display
+                del cleaned_data['main_file']  # remove the file-obj from the cleaned_data
             request.session['student_form_data'] = cleaned_data
             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
 
@@ -368,6 +348,66 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
             },
         )
     return resp
+
+
+# @login_required
+# def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
+#     """
+#     Displays the student-upload-form.
+#     """
+#     log.debug('\n\nstarting upload_slug()')
+#     log.debug(f'slug, ``{slug}``')
+
+#     ## load staff-config data ---------------------------------------
+#     app_config = get_object_or_404(AppConfig, slug=slug)
+#     config_data = app_config.temp_config_json
+
+#     ## prep other form data -----------------------------------------
+#     depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
+#     depositor_email: str = request.user.email
+#     deposit_iso_date: str = datetime.datetime.now().isoformat()
+
+#     ## build form based on staff-config data ------------------------
+#     StudentUploadForm: django.forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
+
+#     ## handle POST and GET ------------------------------------------
+#     if request.method == 'POST':
+#         log.debug('handling POST')
+#         form = StudentUploadForm(request.POST, request.FILES)
+
+#         if form.is_valid():
+#             cleaned_data = form.cleaned_data.copy()
+#             log.debug(f'cleaned_data, ``{pprint.pformat(cleaned_data)}``')
+#             uploaded_file = cleaned_data.get('main_file')
+#             log.debug(f'type(uploaded_file), ``{type(uploaded_file)}``')
+#             if uploaded_file:
+#                 ## store modified-path, not file-obj, in session ----
+#                 saved_path: Path = handle_uploaded_file(uploaded_file)  # path like `uuid4hex.ext`
+#                 cleaned_data['main_file'] = str(saved_path)
+#             request.session['student_form_data'] = cleaned_data
+#             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
+
+#     else:  # GET
+#         ## see if there's form session data to pre-populate the form
+#         initial_data = request.session.get('student_form_data', {})
+#         form = StudentUploadForm(initial=initial_data)
+#         request.session['student_form_data'] = {}  # clear the session data
+#         ## render the form
+#         form = StudentUploadForm(initial=initial_data)
+#         resp: HttpResponse = render(
+#             request,
+#             'student_form.html',
+#             {
+#                 'form': form,
+#                 'slug': slug,
+#                 'username': request.user.first_name,
+#                 'depositor_fullname': depositor_fullname,
+#                 'depositor_email': depositor_email,
+#                 'deposit_iso_date': deposit_iso_date,
+#                 'app_name': app_config.name,
+#             },
+#         )
+#     return resp
 
 
 @login_required

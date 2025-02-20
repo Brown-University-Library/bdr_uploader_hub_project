@@ -58,20 +58,24 @@
 
 {% block main_content %}
 <section class="form-container">
-  <h2>Review Your Submission for "{{ app_name }}"</h2>
-  <form method="post">
+    <h2>Review Your Submission for "{{ app_name }}"</h2>
+    <form method="post">
     {% csrf_token %}
     <div class="form-section">
-      {% for key, value in student_data.items %}
-        <div class="form-group">
-          <strong>{{ key|title }}:</strong> <span class="form-control-static">{{ value }}</span>
-        </div>
-      {% endfor %}
+        {% for key, value in student_data.items %}
+        {% if key == 'staged_file_path' %}
+            {% comment %} Not displaying the file path {% endcomment %}
+        {% else %}
+            <div class="form-group">
+            <strong>{{ key|title }}:</strong> <span class="form-control-static">{{ value }}</span>
+            </div>
+        {% endif %}
+        {% endfor %}
     </div>
     <div class="form-field">
-      <button type="submit" name="confirm" class="btn-primary">Confirm</button>
-      <button type="submit" name="edit" class="btn-primary">Edit</button>
+        <button type="submit" name="confirm" class="btn-primary">Confirm</button>
+        <button type="submit" name="edit" class="btn-primary">Edit</button>
     </div>
-  </form>
+    </form>
 </section>
 {% endblock main_content %}

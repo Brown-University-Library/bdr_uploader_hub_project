@@ -65,8 +65,10 @@ class Submission(models.Model):
     concentrations = models.CharField(max_length=255, blank=True, null=True)
     degrees = models.CharField(max_length=255, blank=True, null=True)
     ## file stuff ---------------------------------------------------
-    supplementary_files = models.FileField(upload_to='submissions/', blank=True, null=True)
+    primary_file = models.FileField(upload_to='primary_files/')
+    supplementary_files = models.FileField(upload_to='supplementary_files/', blank=True, null=True)
     original_file_name = models.CharField(max_length=255, blank=True, null=True)
+    staged_file_name = models.CharField(max_length=255, blank=True, null=True)  # added field
     checksum_type = models.CharField(max_length=100, blank=True, null=True)
     checksum = models.CharField(max_length=255, blank=True, null=True)
     ## form-data ----------------------------------------------------
