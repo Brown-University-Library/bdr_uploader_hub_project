@@ -47,5 +47,5 @@ typing-extensions==4.12.2 ; python_full_version < '3.13'
     # via anyio
 tzdata==2025.1 ; sys_platform == 'win32'
     # via django
-uv==0.5.31
+uv==0.6.2
     # via -r requirements/base.in
