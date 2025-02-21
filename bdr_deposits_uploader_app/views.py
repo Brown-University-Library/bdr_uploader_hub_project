@@ -18,9 +18,8 @@ from django.utils import text
 
 from bdr_deposits_uploader_app.forms.staff_form import StaffForm
 from bdr_deposits_uploader_app.forms.student_form import make_student_form_class
-from bdr_deposits_uploader_app.lib import config_new_helper, version_helper
+from bdr_deposits_uploader_app.lib import config_new_helper, uploaded_file_handler, version_helper
 from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
-from bdr_deposits_uploader_app.lib.uploaded_file_handler import handle_uploaded_file
 from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
 from bdr_deposits_uploader_app.models import AppConfig, Submission
 
@@ -281,9 +280,9 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
             if uploaded_file:
                 cleaned_data['original_file_name'] = uploaded_file.name  # for confirmation-display
                 ## save uploaded main-file --------------------------
-                saved_path: Path = handle_uploaded_file(uploaded_file)  # path like `uuid4hex.ext`
+                saved_path: Path = uploaded_file_handler.handle_uploaded_file(uploaded_file)  # path like `uuid4hex.ext`
                 ## make checksum ------------------------------------
-                result: tuple[str, str] = handle_uploaded_file.make_checksum(saved_path)
+                result: tuple[str, str] = uploaded_file_handler.make_checksum(saved_path)
                 (checksum_type, checksum) = result
                 cleaned_data['checksum_type'] = checksum_type
                 cleaned_data['checksum'] = checksum
