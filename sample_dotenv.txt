@@ -34,7 +34,7 @@ STATIC_URL="/static/"
 STATIC_ROOT="/tmp/"  # setting used by collectstatic command; not used by runserver
 
 ## user uploaded file destination -----------------------------------
-MEDIA_ROOT = "/path/to/project_stuff/staged_uploads/"
+MEDIA_ROOT = "/path/to/project_stuff/staged_uploads/" # Update to allow local file uploads
 
 SERVER_EMAIL="donotreply_foo-project@domain.edu"
 EMAIL_HOST="localhost"
@@ -75,7 +75,7 @@ TEST_SHIB_META_DCT_JSON='{
 # }'
 
 SHIB_SP_LOGIN_URL="https://server.domain.edu/Shibboleth.sso/Login"  # not used in local-development
-SHIB_IDP_LOGOUT_URL="https://sso.domain.edu/idp/shib_logout.jsp"  # not used in local-development
+SHIB_IDP_LOGOUT_URL="https://sso.domain.edu/idp/shib_logout.jsp"  # Used for logging out locally
 
 ## form options -----------------------------------------------------
 ## ( these will probably eventually be stored in db tables, so staff can edit them )
