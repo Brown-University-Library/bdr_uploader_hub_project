@@ -5,6 +5,7 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from config.settings import BASE_BDR_URL
 # Using HTTPX instead of requests
 # https://www.python-httpx.org/
 import httpx
@@ -131,7 +132,7 @@ class StaffForm(forms.Form):
             if not collection_pid:
                 self.add_error('collection_pid', 'Collection PID is required.') 
             else:
-                response = httpx.get('https://repository.library.brown.edu/api/collections/' + str(collection_pid)+ '/')
+                response = httpx.get(BASE_BDR_URL + str(collection_pid)+ '/')
                 log.debug(f'Making BDR API call: {response.status_code}')
                 if response.is_success:
                     # Collection exists in the BDR
