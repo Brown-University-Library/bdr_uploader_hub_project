@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 # Using HTTPX instead of requests
 # https://www.python-httpx.org/
-import requests
+import httpx
 
 log = logging.getLogger(__name__)
 
@@ -124,33 +124,34 @@ class StaffForm(forms.Form):
         # Validate collection PID/title
         if cleaned_data.get('collection_pid', ''):
             collection_pid = cleaned_data.get('collection_pid', '')
-            log.debug(f'THIS IS THE collection_pid: {collection_pid}')
+            log.debug(f'collection_pid: {collection_pid}')
             # Not sure if this is necessary, because the field is required it can't be blank.
             # Argument for adding might be if there ever becomes an API call that doesn't go through the regular
             # form submission, but I think that's unlikely
             if not collection_pid:
                 self.add_error('collection_pid', 'Collection PID is required.') 
-            response = requests.get('https://repository.library.brown.edu/api/collections/' + str(collection_pid))
-            log.debug(f'Making BDR API call: {response.status_code}')
-            if response.ok:
-                # Collection exists in the BDR
-                if cleaned_data.get('collection_title', ''):
-                    collection_title = cleaned_data.get('collection_title', '')
-                    log.debug(f'THIS IS THE collection_title: {collection_title}')
-                    # Same thing here, not sure if this is necessary
-                    if not collection_title:
-                        self.add_error('collection_title', 'Collection title is required.')
-                    
-                    # Now compare the title in the form to the title in the API response
-                    if collection_title.lower() != response.json()['name'].lower():
-                        self.add_error('collection_title', f'Collection title does not match the title in the BDR.')
-
-            elif response.status_code == 404:
-                self.add_error('collection_pid', f'Collection with pid {collection_pid} does not exist.')
-            elif response.status_code >= 500:
-                self.add_error('collection_pid', f'Error connecting to the BDR. Please try again later.')
             else:
-                self.add_error('collection_pid', f'Something went wrong. Please try again later.')
+                response = httpx.get('https://repository.library.brown.edu/api/collections/' + str(collection_pid)+ '/')
+                log.debug(f'Making BDR API call: {response.status_code}')
+                if response.is_success:
+                    # Collection exists in the BDR
+                    if cleaned_data.get('collection_title', ''):
+                        collection_title = cleaned_data.get('collection_title', '')
+                        log.debug(f'collection_title: {collection_title}')
+                        # Same thing here, not sure if this is necessary
+                        if not collection_title:
+                            self.add_error('collection_title', 'Collection title is required.')
+                        
+                        # Now compare the title in the form to the title in the API response
+                        elif collection_title.lower() != response.json()['name'].lower():
+                            self.add_error('collection_title', f'Collection title does not match the title in the BDR.')
+
+                elif response.status_code == 404:
+                    self.add_error('collection_pid', f'Collection with pid {collection_pid} does not exist.')
+                elif response.status_code >= 500:
+                    self.add_error('collection_pid', f'Error connecting to the BDR. Please try again later.')
+                else:
+                    self.add_error('collection_pid', f'Something went wrong. Please try again later.')
 
         if cleaned_data.get('staff_to_notify', ''):
             data = cleaned_data.get('staff_to_notify', '')
