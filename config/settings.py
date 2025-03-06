@@ -223,3 +223,5 @@ visibilities_list: list = json.loads(all_visibilities_json)
 ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = [
     tuple(item) for item in visibilities_list
 ]  # creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]
+
+BASE_BDR_URL = os.environ['BASE_BDR_URL']
