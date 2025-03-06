@@ -81,7 +81,7 @@ def pre_login(request) -> HttpResponseRedirect:
         log.debug('type_value not in [staff, student]')
         type_value = request.session.get('type', None)
         log.debug(f'type_value from session, ``{type_value}``')
-    if type_value not in ['staff', 'student']:  ## if still not found, default to 'staff'
+    if type_value not in ['staff', 'student']:  ## if still not found, default to 'student'
         log.warning('type_value not in [staff, student]')
         type_value = 'student'
     request.session['type'] = type_value
@@ -89,17 +89,24 @@ def pre_login(request) -> HttpResponseRedirect:
     logout_status = request.session.get('logout_status', None)
     log.debug(f'logout_status, ``{logout_status}``')
     if logout_status != 'forcing_logout':
-        ## meaning user has come directly, from, say, the public info page by clicking "Staff Login"
-        ## set logout_status ----------------------------------------
+        """ Means user has come directly, from, say, the public info page by clicking "Staff Login" """
+        ## set session logout_status --------------------------------
         request.session['logout_status'] = 'forcing_logout'
         log.debug(f'logout_status set to ``{request.session["logout_status"]}``')
-        ## build IDP-shib-logout-url --------------------------------
-        # full_pre_login_url = f'{request.scheme}://{request.get_host()}{reverse("pre_login_url")}'
+        ## build redirect-url ---------------------------------------
         full_pre_login_url = f'{request.scheme}://{request.get_host()}{reverse("pre_login_url")}?type={type_value}'
         log.debug(f'full_pre_login_url, ``{full_pre_login_url}``')
-        encoded_full_pre_login_url = parse.quote(full_pre_login_url, safe='')
-        redirect_url = f'{project_settings.SHIB_IDP_LOGOUT_URL}?return={encoded_full_pre_login_url}'
-    else:  # request.session['logout_status'] _is_ found -- meaning user is back after hitting the IDP-shib-logout-url
+        if request.get_host() == '127.0.0.1:8000' and project_settings.DEBUG is True:  # eases local development
+            log.debug('detecting localhost, so skipping shib-logout-url')
+            redirect_url = full_pre_login_url  # redirect right back to here
+        else:
+            ## build IDP-shib-logout-url --------------------------------
+            encoded_full_pre_login_url = parse.quote(full_pre_login_url, safe='')
+            redirect_url = f'{project_settings.SHIB_IDP_LOGOUT_URL}?return={encoded_full_pre_login_url}'
+        log.debug(f'redirect_url from ``logout_status != "forcing_logout"``, ``{redirect_url}``')
+    else:  # request.session['logout_status'] _is_ found
+        """ Means user is back after hitting the IDP-shib-logout-url """
+        log.debug('back after hitting the IDP-shib-logout-url (unless skipped for localhost)')
         ## clear logout_status --------------------------------------
         del request.session['logout_status']
         log.debug('logout_status cleared')
@@ -154,7 +161,7 @@ def logout(request) -> HttpResponseRedirect:
     auth.logout(request)
     ## build redirect-url -------------------------------------------
     redirect_url: str = f'{request.scheme}://{request.get_host()}{reverse("info_url")}'
-    if request.get_host() == '127.0.0.1' and project_settings.DEBUG == True:  # eases local development  # noqa: E712
+    if request.get_host() == '127.0.0.1:8000' and project_settings.DEBUG is True:  # eases local development
         pass  # will redirect right to the info url
     else:
         ## build shib-logout-url -------------------------------------

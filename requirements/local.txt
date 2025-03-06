@@ -12,10 +12,9 @@ certifi==2025.1.31
     # via
     #   httpcore
     #   httpx
-    #   requests
-charset-normalizer==2.0.12
-    # via requests
-django==4.2.18
+cffi==1.17.1 ; implementation_name != 'pypy' and os_name == 'nt'
+    # via trio
+django==4.2.19
     # via -r requirements/base.in
 h11==0.14.0
     # via httpcore
@@ -47,7 +46,7 @@ trio==0.26.2
     # via -r requirements/base.in
 typing-extensions==4.12.2
     # via anyio
-urllib3==1.26.20
-    # via requests
-uv==0.6.3
+tzdata==2025.1 ; sys_platform == 'win32'
+    # via django
+uv==0.6.4
     # via -r requirements/base.in
