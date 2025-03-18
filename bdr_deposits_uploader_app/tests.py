@@ -46,8 +46,8 @@ class ErrorCheckTest(SimpleTestCase):
 class StaffFormDirectTests(TestCase):
     def test_valid_submission(self):
         data = {
-            'collection_pid': '1234',
-            'collection_title': 'My Collection',
+            'collection_pid': project_settings.TEST_COLLECTION_PID_FOR_FORM_VALIDATION,
+            'collection_title': project_settings.TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION,
             'staff_to_notify': 'valid@example.com',
             'authorized_student_emails': 'student@example.com',
             ## license fields

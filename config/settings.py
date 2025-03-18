@@ -225,3 +225,6 @@ ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = [
 ]  # creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]
 
 BASE_BDR_URL = os.environ['BASE_BDR_URL']
+
+TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION']
+TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION']
