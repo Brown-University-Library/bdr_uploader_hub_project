@@ -43,7 +43,7 @@ sqlparse==0.5.3
     # via django
 trio==0.26.2
     # via -r requirements/base.in
-typing-extensions==4.13.1 ; python_full_version < '3.13'
+typing-extensions==4.13.2 ; python_full_version < '3.13'
     # via anyio
 tzdata==2025.2 ; sys_platform == 'win32'
     # via django
