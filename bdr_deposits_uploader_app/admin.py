@@ -15,13 +15,24 @@ admin.site.register(UserProfile)
 
 
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'app', 'status', 'created_at', 'updated_at')
+    # list_display = ('short_id', 'title', 'app', 'status', 'created_at', 'updated_at')
+    list_display = ('short_id', 'title', 'app', 'status', 'created_at', 'updated_at')
     list_filter = ('app', 'status', 'created_at', 'updated_at')
     search_fields = ('title', 'app', 'created_at', 'updated_at')
     ordering = ('-created_at',)
+    readonly_fields = ('id', 'created_at', 'updated_at')
 
     actions = ['ingest']
 
+    ## id field -------------------------------------------------====
+    def short_id(self, obj):
+        uuid_str = str(obj.id)
+        sh_id: str = f'{uuid_str[:3]}...'
+        return sh_id
+
+    short_id.short_description = 'UUID'
+
+    ## ingest action ------------------------------------------------
     def ingest(self, request, queryset):
         log.debug('ingest-action called')
         log.debug(f'queryset: ``{queryset}``')
