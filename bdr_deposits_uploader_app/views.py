@@ -379,6 +379,8 @@ def student_confirm(request, slug):
                 checksum=student_data.get('checksum'),
                 ## form-data ----------------------------------------
                 temp_submission_json=student_data,
+                ## status -------------------------------------------
+                status='created',  # initial status
             )
             log.debug(f'submission created-and-saved successfully, ``{submission}``')
             ## clear the session data after processing
