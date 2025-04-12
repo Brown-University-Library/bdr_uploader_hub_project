@@ -44,10 +44,8 @@ class Submission(models.Model):
     """
 
     STATUS_CHOICES = (
-        ('not_submitted', 'Not Submitted'),
-        ('waiting_for_review', 'Awaiting Review'),
-        ('approved', 'Approved'),
-        ('ingested', 'Ingested'),  # fully ingested, including supplementary files
+        ('created', 'Created'),
+        ('ingested', 'Ingested'),  # fully ingested
         ('ingest_error', 'Ingestion Error'),
     )
 
@@ -91,6 +89,8 @@ class Submission(models.Model):
     checksum = models.CharField(max_length=255, blank=True, null=True)
     ## form-data --------------------------------
     temp_submission_json = models.JSONField(default=dict, blank=True)
+    ## status -----------------------------------
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='created')
 
     def __str__(self):
         title_short = self.title if len(self.title) <= 10 else f'{self.title[:10]}...'
