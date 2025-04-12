@@ -35,6 +35,11 @@ class AppConfig(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
+        """
+        Showing full slug so it appears correctly in admin form-view.
+        """
+        # short_slug = self.slug if len(self.slug) <= 10 else f'{self.slug[:10]}...'
+        # return short_slug
         return self.slug
 
 
