@@ -124,6 +124,9 @@ class StaffForm(forms.Form):
         ## basics fields --------------------------------------------
 
         ## Validate collection PID/title --------
+        generic_pid_collection_error = (
+            'Error validating that collection-pid and collection-title match. Please try again later.'
+        )
         if cleaned_data.get('collection_pid', ''):
             collection_pid = cleaned_data.get('collection_pid', '').strip()
             log.debug(f'collection_pid: {collection_pid}')
@@ -135,40 +138,36 @@ class StaffForm(forms.Form):
             else:
                 api_url: str = BASE_BDR_URL + str(collection_pid) + '/'
                 log.debug(f'api_url, ``{api_url}``')
+                response: httpx.Response | None = None
                 try:  # handes, for example network being down
                     response = httpx.get(api_url)
+                    log.debug(f'Making BDR API call: status code, ``{response.status_code}``')
                 except Exception as e:
                     log.exception(f'Error making BDR API call: {e}')
-                    self.add_error(
-                        'collection_pid',
-                        'Error validating that collection-pid and collection-title match. Please try again later.',
-                    )
-                log.debug(f'Making BDR API call: status code, ``{response.status_code}``')
-                if response.is_success:
-                    ## Collection exists in the BDR
-                    collection_title = cleaned_data.get('collection_title', '').strip()
-                    if collection_title:
-                        log.debug(f'collection_title: {collection_title}')
-                        ## Now compare the title in the form to the title in the API response
-                        api_collection_title = response.json().get('name', '').strip()
-                        log.debug(f'api_collection_title: ``{api_collection_title}``')
-                        if collection_title.lower() != api_collection_title.lower():
-                            self.add_error(
-                                'collection_title',
-                                f'Collection title does not match the BDR pid-title ``{api_collection_title}``.',
-                            )
+                    self.add_error('collection_pid', generic_pid_collection_error)
+                if response:
+                    if response.is_success:
+                        ## Collection exists in the BDR
+                        collection_title = cleaned_data.get('collection_title', '').strip()
+                        if collection_title:
+                            log.debug(f'collection_title: {collection_title}')
+                            ## Now compare the title in the form to the title in the API response
+                            api_collection_title = response.json().get('name', '').strip()
+                            log.debug(f'api_collection_title: ``{api_collection_title}``')
+                            if collection_title.lower() != api_collection_title.lower():
+                                self.add_error(
+                                    'collection_title',
+                                    f'Collection title does not match the BDR pid-title ``{api_collection_title}``.',
+                                )
+                        else:
+                            # Same thing here, not sure if this is necessary
+                            self.add_error('collection_title', 'Collection title is required.')
+                    elif response.status_code == 404:
+                        self.add_error('collection_pid', f'Collection with pid {collection_pid} does not exist.')
+                    elif response.status_code >= 500:
+                        self.add_error('collection_pid', 'Error connecting to the BDR. Please try again later.')
                     else:
-                        # Same thing here, not sure if this is necessary
-                        self.add_error('collection_title', 'Collection title is required.')
-                elif response.status_code == 404:
-                    self.add_error('collection_pid', f'Collection with pid {collection_pid} does not exist.')
-                elif response.status_code >= 500:
-                    self.add_error('collection_pid', 'Error connecting to the BDR. Please try again later.')
-                else:
-                    self.add_error(
-                        'collection_pid',
-                        'Error validating that collection-pid and collection-title match. Please try again later.',
-                    )
+                        self.add_error('collection_pid', generic_pid_collection_error)
 
         # # Validate collection PID/title
         # if cleaned_data.get('collection_pid', ''):
