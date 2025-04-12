@@ -263,8 +263,8 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     log.debug(f'slug, ``{slug}``')
 
     ## load staff-config data ---------------------------------------
-    app_config = get_object_or_404(AppConfig, slug=slug)
-    config_data: dict = json.loads(app_config.temp_config_json)
+    app_config: AppConfig = get_object_or_404(AppConfig, slug=slug)
+    config_data: dict = app_config.temp_config_json
 
     ## prep other form data -----------------------------------------
     depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
@@ -395,71 +395,6 @@ def student_confirm(request, slug):
         return HttpResponseNotFound('<div>404 / Not Found</div>')
 
     ## end def student_confirm()
-
-
-# @login_required
-# def student_confirm(request, slug):
-#     """
-#     Displays the student-upload confirmation page.
-#     """
-#     log.debug('\n\nstarting student_confirm()')
-
-#     ## retrieve stored data from session
-#     student_data = request.session.get('student_form_data')
-#     if not student_data:
-#         ## no data saved; redirect back to upload form
-#         return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
-
-#     if request.method == 'POST':
-#         if 'confirm' in request.POST:
-#             ## confirmed, so create Submission record
-#             app_config = get_object_or_404(AppConfig, slug=slug)
-#             submission = Submission.objects.create(
-#                 ## basics -------------------------------------------
-#                 app=app_config,
-#                 student_eppn=request.user.username,
-#                 student_email=request.user.email,
-#                 title=student_data.get('title'),
-#                 abstract=student_data.get('abstract'),
-#                 ## collaborators ------------------------------------
-#                 advisors_and_readers=student_data.get('advisors_and_readers'),
-#                 team_members=student_data.get('team_members'),
-#                 faculty_mentors=student_data.get('faculty_mentors'),
-#                 authors=student_data.get('authors'),
-#                 ## departments/programs ------------------------------
-#                 department=student_data.get('department'),
-#                 research_program=student_data.get('research_program'),
-#                 ## access and visibility -----------------------------
-#                 license_options=student_data.get('license_options'),
-#                 visibility_options=student_data.get('visibility_options'),
-#                 ## other --------------------------------------------
-#                 concentrations=student_data.get('concentrations'),
-#                 degrees=student_data.get('degrees'),
-#                 ## file-stuff ---------------------------------------
-#                 primary_file=student_data.get('staged_file_path'),
-#                 supplementary_files=student_data.get('supplementary_files'),
-#                 original_file_name=student_data.get('original_file_name'),
-#                 staged_file_name=student_data.get('staged_file_path').split('/')[-1],
-#                 checksum_type=student_data.get('checksum_type'),
-#                 checksum=student_data.get('checksum'),
-#                 ## form-data ----------------------------------------
-#                 temp_submission_json=student_data,
-#             )
-#             log.debug(f'submission created-and-saved successfully, ``{submission}``')
-#             ## clear the session data after processing
-#             del request.session['student_form_data']
-#             return redirect('upload_successful_url')  # redirect to student-form success page
-#         elif 'edit' in request.POST:
-#             ## send back to student-upload-form
-#             return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
-#     else:
-#         # Render a template that shows the submitted data read-only.
-#         context = {
-#             'student_data': student_data,
-#             'slug': slug,
-#             'app_name': get_object_or_404(AppConfig, slug=slug).name,
-#         }
-#         return render(request, 'student_confirm.html', context)
 
 
 def upload_successful(request) -> HttpResponse:
