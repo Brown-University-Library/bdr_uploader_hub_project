@@ -15,8 +15,8 @@ admin.site.register(UserProfile)
 
 
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'app', 'created_at', 'updated_at')
-    list_filter = ('app', 'created_at', 'updated_at')
+    list_display = ('title', 'app', 'status', 'created_at', 'updated_at')
+    list_filter = ('app', 'status', 'created_at', 'updated_at')
     search_fields = ('title', 'app', 'created_at', 'updated_at')
     ordering = ('-created_at',)
 
