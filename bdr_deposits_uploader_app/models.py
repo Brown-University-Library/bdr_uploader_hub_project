@@ -35,6 +35,11 @@ class AppConfig(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
+        """
+        Showing full slug so it appears correctly in admin form-view.
+        """
+        # short_slug = self.slug if len(self.slug) <= 10 else f'{self.slug[:10]}...'
+        # return short_slug
         return self.slug
 
 
@@ -44,10 +49,8 @@ class Submission(models.Model):
     """
 
     STATUS_CHOICES = (
-        ('not_submitted', 'Not Submitted'),
-        ('waiting_for_review', 'Awaiting Review'),
-        ('approved', 'Approved'),
-        ('ingested', 'Ingested'),  # fully ingested, including supplementary files
+        ('ready_to_ingest', 'Ready to Ingest'),
+        ('ingested', 'Ingested'),  # fully ingested
         ('ingest_error', 'Ingestion Error'),
     )
 
@@ -84,13 +87,18 @@ class Submission(models.Model):
     degrees = models.CharField(max_length=255, blank=True, null=True)
     ## file stuff -------------------------------
     primary_file = models.FileField(upload_to='primary_files/', blank=True, null=True)
-    supplementary_files = models.FileField(upload_to='supplementary_files/', blank=True, null=True)
+    supplementary_files = models.FileField(upload_to='supplementary_files/', blank=True, null=True)  # not currently used
     original_file_name = models.CharField(max_length=255, blank=True, null=True)
     staged_file_name = models.CharField(max_length=255, blank=True, null=True)  # added field
     checksum_type = models.CharField(max_length=100, blank=True, null=True)
     checksum = models.CharField(max_length=255, blank=True, null=True)
     ## form-data --------------------------------
     temp_submission_json = models.JSONField(default=dict, blank=True)
+    ## ingestion stuff --------------------------
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='created')
+    staff_ingester = models.CharField(max_length=100, blank=True, null=True)  # email address
+    ingest_error_message = models.TextField(blank=True, null=True)
+    bdr_pid = models.CharField(max_length=20, blank=True, null=True, verbose_name='BDR PID')
 
     def __str__(self):
         title_short = self.title if len(self.title) <= 10 else f'{self.title[:10]}...'
