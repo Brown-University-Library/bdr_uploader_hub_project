@@ -94,8 +94,11 @@ class Submission(models.Model):
     checksum = models.CharField(max_length=255, blank=True, null=True)
     ## form-data --------------------------------
     temp_submission_json = models.JSONField(default=dict, blank=True)
-    ## status -----------------------------------
+    ## ingestion stuff --------------------------
     status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='created')
+    staff_ingester = models.CharField(max_length=100, blank=True, null=True)  # email address
+    ingest_error_message = models.TextField(blank=True, null=True)
+    bdr_pid = models.CharField(max_length=20, blank=True, null=True, verbose_name='BDR PID')
 
     def __str__(self):
         title_short = self.title if len(self.title) <= 10 else f'{self.title[:10]}...'
