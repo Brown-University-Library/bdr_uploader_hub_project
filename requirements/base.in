@@ -1,4 +1,6 @@
-## base requirements
+## bdrxml
+git+https://github.com/Brown-University-Library/bdrxml.git@d167e4c6f7ae85104f92b61877f373fd4ace33ed
+
 Django~=4.2.0
 httpx~=0.28.0
 pip~=24.3.0
