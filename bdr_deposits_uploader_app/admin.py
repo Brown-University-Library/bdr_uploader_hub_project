@@ -43,16 +43,14 @@ class SubmissionAdmin(admin.ModelAdmin):
     def ingest(self, request, queryset):
         log.debug('ingest-action called')
         log.debug(f'queryset: ``{queryset}``')
-        # messages.info(request, 'Theses approved')
         ## confirm that all selections are ready to ingest ----------
         errors: list = []
         for submission in queryset:
             log.debug(f'processing submission.title: ``{submission.title}``')
             log.debug(f'submission.status: ``{submission.status}``')
             if not submission.status == 'ready_to_ingest':
-                # errors.append(str(submission))
                 errors.append(f'`{str(submission.id)[0:4]}...--{str(submission)}`')
-                # messages.warning(request, f'Submission ``{submission.title}`` not ready to ingest')
+                log.warning(f'`{str(submission.id)[0:4]}...--{str(submission)}` not ready to ingest; status: {submission.status}')
             if errors:
                 messages.warning(request, f'Invalid selections: {", ".join(errors)}')
                 return
