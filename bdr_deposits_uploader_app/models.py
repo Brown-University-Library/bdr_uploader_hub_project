@@ -49,7 +49,7 @@ class Submission(models.Model):
     """
 
     STATUS_CHOICES = (
-        ('created', 'Created'),
+        ('ready_to_ingest', 'Ready to Ingest'),
         ('ingested', 'Ingested'),  # fully ingested
         ('ingest_error', 'Ingestion Error'),
     )
