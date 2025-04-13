@@ -15,12 +15,11 @@ admin.site.register(UserProfile)
 
 
 class SubmissionAdmin(admin.ModelAdmin):
-    # list_display = ('short_id', 'title', 'app', 'status', 'created_at', 'updated_at')
-    list_display = ('short_id', 'title', 'short_app_slug', 'status', 'created_at', 'updated_at')
+    list_display = ('short_id', 'title', 'short_app_slug', 'status', 'bdr_pid', 'updated_at')
     list_filter = ('app', 'status', 'created_at', 'updated_at')
-    search_fields = ('title', 'app', 'created_at', 'updated_at')
+    search_fields = ('title', 'bdr_pid', 'app', 'created_at', 'updated_at')
     ordering = ('-created_at',)
-    readonly_fields = ('id', 'created_at', 'updated_at')
+    readonly_fields = ('id', 'created_at', 'updated_at', 'staff_ingester', 'ingest_error_message', 'bdr_pid')
 
     actions = ['ingest']
 
