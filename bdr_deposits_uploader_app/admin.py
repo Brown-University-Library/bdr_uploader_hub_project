@@ -50,11 +50,27 @@ class SubmissionAdmin(admin.ModelAdmin):
             log.debug(f'submission.status: ``{submission.status}``')
             if not submission.status == 'ready_to_ingest':
                 errors.append(f'`{str(submission.id)[0:4]}...--{str(submission)}`')
-                log.warning(f'`{str(submission.id)[0:4]}...--{str(submission)}` not ready to ingest; status: {submission.status}')
+                log.warning(
+                    f'`{str(submission.id)[0:4]}...--{str(submission)}` not ready to ingest; status: {submission.status}'
+                )
             if errors:
                 messages.warning(request, f'Invalid selections: {", ".join(errors)}')
                 return
         ## ingest the selected submissions --------------------------
+        for submission in queryset:
+            """
+            attempt to ingest
+            - on failure:
+                - log problem
+                - change status to `ingest_error`
+                - save bdr-pid if I have it
+                - save
+            - on success:
+                - change status to `ingested`
+                - save bdr-pid
+                - save
+            """
+            log.info(f'Ingested submission: {submission}')
         messages.success(request, 'Submissions ingested')
         return
 
