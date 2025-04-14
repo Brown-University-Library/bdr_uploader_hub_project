@@ -3,7 +3,7 @@
     <mods:title>{{ title }}</mods:title>
   </mods:titleInfo>
   <mods:name type="personal">
-    <mods:namePart>Rymsza-Pawlowska, Malgorzata Joanna</mods:namePart>
+    <mods:namePart>Lastname, Firstname</mods:namePart>
     <mods:role>
       <mods:roleTerm type="text">creator</mods:roleTerm>
     </mods:role>
@@ -17,19 +17,19 @@
   </mods:physicalDescription>
   <mods:note>Thesis (Ph.D. -- Brown University (2012)</mods:note>
   <mods:name type="personal">
-    <mods:namePart>Smulyan, Susan</mods:namePart>
+    <mods:namePart>Lastname, Firstname</mods:namePart>
     <mods:role>
       <mods:roleTerm type="text">Director</mods:roleTerm>
     </mods:role>
   </mods:name>
   <mods:name type="personal">
-    <mods:namePart>Lubar, Steven</mods:namePart>
+    <mods:namePart>Lastname, Firstname</mods:namePart>
     <mods:role>
       <mods:roleTerm type="text">Reader</mods:roleTerm>
     </mods:role>
   </mods:name>
   <mods:name type="personal">
-    <mods:namePart>Joyrich, Lynne</mods:namePart>
+    <mods:namePart>Lastname, Firstname</mods:namePart>
     <mods:role>
       <mods:roleTerm type="text">Reader</mods:roleTerm>
     </mods:role>
