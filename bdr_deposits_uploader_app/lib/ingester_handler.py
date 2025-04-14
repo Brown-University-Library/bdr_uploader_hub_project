@@ -71,7 +71,7 @@ class Ingester:
                 submission.ingest_error_message = None
                 submission.save()
                 send_ingest_success_email(
-                    submission.first_name, submission.email, submission.title, submission.bdr_url
+                    request.user.first_name, submission.student_email, submission.title, submission.bdr_url
                 )  # bdr_url will be a property based on bdr_pid
                 log.info('sent_ingestion_confirmation email')
             except Exception as e:
