@@ -6,7 +6,7 @@ from django.contrib import messages
 
 from bdr_deposits_uploader_app.models import Submission
 
-from .lib.emailer import send_ingest_success_email
+from .emailer import send_ingest_success_email
 
 log = logging.getLogger(__name__)
 
