@@ -102,11 +102,7 @@ class Ingester:
 
     def prepare_rights(self) -> str:
         """
-                Prepares the `rightsMetadata` xml file for ingestion.
-
-        BDR_MANAGER_GROUP: str = os.environ['BDR_MANAGER_GROUP']
-        BDR_BROWN_GROUP: str = os.environ['BDR_BROWN_GROUP']
-        BDR_PUBLIC_GROUP: str = os.environ['BDR_PUBLIC_GROUP']
+        Prepares the `rightsMetadata` xml file for ingestion.
         """
         log.debug('prepare_rights called')
         xml_str = render_to_string(
