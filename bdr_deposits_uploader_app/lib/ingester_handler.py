@@ -6,6 +6,8 @@ from django.contrib import messages
 
 from bdr_deposits_uploader_app.models import Submission
 
+from .lib.emailer import send_ingest_success_email
+
 log = logging.getLogger(__name__)
 
 
@@ -22,6 +24,8 @@ class Ingester:
     def validate_queryset(self, request, queryset):
         """
         Validates the queryset to ensure all submissions are ready for ingestion.
+        The `messages.warning(request, err)` displays a warning message on the admin-page.
+        Called by the `ingest` action in the SubmissionAdmin class.
         """
         log.debug('validate_queryset called')
         errors: list = []
@@ -41,8 +45,47 @@ class Ingester:
         else:
             ok = True
             log.debug('All submissions are ready to ingest.')
+        ok = False  # TEMP, for testing
         log.debug(f'ok, ``{ok}``; err, ``{err}``')
         return (ok, err)
+
+    def manage_ingest(self, request, queryset):
+        """
+        Manages the ingestion of the selected submissions into the BDR.
+        Called by the `ingest` action in the SubmissionAdmin class.
+        """
+        log.debug('manage_ingest called')
+        errors = []
+        for submission in queryset:
+            self.submission = submission
+            try:
+                self.prepare_mods()
+                self.prepare_rights()
+                self.prepare_ir()
+                self.prepare_rels()
+                self.prepare_file()
+                self.parameterize()
+                result: tuple[str | None, str | None] = self.post()
+                (pid, err) = result
+                submission.bdr_pid = pid
+                submission.status = 'ingested'
+                submission.ingest_error_message = None
+                submission.save()
+                send_ingest_success_email(
+                    submission.first_name, submission.email, submission.title, submission.bdr_url
+                )  # bdr_url will be a property based on bdr_pid
+                log.info('sent_ingestion_confirmation email')
+            except Exception as e:
+                log.exception(f'Error ingesting submission: {submission}, Error: {e}')
+                submission.status = 'ingest_error'
+                submission.ingest_error_message = str(e)
+                submission.save()
+                message_error = f'`{str(submission.id)[0:4]}...--{str(submission)}`'
+                errors.append(message_error)
+        if errors:
+            messages.error(request, f'Some errors occurred during ingestion, for items: {", ".join(errors)}')
+        else:
+            messages.success(request, 'Submissions ingested')
 
     def prepare_mods(self):
         """

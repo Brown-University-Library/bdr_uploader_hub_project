@@ -1,8 +1,7 @@
 import logging
 
-from django.contrib import admin, messages
+from django.contrib import admin
 
-from .lib.emailer import send_ingest_success_email
 from .lib.ingester_handler import Ingester
 from .models import AppConfig, Submission, UserProfile
 
@@ -42,6 +41,18 @@ class SubmissionAdmin(admin.ModelAdmin):
 
     ## ingest action ------------------------------------------------
     def ingest(self, request, queryset):
+        """
+        Validates submissions to ensure they're all ready for ingestion.
+        - on failure, admin is updated with items not ready, and the action is aborted.
+        Ingests the selected submissions into the BDR.
+        - on failure
+            - submission.status is set to `ingest_error`
+            - submission.ingest_error_message is set to the error message
+        - on success
+            - submission.status is set to `ingested`
+            - submission.bdr_pid is set to the BDR PID
+            - email is sent to the user confirming ingestion
+        """
         log.debug('ingest-action called')
         log.debug(f'queryset: ``{queryset}``')
         ## confirm submissions are ready to ingest ------------------
@@ -52,39 +63,7 @@ class SubmissionAdmin(admin.ModelAdmin):
         if not ok:
             return
         ## ingest the selected submissions --------------------------
-        for submission in queryset:
-            """
-            attempt to ingest
-            - on failure:
-                - log problem
-                - change status to `ingest_error`
-                - save bdr-pid if I have it
-                - save
-            - on success:
-                - change status to `ingested`
-                - save bdr-pid
-                - save
-            """
-            ## happy path, for logic --------------------------------
-            ingester.submission = submission
-            ingester.prepare_mods()
-            ingester.prepare_rights()
-            ingester.prepare_ir()
-            ingester.prepare_rels()
-            ingester.prepare_file()
-            ingester.parameterize()
-            result: tuple[str | None, str | None] = ingester.post()
-            (pid, error_message) = result
-            log.info(f'ingested submission: {submission}')
-            submission.bdr_pid = pid
-            submission.status = 'ingested'
-            submission.ingest_error_message = None
-            submission.save()
-            send_ingest_success_email(
-                submission.first_name, submission.email, submission.title, submission.bdr_url
-            )  # bdr_url will be a property based on bdr_pid
-            log.info('sent_ingestion_confirmation email')
-        messages.success(request, 'Submissions ingested')
+        ingester.manage_ingest(request, queryset)
         return
 
     ingest.short_description = 'Ingest selected submissions'
