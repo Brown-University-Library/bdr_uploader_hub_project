@@ -224,9 +224,9 @@ ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = [
     tuple(item) for item in visibilities_list
 ]  # creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]
 
-BASE_BDR_URL: str = os.environ['BASE_BDR_URL']
+BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = os.environ['BDR_PUBLIC_API_COLLECTION_ROOT_URL']
 
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION']
 TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION']
 
-BDR_PUBLIC_ITEM_ROOT_URL: str = os.environ['BDR_PUBLIC_ITEM_ROOT_URL']
+BDR_PUBLIC_STUDIO_ITEM_ROOT_URL: str = os.environ['BDR_PUBLIC_STUDIO_ITEM_ROOT_URL']

@@ -108,7 +108,7 @@ class Submission(models.Model):
         """
         if not self.bdr_pid:
             return None
-        return f'{settings.BDR_PUBLIC_ITEM_ROOT_URL}{self.bdr_pid}/'
+        return f'{settings.BDR_PUBLIC_STUDIO_ITEM_ROOT_URL}{self.bdr_pid}/'
 
     def __str__(self):
         title_short = self.title if len(self.title) <= 10 else f'{self.title[:10]}...'
