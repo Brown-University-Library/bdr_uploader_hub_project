@@ -69,7 +69,25 @@ class SubmissionAdmin(admin.ModelAdmin):
                 - save bdr-pid
                 - save
             """
-            log.info(f'Ingested submission: {submission}')
+            ## happy path, for logic --------------------------------
+            ingester = Ingester(submission)
+            ingester.prepare_mods()
+            ingester.prepare_rights()
+            ingester.prepare_ir()
+            ingester.prepare_rels()
+            ingester.prepare_file()
+            ingester.parameterize()
+            result: tuple[str, str] = ingester.post()
+            (pid, error_message) = result
+            log.info(f'ingested submission: {submission}')
+            submission.bdr_pid = pid
+            submission.status = 'ingested'
+            submission.ingest_error_message = None
+            submission.save()
+            send_ingest_success_email(
+                submission.first_name, submission.email, submission.title, submission.bdr_url
+            )  # bdr_url will be a property based on bdr_pid
+            log.info('sent_ingestion_confirmation email')
         messages.success(request, 'Submissions ingested')
         return
 
