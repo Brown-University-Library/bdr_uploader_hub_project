@@ -212,21 +212,20 @@ TEST_SHIB_META_DCT: dict = json.loads(os.environ['TEST_SHIB_META_DCT_JSON'])
 SHIB_SP_LOGIN_URL: str = os.environ['SHIB_SP_LOGIN_URL']
 SHIB_IDP_LOGOUT_URL: str = os.environ['SHIB_IDP_LOGOUT_URL']
 
+## creates, eg: [('all_rights_reserved', 'All Rights Reserved'), ('CC_BY', 'Attribution (CC BY)'), etc.]
 all_licenses_json: str = os.environ['ALL_LICENSE_OPTIONS_JSON']
 licenses_list: list = json.loads(all_licenses_json)
-ALL_LICENSE_OPTIONS: list[tuple[str, str]] = [
-    tuple(item) for item in licenses_list
-]  # creates, eg: [('all_rights_reserved', 'All Rights Reserved'), ('CC_BY', 'Attribution (CC BY)'), etc.]
+ALL_LICENSE_OPTIONS: list[tuple[str, str]] = [tuple(item) for item in licenses_list]
 
+## creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]
 all_visibilities_json: str = os.environ['ALL_VISIBILITY_OPTIONS_JSON']
 visibilities_list: list = json.loads(all_visibilities_json)
-ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = [
-    tuple(item) for item in visibilities_list
-]  # creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]
+ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = [tuple(item) for item in visibilities_list]
 
+## used for pid<-->collection-name validation
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = os.environ['BDR_PUBLIC_API_COLLECTION_ROOT_URL']
-
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION']
 TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION']
 
+## used for ingest confirmation-email to student
 BDR_PUBLIC_STUDIO_ITEM_ROOT_URL: str = os.environ['BDR_PUBLIC_STUDIO_ITEM_ROOT_URL']
