@@ -69,7 +69,7 @@ class Ingester:
         # self.submission.parameterized = ...
         pass
 
-    def post(self):
+    def post(self) -> tuple[str | None, str | None]:
         """
         Posts the submission to the BDR for ingestion.
         """

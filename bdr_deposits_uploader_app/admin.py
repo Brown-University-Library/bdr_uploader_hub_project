@@ -2,6 +2,7 @@ import logging
 
 from django.contrib import admin, messages
 
+from .lib.emailer import send_ingest_success_email
 from .lib.ingester_handler import Ingester
 from .models import AppConfig, Submission, UserProfile
 
@@ -78,7 +79,7 @@ class SubmissionAdmin(admin.ModelAdmin):
             ingester.prepare_rels()
             ingester.prepare_file()
             ingester.parameterize()
-            result: tuple[str, str] = ingester.post()
+            result: tuple[str | None, str | None] = ingester.post()
             (pid, error_message) = result
             log.info(f'ingested submission: {submission}')
             submission.bdr_pid = pid
