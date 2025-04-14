@@ -3,6 +3,7 @@
 import logging
 
 from django.contrib import messages
+from django.template.loader import render_to_string
 
 from bdr_deposits_uploader_app.models import Submission
 
@@ -48,7 +49,7 @@ class Ingester:
         log.debug(f'ok, ``{ok}``; err, ``{err}``')
         return (ok, err)
 
-    def manage_ingest(self, request, queryset):
+    def manage_ingest(self, request, queryset) -> None:
         """
         Manages the ingestion of the selected submissions into the BDR.
         Called by the `ingest` action in the SubmissionAdmin class.
@@ -58,7 +59,7 @@ class Ingester:
         for submission in queryset:
             self.submission = submission
             try:
-                self.prepare_mods()
+                self.prepare_mods(submission.title)
                 self.prepare_rights()
                 self.prepare_ir()
                 self.prepare_rels()
@@ -86,14 +87,14 @@ class Ingester:
         else:
             messages.success(request, 'Submissions ingested')
 
-    def prepare_mods(self):
+    def prepare_mods(self, title: str) -> str:
         """
-        Prepares the MODS file for ingestion.
+        Renders the xml_mods.xml template using the given title and returns it as a string.
         """
         log.debug('prepare_mods called')
-        # Logic to prepare MODS file
-        # self.submission.mods_file = ...
-        pass
+        xml_str = render_to_string('xml_mods.xml', {'title': title})
+        log.debug(f'xml_str: {xml_str}')
+        return xml_str
 
     def prepare_rights(self):
         """

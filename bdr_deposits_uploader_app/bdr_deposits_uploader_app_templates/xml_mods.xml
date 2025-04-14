@@ -1,0 +1,77 @@
+<mods:mods ID="etd832" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd">
+	<mods:titleInfo>
+		<mods:title>{{ title }}</mods:title>
+	</mods:titleInfo><mods:name type="personal">
+		<mods:namePart>Rymsza-Pawlowska, Malgorzata Joanna</mods:namePart>
+	<mods:role>
+		<mods:roleTerm type="text">creator</mods:roleTerm>
+	</mods:role>
+	</mods:name>
+<mods:originInfo>
+	<mods:copyrightDate>2012</mods:copyrightDate>
+</mods:originInfo>
+<mods:physicalDescription>
+        <mods:extent>vii, 323 p.</mods:extent>
+        <mods:digitalOrigin>born digital</mods:digitalOrigin>
+</mods:physicalDescription>
+<mods:note>Thesis (Ph.D. -- Brown University (2012)</mods:note>
+<mods:name type="personal">
+<mods:namePart>Smulyan, Susan</mods:namePart>
+<mods:role>
+<mods:roleTerm type="text">Director</mods:roleTerm>
+</mods:role>
+</mods:name>
+
+<mods:name type="personal">
+<mods:namePart>Lubar, Steven</mods:namePart>
+<mods:role>
+<mods:roleTerm type="text">Reader</mods:roleTerm>
+</mods:role>
+</mods:name>
+
+<mods:name type="personal">
+<mods:namePart>Joyrich, Lynne</mods:namePart>
+<mods:role>
+<mods:roleTerm type="text">Reader</mods:roleTerm>
+</mods:role>
+</mods:name>
+<mods:name type="corporate">
+		<mods:namePart>Brown University. American Civilization</mods:namePart>
+		<mods:role>
+			<mods:roleTerm type="text">sponsor</mods:roleTerm>
+		</mods:role>
+		</mods:name>
+	<mods:typeOfResource>text</mods:typeOfResource>
+	<mods:genre authority="aat">theses</mods:genre>
+	<mods:abstract>This dissertation looks at different forms of historical practice to argue that the 1970s saw a significant transformation in the ways that individuals, groups, and the state conceived of and interacted with the American past. I organize my investigation around subjective, organizational, and cultural shifts in historic ideation during this decade. In my analysis, I identify two modes of engagement with history: preservation, which places the actor outside of the historical narrative and emphasizes fixed histories that have already occurred; and reenactment, an embodied performance of archival knowledge that seeks immersion and requires emotional identification with the historical subject. I contend that while practices of reenactment become more prominent in the 1970s, both reenactment and preservation were strategically used to explore and understand history in the context of postmodern subjectivity. Using a combination of archival and theoretical approaches, I examine a series of case studies loosely organized around the 1976 United States Bicentennial celebration, including state-run programming, history television, living history initiatives, affective technologies, museum exhibition, and social movements.  I trace how these commemorations, exhibitions, broadcasts, and protests both reflected and influenced new modes of historical ideation, that, in placing subjects within experiential historical narratives, both reinforced existing ideologies and opened up new spaces for reflection and refusal. In addition to being a cultural history, this project is also an intellectual history, as I map and account for a growing unease about the ability to understand history in American social and cultural critique in the 1970s and 80s, placing conversations that pathologized popular historical ideation within the contexts of flexible accumulation, new conservatism, and postmodernism. In its attention to the 1970s as a critical moment of change and its historicization of what remains a central model of historical engagement, my account builds upon and contributes to recent work in history, media studies, memory studies, and performance studies.</mods:abstract>
+
+    <mods:subject>
+        <mods:topic>memory</mods:topic>
+    </mods:subject>
+
+    <mods:subject>
+        <mods:topic>preservation</mods:topic>
+    </mods:subject>
+
+    <mods:subject>
+        <mods:topic>reenactment</mods:topic>
+    </mods:subject>
+
+    <mods:subject>
+        <mods:topic>1970s</mods:topic>
+    </mods:subject>
+
+    <mods:subject>
+        <mods:topic>identity</mods:topic>
+    </mods:subject>
+
+    <mods:subject>
+        <mods:topic>history</mods:topic>
+    </mods:subject>
+
+	<mods:recordInfo>
+		<mods:recordContentSource authority="marcorg">RPB</mods:recordContentSource>
+		<!-- <mods:recordCreationDate encoding="iso8601">20121023</mods:recordCreationDate>         -->
+        <mods:recordCreationDate encoding="iso8601">{{ iso8601_creation_date }}</mods:recordCreationDate>
+	</mods:recordInfo>
+</mods:mods>
