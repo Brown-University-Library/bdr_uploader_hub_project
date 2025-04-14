@@ -3,6 +3,7 @@
 import logging
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
 
@@ -96,17 +97,28 @@ class Ingester:
         dt = datetime.now()
         date_str = dt.date().isoformat()
         xml_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': date_str})
-        log.debug(f'xml_str: {xml_str}')
+        log.debug(f'\nmods xml_str: {xml_str}')
         return xml_str
 
-    def prepare_rights(self):
+    def prepare_rights(self) -> str:
         """
-        Prepares the rights file for ingestion.
+                Prepares the `rightsMetadata` xml file for ingestion.
+
+        BDR_MANAGER_GROUP: str = os.environ['BDR_MANAGER_GROUP']
+        BDR_BROWN_GROUP: str = os.environ['BDR_BROWN_GROUP']
+        BDR_PUBLIC_GROUP: str = os.environ['BDR_PUBLIC_GROUP']
         """
         log.debug('prepare_rights called')
-        # Logic to prepare rights file
-        # self.submission.rights_file = ...
-        pass
+        xml_str = render_to_string(
+            'xml_rights.xml',
+            {
+                'BDR_MANAGER_GROUP': settings.BDR_MANAGER_GROUP,
+                'BDR_BROWN_GROUP': settings.BDR_BROWN_GROUP,
+                'BDR_PUBLIC_GROUP': settings.BDR_PUBLIC_GROUP,
+            },
+        )
+        log.debug(f'\nrights xml_str: {xml_str}')
+        return xml_str
 
     def prepare_ir(self):
         """
