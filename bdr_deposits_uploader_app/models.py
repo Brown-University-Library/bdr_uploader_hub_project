@@ -59,6 +59,7 @@ class Submission(models.Model):
     ## general ----------------------------------
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     app = models.ForeignKey(AppConfig, on_delete=models.CASCADE, null=True)
+    student_eppn = models.CharField(max_length=255, blank=True, null=True)
 
     ## timestamps -------------------------------
     created_at = models.DateTimeField(auto_now_add=True)
@@ -67,8 +68,7 @@ class Submission(models.Model):
     ## form-data ----------------------------------------------------
 
     ## basics -----------------------------------
-    student_eppn = models.CharField(max_length=255, blank=True, null=True)
-    student_email = models.CharField(max_length=255, blank=True, null=True)
+    student_email = models.CharField(max_length=255, blank=True, null=True)  # displayed but not editable
     title = models.CharField(max_length=255)
     abstract = models.TextField()
     ## collaborators ----------------------------
@@ -99,6 +99,16 @@ class Submission(models.Model):
     staff_ingester = models.CharField(max_length=100, blank=True, null=True)  # email address
     ingest_error_message = models.TextField(blank=True, null=True)
     bdr_pid = models.CharField(max_length=20, blank=True, null=True, verbose_name='BDR PID')
+    ## (end of main fields)
+
+    @property
+    def bdr_url(self) -> str | None:
+        """
+        Returns the full BDR URL based on the bdr_pid, or None if not set.
+        """
+        if not self.bdr_pid:
+            return None
+        return f'{settings.BDR_PUBLIC_ITEM_ROOT_URL}{self.bdr_pid}/'
 
     def __str__(self):
         title_short = self.title if len(self.title) <= 10 else f'{self.title[:10]}...'
