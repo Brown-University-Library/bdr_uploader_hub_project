@@ -229,3 +229,8 @@ TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_TIT
 
 ## used for ingest confirmation-email to student
 BDR_PUBLIC_STUDIO_ITEM_ROOT_URL: str = os.environ['BDR_PUBLIC_STUDIO_ITEM_ROOT_URL']
+
+## used for rightsMetadata xml file
+BDR_MANAGER_GROUP: str = os.environ['BDR_MANAGER_GROUP']
+BDR_BROWN_GROUP: str = os.environ['BDR_BROWN_GROUP']
+BDR_PUBLIC_GROUP: str = os.environ['BDR_PUBLIC_GROUP']
