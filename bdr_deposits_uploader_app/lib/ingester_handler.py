@@ -45,7 +45,6 @@ class Ingester:
         else:
             ok = True
             log.debug('All submissions are ready to ingest.')
-        ok = False  # TEMP, for testing
         log.debug(f'ok, ``{ok}``; err, ``{err}``')
         return (ok, err)
 
