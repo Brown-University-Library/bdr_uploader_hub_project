@@ -1,0 +1,17 @@
+<rights:RightsDeclarationMD xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rights="http://cosimo.stanford.edu/sdr/metsrights/" xsi:schemaLocation="http://cosimo.stanford.edu/sdr/rights http://cosimo.stanford.edu/sdr/metsrights.xsd">
+  <rights:RightsHolder CONTEXTIDS="rts001 rts002 rts003">
+    <rights:RightsHolderName>Brown University Library: Digital Production Services</rights:RightsHolderName>
+  </rights:RightsHolder>
+  <rights:Context CONTEXTID="rts001" CONTEXTCLASS="REPOSITORY MGR">
+    <rights:Permissions DELETE="true" DISCOVER="true" DISPLAY="true" MODIFY="true"></rights:Permissions>
+    <rights:UserName USERTYPE="GROUP">{{ BDR_MANAGER_GROUP }}</rights:UserName>
+  </rights:Context>
+  <rights:Context CONTEXTID="rts002" CONTEXTCLASS="BROWN PUBLIC">
+    <rights:Permissions DELETE="false" DISCOVER="true" DISPLAY="true" MODIFY="false"></rights:Permissions>
+    <rights:UserName USERTYPE="GROUP">{{ BDR_BROWN_GROUP }}</rights:UserName>
+  </rights:Context>
+  <rights:Context CONTEXTID="rts003" CONTEXTCLASS="GENERAL PUBLIC">
+    <rights:Permissions DELETE="false" DISCOVER="true" DISPLAY="true" MODIFY="false"></rights:Permissions>
+    <rights:UserName USERTYPE="GROUP">{{ BDR_PUBLIC_GROUP }}</rights:UserName>
+  </rights:Context>
+</rights:RightsDeclarationMD>
