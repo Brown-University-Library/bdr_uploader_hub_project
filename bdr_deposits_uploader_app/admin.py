@@ -2,6 +2,7 @@ import logging
 
 from django.contrib import admin, messages
 
+from .lib.ingester_handler import Ingester
 from .models import AppConfig, Submission, UserProfile
 
 log = logging.getLogger(__name__)
