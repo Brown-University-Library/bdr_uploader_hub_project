@@ -65,7 +65,7 @@ class Ingester:
                 self.prepare_mods(submission.title)
                 self.prepare_rights(submission.student_eppn)
                 self.prepare_ir(submission.student_eppn, submission.student_email)
-                self.prepare_rels(submission.app.temp_config_json)
+                self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
                 self.prepare_file()
                 self.parameterize()
                 result: tuple[str | None, str | None] = self.post()
@@ -129,14 +129,13 @@ class Ingester:
         log.debug(f'ir json: {ir_json}')
         return ir_json
 
-    def prepare_rels(self, app_config_json: str) -> str:
+    def prepare_rels(self, app_config_dict_from_json: dict) -> str:
         """
         Prepares the RELS-EXT data for ingestion.
         All the api call needs is a simple json dict with the collection_pid.
         """
         log.debug('prepare_rels called')
-        app_config_jdct: dict = json.loads(app_config_json)
-        collection_pid: str = app_config_jdct['collection_pid']
+        collection_pid: str = app_config_dict_from_json['collection_pid']
         rels_ext_json = json.dumps({'isMemberOfCollection': collection_pid})
         log.debug(f'rels_ext json: {rels_ext_json}')
         return rels_ext_json
