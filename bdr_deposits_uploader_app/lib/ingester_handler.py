@@ -220,6 +220,7 @@ class Ingester:
         params['permission_ids'] = permission_ids_param_b
         params['agent_name'] = 'BDR_UPLOAD_HUB'
         # params['agent_address'] = ''
+        log.debug(f'params: {pprint.pformat(params)}')
         return params
 
     def post(self, params) -> tuple[str | None, str | None]:
