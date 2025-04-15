@@ -1,7 +1,7 @@
 ## ingester class responsible for preparing and ingesting a submission
 
-import json
 import logging
+import pprint
 from datetime import datetime
 
 from django.conf import settings
@@ -24,6 +24,10 @@ class Ingester:
         self.submission: Submission | None = None
         self.ingest_error_message: str | None = None
         self.bdr_pid: str | None = None
+        self.mods = ''
+        self.rights = {}
+        self.ir = {}
+        self.rels = {}
 
     def validate_queryset(self, request, queryset):
         """
@@ -62,10 +66,10 @@ class Ingester:
         for submission in queryset:
             self.submission = submission
             try:
-                self.prepare_mods(submission.title)
-                self.prepare_rights(submission.student_eppn)
-                self.prepare_ir(submission.student_eppn, submission.student_email)
-                self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
+                self.mods: str = self.prepare_mods(submission.title)
+                self.rights: dict = self.prepare_rights(submission.student_eppn, submission.visibility_options)
+                self.ir: dict = self.prepare_ir(submission.student_eppn, submission.student_email)
+                self.rels: dict = self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
                 self.prepare_file()
                 self.parameterize()
                 result: tuple[str | None, str | None] = self.post()
@@ -100,24 +104,89 @@ class Ingester:
         log.debug(f'\nmods xml_str: {xml_str}')
         return xml_str
 
-    def prepare_rights(self, user_eppn: str) -> str:
+    def prepare_rights(self, student_eppn: str, visibility: str) -> dict:
         """
-        Prepares the `rightsMetadata` xml file for ingestion.
+        Prepares the `rightsMetadata` data file for ingestion.
+
+        ALL_VISIBILITY_OPTIONS_JSON = '[
+            ["public", "Public"],
+            ["private", "Private"],
+            ["brown_only_discoverable", "Brown Only but discoverable"],
+            ["brown_only_not_discoverable", "Brown Only not discoverable"]
+        ]'
+
+        From theses app: ```additional_rights =  f'{brown_group}#{main_rights}+{public_group}#discover'```
         """
         log.debug('prepare_rights called')
-        xml_str = render_to_string(
-            'xml_rights.xml',
-            {
-                'BDR_MANAGER_GROUP': settings.BDR_MANAGER_GROUP,
-                'individual': user_eppn,
-                'BDR_BROWN_GROUP': settings.BDR_BROWN_GROUP,
-                'BDR_PUBLIC_GROUP': settings.BDR_PUBLIC_GROUP,
-            },
-        )
-        log.debug(f'\nrights xml_str: {xml_str}')
-        return xml_str
+        ## populate the four strings --------------------------------
+        owner_string = f'{student_eppn}#discover,display'
+        admin_string = f'{settings.BDR_MANAGER_GROUP}#discover,display'
+        public_string = ''
+        brown_string = ''
+        if visibility == 'public':
+            public_string = f'{settings.BDR_PUBLIC_GROUP}#discover,display'
+            brown_string = f'{settings.BDR_BROWN_GROUP}#discover,display'
+        elif visibility == 'private':
+            pass
+        elif visibility == 'brown_only_discoverable':
+            brown_string = f'{settings.BDR_BROWN_GROUP}#discover,display'
+        else:  # brown_only_not_discoverable
+            brown_string = f'{settings.BDR_BROWN_GROUP}#display'
+        ## create the additional-rights string ----------------------
+        if public_string:
+            additional_rights = f'{admin_string}+{public_string}+{brown_string}'
+        elif brown_string:
+            additional_rights = f'{admin_string}+{brown_string}'
+        ## create the rights json -----------------------------------
+        rights: dict = {
+            'owner_id': owner_string,
+            'additional_rights': additional_rights,
+        }
+        log.debug(f'rights: {pprint.pformat(rights)}')
+        return rights
 
-    def prepare_ir(self, student_eppn: str, student_email: str) -> str:
+    # def prepare_rights(self, student_eppn: str, visibility: str) -> str:
+    #     """
+    #     Prepares the `rightsMetadata` data file for ingestion.
+
+    #     ALL_VISIBILITY_OPTIONS_JSON = '[
+    #         ["public", "Public"],
+    #         ["private", "Private"],
+    #         ["brown_only_discoverable", "Brown Only but discoverable"],
+    #         ["brown_only_not_discoverable", "Brown Only not discoverable"]
+    #     ]'
+
+    #     From theses app: ```additional_rights =  f'{brown_group}#{main_rights}+{public_group}#discover'```
+    #     """
+    #     log.debug('prepare_rights called')
+    #     rights_params = {'owner_id': student_eppn}
+    #     if visibility == 'public':
+    #         view_identity = 'BDR_PUBLIC'
+    #     else:
+    #         view_identity = 'BROWN:COMMUNITY:ALL'
+    #     rights_params['additional_rights'] = f'{view_identity}#discover,display'
+    #     rights_json = json.dumps(rights_params)
+    #     log.debug(f'rights json: {rights_json}')
+    #     return rights_json
+
+    # def prepare_rights(self, user_eppn: str) -> str:
+    #     """
+    #     Prepares the `rightsMetadata` xml file for ingestion.
+    #     """
+    #     log.debug('prepare_rights called')
+    #     xml_str = render_to_string(
+    #         'xml_rights.xml',
+    #         {
+    #             'BDR_MANAGER_GROUP': settings.BDR_MANAGER_GROUP,
+    #             'individual': user_eppn,
+    #             'BDR_BROWN_GROUP': settings.BDR_BROWN_GROUP,
+    #             'BDR_PUBLIC_GROUP': settings.BDR_PUBLIC_GROUP,
+    #         },
+    #     )
+    #     log.debug(f'\nrights xml_str: {xml_str}')
+    #     return xml_str
+
+    def prepare_ir(self, student_eppn: str, student_email: str) -> dict:
         """
         Prepares the IR data for ingestion.
         """
@@ -125,20 +194,19 @@ class Ingester:
         ir_params = {}
         ir_params['depositor_eppn'] = student_eppn
         ir_params['depositor_email'] = student_email
-        ir_json = json.dumps(ir_params)
-        log.debug(f'ir json: {ir_json}')
-        return ir_json
+        log.debug(f'ir_params: {pprint.pformat(ir_params)}')
+        return ir_params
 
-    def prepare_rels(self, app_config_dict_from_json: dict) -> str:
+    def prepare_rels(self, app_config_dict_from_json: dict) -> dict:
         """
         Prepares the RELS-EXT data for ingestion.
         All the api call needs is a simple json dict with the collection_pid.
         """
         log.debug('prepare_rels called')
         collection_pid: str = app_config_dict_from_json['collection_pid']
-        rels_ext_json = json.dumps({'isMemberOfCollection': collection_pid})
-        log.debug(f'rels_ext json: {rels_ext_json}')
-        return rels_ext_json
+        rels_ext = {'isMemberOfCollection': collection_pid}
+        log.debug(f'rels_ext: {rels_ext}')
+        return rels_ext
 
     def prepare_file(self):
         """
