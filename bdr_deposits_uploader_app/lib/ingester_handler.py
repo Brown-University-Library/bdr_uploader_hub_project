@@ -1,5 +1,6 @@
 ## ingester class responsible for preparing and ingesting a submission
 
+import json
 import logging
 from datetime import datetime
 
@@ -64,7 +65,7 @@ class Ingester:
                 self.prepare_mods(submission.title)
                 self.prepare_rights(submission.student_eppn)
                 self.prepare_ir()
-                self.prepare_rels()
+                self.prepare_rels(submission.app.temp_config_json)
                 self.prepare_file()
                 self.parameterize()
                 result: tuple[str | None, str | None] = self.post()
@@ -125,14 +126,16 @@ class Ingester:
         # self.submission.ir_file = ...
         pass
 
-    def prepare_rels(self):
+    def prepare_rels(self, app_config_json: str) -> str:
         """
-        Prepares the RELS file for ingestion.
+        Prepares the RELS-EXT data for ingestion.
         """
         log.debug('prepare_rels called')
-        # Logic to prepare RELS file
-        # self.submission.rels_file = ...
-        pass
+        app_config_jdct: dict = json.loads(app_config_json)
+        collection_pid: str = app_config_jdct['collection_pid']
+        rels_ext_json = json.dumps({'isMemberOfCollection': collection_pid})
+        log.debug(f'rels_ext json: {rels_ext_json}')
+        return rels_ext_json
 
     def prepare_file(self):
         """
