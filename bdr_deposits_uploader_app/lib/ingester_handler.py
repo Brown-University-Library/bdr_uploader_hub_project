@@ -5,6 +5,7 @@ import logging
 import pprint
 from datetime import datetime
 
+import httpx
 from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -81,7 +82,7 @@ class Ingester:
                     submission.original_file_name,
                 )
                 params: dict = self.parameterize()
-                result: tuple[str | None, str | None] = self.post()
+                result: tuple[str | None, str | None] = self.post(params)
                 (pid, err) = result
                 submission.bdr_pid = pid
                 submission.status = 'ingested'
@@ -206,21 +207,37 @@ class Ingester:
         ir_param_b: str = json.dumps(ir_param_a)
         rels_param: str = json.dumps(self.rels)
         file_data_params: dict = self.file_data
-        ## assemble params ------------------------------------------
+        ## assemble main params -------------------------------------
         params = {}
         params['mods'] = mods_param_b
         params['rights'] = rights_param_b
         params['ir'] = ir_param_b
         params['rels'] = rels_param
         params['content_streams'] = file_data_params
+        ## assemble other params ------------------------------------
+        permission_ids_param_a: list = [settings.BDR_MANAGER_GROUP]
+        permission_ids_param_b: str = json.dumps(permission_ids_param_a)
+        params['permission_ids'] = permission_ids_param_b
+        params['agent_name'] = 'BDR_GENERIC_UPLOADER'
+        # params['agent_address'] = ''
         return params
 
-    def post(self) -> tuple[str | None, str | None]:
+    def post(self, params) -> tuple[str | None, str | None]:
         """
         Posts the submission to the BDR for ingestion.
         """
         log.debug('post called')
-        # Logic to post submission
-        # self.submission.posted = ...
-        # return (self.bdr_pid, self.ingest_error_message)
-        return (self.bdr_pid, self.ingest_error_message)
+        error_message = ''
+        try:
+            resp = httpx.post(settings.API_POST_URL, json=params)
+            log.debug(f'type(resp), ``{type(resp)}``; resp.status_code, ``{resp.status_code}``')
+            if resp.status_code == 200:
+                data_dict = resp.json()
+                self.bdr_pid = data_dict['pid']
+            else:
+                error_message = f'bad bdr-api response; status_code, ``{resp.status_code}``; text, ``{resp.text}``'
+                raise Exception(error_message)
+        except Exception as e:
+            error_message = f'Error posting to BDR: {e}'
+            log.exception(error_message)
+        return (self.bdr_pid, error_message)
