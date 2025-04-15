@@ -228,16 +228,13 @@ class Ingester:
         """
         log.debug('post called')
         error_message = ''
-        try:
-            resp = httpx.post(settings.API_POST_URL, json=params)
-            log.debug(f'type(resp), ``{type(resp)}``; resp.status_code, ``{resp.status_code}``')
-            if resp.status_code == 200:
-                data_dict = resp.json()
-                self.bdr_pid = data_dict['pid']
-            else:
-                error_message = f'bad bdr-api response; status_code, ``{resp.status_code}``; text, ``{resp.text}``'
-                raise Exception(error_message)
-        except Exception as e:
-            error_message = f'Error posting to BDR: {e}'
-            log.exception(error_message)
+        resp = httpx.post(settings.BDR_PRIVATE_API_ROOT_URL, json=params)
+        log.debug(f'type(resp), ``{type(resp)}``; resp.status_code, ``{resp.status_code}``')
+        if resp.status_code == 200:
+            data_dict = resp.json()
+            self.bdr_pid = data_dict['pid']
+        else:
+            error_message = f'bad bdr-api response; status_code, ``{resp.status_code}``; text, ``{resp.text}``'
+            raise Exception(error_message)
+        log.exception(error_message)
         return (self.bdr_pid, error_message)
