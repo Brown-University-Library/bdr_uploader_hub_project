@@ -1,5 +1,6 @@
 ## ingester class responsible for preparing and ingesting a submission
 
+import json
 import logging
 import pprint
 from datetime import datetime
@@ -28,6 +29,7 @@ class Ingester:
         self.rights = {}
         self.ir = {}
         self.rels = {}
+        self.file_data = {}
 
     def validate_queryset(self, request, queryset):
         """
@@ -66,12 +68,19 @@ class Ingester:
         for submission in queryset:
             self.submission = submission
             try:
+                f = submission.primary_file
+                log.debug(f'type of f, ``{type(f)}``')
                 self.mods: str = self.prepare_mods(submission.title)
                 self.rights: dict = self.prepare_rights(submission.student_eppn, submission.visibility_options)
                 self.ir: dict = self.prepare_ir(submission.student_eppn, submission.student_email)
                 self.rels: dict = self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
-                self.prepare_file()
-                self.parameterize()
+                self.file_data: dict = self.prepare_file(
+                    submission.checksum_type,
+                    submission.checksum,
+                    submission.primary_file.path,
+                    submission.original_file_name,
+                )
+                params: dict = self.parameterize()
                 result: tuple[str | None, str | None] = self.post()
                 (pid, err) = result
                 submission.bdr_pid = pid
@@ -145,47 +154,6 @@ class Ingester:
         log.debug(f'rights: {pprint.pformat(rights)}')
         return rights
 
-    # def prepare_rights(self, student_eppn: str, visibility: str) -> str:
-    #     """
-    #     Prepares the `rightsMetadata` data file for ingestion.
-
-    #     ALL_VISIBILITY_OPTIONS_JSON = '[
-    #         ["public", "Public"],
-    #         ["private", "Private"],
-    #         ["brown_only_discoverable", "Brown Only but discoverable"],
-    #         ["brown_only_not_discoverable", "Brown Only not discoverable"]
-    #     ]'
-
-    #     From theses app: ```additional_rights =  f'{brown_group}#{main_rights}+{public_group}#discover'```
-    #     """
-    #     log.debug('prepare_rights called')
-    #     rights_params = {'owner_id': student_eppn}
-    #     if visibility == 'public':
-    #         view_identity = 'BDR_PUBLIC'
-    #     else:
-    #         view_identity = 'BROWN:COMMUNITY:ALL'
-    #     rights_params['additional_rights'] = f'{view_identity}#discover,display'
-    #     rights_json = json.dumps(rights_params)
-    #     log.debug(f'rights json: {rights_json}')
-    #     return rights_json
-
-    # def prepare_rights(self, user_eppn: str) -> str:
-    #     """
-    #     Prepares the `rightsMetadata` xml file for ingestion.
-    #     """
-    #     log.debug('prepare_rights called')
-    #     xml_str = render_to_string(
-    #         'xml_rights.xml',
-    #         {
-    #             'BDR_MANAGER_GROUP': settings.BDR_MANAGER_GROUP,
-    #             'individual': user_eppn,
-    #             'BDR_BROWN_GROUP': settings.BDR_BROWN_GROUP,
-    #             'BDR_PUBLIC_GROUP': settings.BDR_PUBLIC_GROUP,
-    #         },
-    #     )
-    #     log.debug(f'\nrights xml_str: {xml_str}')
-    #     return xml_str
-
     def prepare_ir(self, student_eppn: str, student_email: str) -> dict:
         """
         Prepares the IR data for ingestion.
@@ -208,23 +176,44 @@ class Ingester:
         log.debug(f'rels_ext: {rels_ext}')
         return rels_ext
 
-    def prepare_file(self):
+    def prepare_file(
+        self, submission_checksum_type: str, submission_checksum: str, file_path: str, original_file_name: str
+    ) -> dict:
         """
-        Prepares the file for ingestion.
+        Prepares file-data ingestion.
         """
         log.debug('prepare_file called')
-        # Logic to prepare file
-        # self.submission.file = ...
-        pass
+        file_data = {
+            'checksum_type': submission_checksum_type,
+            'checksum': submission_checksum,
+            'file_name': original_file_name,
+            'path': file_path,
+        }
+        log.debug(f'file_data: {pprint.pformat(file_data)}')
+        return file_data
 
-    def parameterize(self):
+    def parameterize(self) -> dict:
         """
-        Parameterizes the submission for ingestion.
+        Parameterizes the submission data for ingestion.
         """
         log.debug('parameterize called')
-        # Logic to parameterize submission
-        # self.submission.parameterized = ...
-        pass
+        ## prep data ------------------------------------------------
+        mods_param_a: dict = {'xml_data': self.mods}
+        mods_param_b: str = json.dumps(mods_param_a)
+        rights_param_a: dict = {'parameters': self.rights}
+        rights_param_b: str = json.dumps(rights_param_a)
+        ir_param_a: dict = {'parameters': self.ir}
+        ir_param_b: str = json.dumps(ir_param_a)
+        rels_param: str = json.dumps(self.rels)
+        file_data_params: dict = self.file_data
+        ## assemble params ------------------------------------------
+        params = {}
+        params['mods'] = mods_param_b
+        params['rights'] = rights_param_b
+        params['ir'] = ir_param_b
+        params['rels'] = rels_param
+        params['content_streams'] = file_data_params
+        return params
 
     def post(self) -> tuple[str | None, str | None]:
         """
