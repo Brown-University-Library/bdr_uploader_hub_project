@@ -64,7 +64,7 @@ class Ingester:
             try:
                 self.prepare_mods(submission.title)
                 self.prepare_rights(submission.student_eppn)
-                self.prepare_ir()
+                self.prepare_ir(submission.student_eppn, submission.student_email)
                 self.prepare_rels(submission.app.temp_config_json)
                 self.prepare_file()
                 self.parameterize()
@@ -117,18 +117,22 @@ class Ingester:
         log.debug(f'\nrights xml_str: {xml_str}')
         return xml_str
 
-    def prepare_ir(self):
+    def prepare_ir(self, student_eppn: str, student_email: str) -> str:
         """
-        Prepares the IR file for ingestion.
+        Prepares the IR data for ingestion.
         """
         log.debug('prepare_ir called')
-        # Logic to prepare IR file
-        # self.submission.ir_file = ...
-        pass
+        ir_params = {}
+        ir_params['depositor_eppn'] = student_eppn
+        ir_params['depositor_email'] = student_email
+        ir_json = json.dumps(ir_params)
+        log.debug(f'ir json: {ir_json}')
+        return ir_json
 
     def prepare_rels(self, app_config_json: str) -> str:
         """
         Prepares the RELS-EXT data for ingestion.
+        All the api call needs is a simple json dict with the collection_pid.
         """
         log.debug('prepare_rels called')
         app_config_jdct: dict = json.loads(app_config_json)
