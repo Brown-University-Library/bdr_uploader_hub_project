@@ -197,7 +197,7 @@ class Ingester:
         """
         Parameterizes the submission data for ingestion.
         """
-        log.debug('parameterize called')
+        log.debug('parameterize() called')
         ## prep data ------------------------------------------------
         mods_param_a: dict = {'xml_data': self.mods}
         mods_param_b: str = json.dumps(mods_param_a)
@@ -218,7 +218,7 @@ class Ingester:
         permission_ids_param_a: list = [settings.BDR_MANAGER_GROUP]
         permission_ids_param_b: str = json.dumps(permission_ids_param_a)
         params['permission_ids'] = permission_ids_param_b
-        params['agent_name'] = 'BDR_GENERIC_UPLOADER'
+        params['agent_name'] = 'BDR_UPLOAD_HUB'
         # params['agent_address'] = ''
         return params
 
