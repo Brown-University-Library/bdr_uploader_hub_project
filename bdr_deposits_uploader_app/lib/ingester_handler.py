@@ -94,9 +94,8 @@ class Ingester:
         Renders the xml_mods.xml template using the given title and returns it as a string.
         """
         log.debug('prepare_mods called')
-        dt = datetime.now()
-        date_str = dt.date().isoformat()
-        xml_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': date_str})
+        year: str = str(datetime.now().year)
+        xml_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': year})
         log.debug(f'\nmods xml_str: {xml_str}')
         return xml_str
 
