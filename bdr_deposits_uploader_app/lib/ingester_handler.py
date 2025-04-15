@@ -62,7 +62,7 @@ class Ingester:
             self.submission = submission
             try:
                 self.prepare_mods(submission.title)
-                self.prepare_rights()
+                self.prepare_rights(submission.student_eppn)
                 self.prepare_ir()
                 self.prepare_rels()
                 self.prepare_file()
@@ -99,7 +99,7 @@ class Ingester:
         log.debug(f'\nmods xml_str: {xml_str}')
         return xml_str
 
-    def prepare_rights(self) -> str:
+    def prepare_rights(self, user_eppn: str) -> str:
         """
         Prepares the `rightsMetadata` xml file for ingestion.
         """
@@ -108,6 +108,7 @@ class Ingester:
             'xml_rights.xml',
             {
                 'BDR_MANAGER_GROUP': settings.BDR_MANAGER_GROUP,
+                'individual': user_eppn,
                 'BDR_BROWN_GROUP': settings.BDR_BROWN_GROUP,
                 'BDR_PUBLIC_GROUP': settings.BDR_PUBLIC_GROUP,
             },
