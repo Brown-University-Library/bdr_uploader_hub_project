@@ -9,6 +9,7 @@ import httpx
 from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
+from lxml import etree
 
 from bdr_deposits_uploader_app.models import Submission
 
@@ -104,15 +105,41 @@ class Ingester:
         else:
             messages.success(request, 'Submissions ingested')
 
+    # def prepare_mods(self, title: str) -> str:
+    #     """
+    #     Renders the xml_mods.xml template using the given title and returns it as a string.
+    #     """
+    #     log.debug('prepare_mods called')
+    #     year: str = str(datetime.now().year)
+    #     xml_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': year})
+    #     log.debug(f'\nmods xml_str: {xml_str}')
+    #     return xml_str
+
     def prepare_mods(self, title: str) -> str:
         """
         Renders the xml_mods.xml template using the given title and returns it as a string.
         """
         log.debug('prepare_mods called')
         year: str = str(datetime.now().year)
-        xml_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': year})
-        log.debug(f'\nmods xml_str: {xml_str}')
-        return xml_str
+        xml_initial_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': year})
+        log.debug(f'\nmods xml_initial_str: {xml_initial_str}')
+        xml_formatted_str = self.format_mods(xml_initial_str)
+        log.debug(f'\nmods xml_formatted_str: {xml_formatted_str}')
+        return xml_formatted_str
+
+    def format_mods(self, unformatted_mods_string: str) -> str:
+        """
+        Formats the item_mods object via lxml.
+        I tried formatting with BeautifulSoup, and minidom, but they both had issues; this is perfect for my needs.
+        Note that the BDR-API _requires_ the typeOfResource element to be in the format: opening-element -> text -> closing-element -- which this formatting ensures.
+        Called by manage_item_mods_creation()
+        """
+        log.debug('starting format_mods()')
+        unformatted_mods_bytes: bytes = unformatted_mods_string.encode('utf-8')
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.fromstring(unformatted_mods_bytes, parser=parser)
+        formatted_mods_string = etree.tostring(tree, pretty_print=True).decode()   # type: ignore
+        return formatted_mods_string
 
     def prepare_rights(self, student_eppn: str, visibility: str) -> dict:
         """
