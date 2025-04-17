@@ -105,16 +105,6 @@ class Ingester:
         else:
             messages.success(request, 'Submissions ingested')
 
-    # def prepare_mods(self, title: str) -> str:
-    #     """
-    #     Renders the xml_mods.xml template using the given title and returns it as a string.
-    #     """
-    #     log.debug('prepare_mods called')
-    #     year: str = str(datetime.now().year)
-    #     xml_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': year})
-    #     log.debug(f'\nmods xml_str: {xml_str}')
-    #     return xml_str
-
     def prepare_mods(self, title: str) -> str:
         """
         Renders the xml_mods.xml template using the given title and returns it as a string.
@@ -240,6 +230,7 @@ class Ingester:
         rights_param = json.dumps({'parameters': self.rights})
         ir_param = json.dumps({'parameters': self.ir})
         rels_param = json.dumps(self.rels)
+        file_param = json.dumps(self.file_data)
 
         ## assemble main params -------------------------------------
         params = {}
@@ -247,7 +238,7 @@ class Ingester:
         params['rights'] = rights_param
         params['ir'] = ir_param
         params['rels'] = rels_param
-        params['content_streams'] = self.file_data
+        params['content_streams'] = file_param
         ## assemble other params ------------------------------------
         # permission_ids_param_a: list = [settings.BDR_MANAGER_GROUP]
         # permission_ids_param_b: str = json.dumps(permission_ids_param_a)
