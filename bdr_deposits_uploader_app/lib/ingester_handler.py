@@ -138,7 +138,7 @@ class Ingester:
         unformatted_mods_bytes: bytes = unformatted_mods_string.encode('utf-8')
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.fromstring(unformatted_mods_bytes, parser=parser)
-        formatted_mods_string = etree.tostring(tree, pretty_print=True).decode()   # type: ignore
+        formatted_mods_string = etree.tostring(tree, pretty_print=True).decode()  # type: ignore
         return formatted_mods_string
 
     def prepare_rights(self, student_eppn: str, visibility: str) -> dict:
@@ -226,25 +226,31 @@ class Ingester:
         """
         log.debug('parameterize() called')
         ## prep data ------------------------------------------------
-        mods_param_a: dict = {'xml_data': self.mods}
-        mods_param_b: str = json.dumps(mods_param_a)
-        rights_param_a: dict = {'parameters': self.rights}
-        rights_param_b: str = json.dumps(rights_param_a)
-        ir_param_a: dict = {'parameters': self.ir}
-        ir_param_b: str = json.dumps(ir_param_a)
-        rels_param: str = json.dumps(self.rels)
-        file_data_params: dict = self.file_data
+        # mods_param_a: dict = {'xml_data': self.mods}
+        # mods_param_b: str = json.dumps(mods_param_a)
+        # rights_param_a: dict = {'parameters': self.rights}
+        # rights_param_b: str = json.dumps(rights_param_a)
+        # ir_param_a: dict = {'parameters': self.ir}
+        # ir_param_b: str = json.dumps(ir_param_a)
+        # rels_param: str = json.dumps(self.rels)
+        # file_data_params: dict = self.file_data
+
+        mods_param = json.dumps({'parameters': {'xml_data': self.mods}})
+        rights_param = json.dumps({'parameters': self.rights})
+        ir_param = json.dumps({'parameters': self.ir})
+        rels_param = json.dumps(self.rels)
+
         ## assemble main params -------------------------------------
         params = {}
-        params['mods'] = mods_param_b
-        params['rights'] = rights_param_b
-        params['ir'] = ir_param_b
+        params['mods'] = mods_param
+        params['rights'] = rights_param
+        params['ir'] = ir_param
         params['rels'] = rels_param
-        params['content_streams'] = file_data_params
+        params['content_streams'] = self.file_data
         ## assemble other params ------------------------------------
-        permission_ids_param_a: list = [settings.BDR_MANAGER_GROUP]
-        permission_ids_param_b: str = json.dumps(permission_ids_param_a)
-        params['permission_ids'] = permission_ids_param_b
+        # permission_ids_param_a: list = [settings.BDR_MANAGER_GROUP]
+        # permission_ids_param_b: str = json.dumps(permission_ids_param_a)
+        params['permission_ids'] = json.dumps([settings.BDR_MANAGER_GROUP])
         params['agent_name'] = 'BDR_UPLOAD_HUB'
         # params['agent_address'] = ''
         log.debug(f'params: {pprint.pformat(params)}')
