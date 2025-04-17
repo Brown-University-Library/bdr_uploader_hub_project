@@ -216,21 +216,11 @@ class Ingester:
         """
         log.debug('parameterize() called')
         ## prep data ------------------------------------------------
-        # mods_param_a: dict = {'xml_data': self.mods}
-        # mods_param_b: str = json.dumps(mods_param_a)
-        # rights_param_a: dict = {'parameters': self.rights}
-        # rights_param_b: str = json.dumps(rights_param_a)
-        # ir_param_a: dict = {'parameters': self.ir}
-        # ir_param_b: str = json.dumps(ir_param_a)
-        # rels_param: str = json.dumps(self.rels)
-        # file_data_params: dict = self.file_data
-
-        # mods_param = json.dumps({'parameters': {'xml_data': self.mods}})
         mods_param = json.dumps({'xml_data': self.mods})
         rights_param = json.dumps({'parameters': self.rights})
         ir_param = json.dumps({'parameters': self.ir})
         rels_param = json.dumps(self.rels)
-        file_param = json.dumps(self.file_data)
+        file_param = json.dumps([self.file_data])  # bdr-api requires list
 
         ## assemble main params -------------------------------------
         params = {}
