@@ -235,7 +235,8 @@ class Ingester:
         # rels_param: str = json.dumps(self.rels)
         # file_data_params: dict = self.file_data
 
-        mods_param = json.dumps({'parameters': {'xml_data': self.mods}})
+        # mods_param = json.dumps({'parameters': {'xml_data': self.mods}})
+        mods_param = json.dumps({'xml_data': self.mods})
         rights_param = json.dumps({'parameters': self.rights})
         ir_param = json.dumps({'parameters': self.ir})
         rels_param = json.dumps(self.rels)
@@ -262,7 +263,7 @@ class Ingester:
         """
         log.debug('post called')
         error_message = ''
-        resp = httpx.post(settings.BDR_PRIVATE_API_ROOT_URL, json=params)
+        resp = httpx.post(settings.BDR_PRIVATE_API_ROOT_URL, params=params)
         log.debug(f'type(resp), ``{type(resp)}``; resp.status_code, ``{resp.status_code}``')
         if resp.status_code == 200:
             data_dict = resp.json()
