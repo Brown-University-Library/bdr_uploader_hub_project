@@ -263,7 +263,7 @@ class Ingester:
         """
         log.debug('post called')
         error_message = ''
-        resp = httpx.post(settings.BDR_PRIVATE_API_ROOT_URL, params=params)
+        resp = httpx.post(settings.BDR_PRIVATE_API_ROOT_URL, data=params)
         log.debug(f'type(resp), ``{type(resp)}``; resp.status_code, ``{resp.status_code}``')
         if resp.status_code == 200:
             data_dict = resp.json()
