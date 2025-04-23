@@ -157,13 +157,19 @@ class Ingester:
             pass
         elif visibility == 'brown_only_discoverable':
             brown_string = f'{settings.BDR_BROWN_GROUP}#discover,display'
-        else:  # brown_only_not_discoverable
+        elif visibility == 'brown_only_not_discoverable':
             brown_string = f'{settings.BDR_BROWN_GROUP}#display'
+        else:  # shouldn't get here
+            error_message = f'invalid visibility option: {visibility}'
+            raise Exception(error_message)
         ## create the additional-rights string ----------------------
         if public_string:
             additional_rights = f'{admin_string}+{public_string}+{brown_string}'
         elif brown_string:
             additional_rights = f'{admin_string}+{brown_string}'
+        else:  # private
+            additional_rights = admin_string
+        log.debug(f'owner_string: {owner_string}')
         ## create the rights json -----------------------------------
         rights: dict = {
             'owner_id': owner_string,
