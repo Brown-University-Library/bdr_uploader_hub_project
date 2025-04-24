@@ -1,0 +1,91 @@
+<mods:mods xmlns:mods="http://www.loc.gov/mods/v3"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd">
+
+  <mods:titleInfo>
+    <mods:title>{{ title }}</mods:title>
+  </mods:titleInfo>
+
+  <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
+
+  <mods:abstract>Your abstract here.</mods:abstract>
+
+  <mods:name type="personal">
+    <mods:namePart>Author Last, First</mods:namePart>
+    <mods:role>
+      <mods:roleTerm authority="marcrelator"
+                     authorityURI="http://id.loc.gov/vocabulary/relators"
+                     valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+
+  <!-- Repeating personal names example -->
+  <mods:name type="personal">
+    <mods:namePart>Advisor Last, First</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="text">advisor</mods:roleTerm>
+    </mods:role>
+    <mods:affiliation>Advisor Affiliation</mods:affiliation>
+  </mods:name>
+
+  <mods:name type="personal">
+    <mods:namePart>Reader Last, First</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="text">reader</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+
+  <!-- Example corporate name -->
+  <mods:name type="corporate">
+    <mods:namePart>Brown University. Department Name</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="text">sponsor</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+
+  <!-- Repeating subjects example -->
+  <mods:subject authority="fast"
+                authorityURI="http://id.worldcat.org/fast"
+                valueURI="http://id.worldcat.org/fast/01016339">
+    <mods:topic>Topic One</mods:topic>
+  </mods:subject>
+
+  <mods:subject authority="fast"
+                authorityURI="http://id.worldcat.org/fast"
+                valueURI="http://id.worldcat.org/fast/01137578">
+    <mods:topic>Topic Two</mods:topic>
+  </mods:subject>
+
+  <mods:language>
+    <mods:languageTerm type="text" authority="iso639-2b">English</mods:languageTerm>
+  </mods:language>
+
+  <mods:originInfo>
+    <mods:place>
+      <mods:placeTerm type="text">Providence, RI</mods:placeTerm>
+    </mods:place>
+    <mods:publisher>Brown University</mods:publisher>
+    <mods:dateCreated keyDate="yes" encoding="w3cdtf">{{ year }}</mods:dateCreated>
+  </mods:originInfo>
+
+  <mods:physicalDescription>
+    <mods:digitalOrigin>born digital</mods:digitalOrigin>
+    <mods:extent>1 PDF</mods:extent>
+  </mods:physicalDescription>
+
+  <mods:genre authority="aat">document genre</mods:genre>
+
+  <!-- Notes -->
+  <mods:note displayLabel="Concentration">Your concentration here</mods:note>
+  <mods:note type="thesis">Senior thesis (AB)--Brown University, 2024</mods:note>
+
+  <!-- Identifiers -->
+  <mods:identifier type="doi">Your DOI here</mods:identifier>
+
+  <!-- Access conditions -->
+  <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
+  <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
+  <mods:accessCondition type="restriction on access">All Rights Reserved</mods:accessCondition>
+
+</mods:mods>

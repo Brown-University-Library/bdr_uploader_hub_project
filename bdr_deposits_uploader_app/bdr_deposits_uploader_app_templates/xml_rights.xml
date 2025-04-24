@@ -1,0 +1,27 @@
+<rights:RightsDeclarationMD xmlns:rights="http://cosimo.stanford.edu/sdr/metsrights/"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xsi:schemaLocation="http://cosimo.stanford.edu/sdr/rights http://cosimo.stanford.edu/sdr/metsrights.xsd">
+
+  <rights:RightsHolder CONTEXTIDS="rights000 rights001 rights002 rights003" />
+
+  <rights:Context CONTEXTID="rights000">
+    <rights:Permissions DELETE="true" DISCOVER="true" DISPLAY="true" MODIFY="true"/>
+    <rights:UserName USERTYPE="GROUP">{{ BDR_MANAGER_GROUP }}</rights:UserName>
+  </rights:Context>
+
+  <rights:Context CONTEXTID="rights001">
+    <rights:Permissions DELETE="true" DISCOVER="true" DISPLAY="true" MODIFY="true"/>
+    <rights:UserName USERTYPE="INDIVIDUAL">{{ individual }}</rights:UserName>
+  </rights:Context>
+
+  <rights:Context CONTEXTID="rights002">
+    <rights:Permissions DELETE="false" DISCOVER="true" DISPLAY="true" MODIFY="false"/>
+    <rights:UserName USERTYPE="GROUP">{{ BDR_BROWN_GROUP }}</rights:UserName>
+  </rights:Context>
+
+  <rights:Context CONTEXTID="rights003">
+    <rights:Permissions DELETE="false" DISCOVER="true" DISPLAY="true" MODIFY="false"/>
+    <rights:UserName USERTYPE="GROUP">{{ BDR_PUBLIC_GROUP }}</rights:UserName>
+  </rights:Context>
+
+</rights:RightsDeclarationMD>

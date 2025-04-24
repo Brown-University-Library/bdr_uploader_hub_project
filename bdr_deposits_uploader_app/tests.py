@@ -6,6 +6,7 @@ from django.test import SimpleTestCase, TestCase  # SimpleTestCase does not requ
 from django.test.utils import override_settings
 
 from bdr_deposits_uploader_app.forms.staff_form import StaffForm
+from bdr_deposits_uploader_app.lib.ingester_handler import Ingester
 
 log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
@@ -126,3 +127,48 @@ class StaffFormDirectTests(TestCase):
         self.assertIn('At least one student group or email must be provided.', form.errors['__all__'][0])
 
     ## end class StaffFormTests()
+
+
+class IngestTest(TestCase):
+    def setUp(self):
+        self.ingester = Ingester()
+
+    @override_settings(BDR_MANAGER_GROUP='admin_group', BDR_PUBLIC_GROUP='public_group', BDR_BROWN_GROUP='brown_group')
+    def test_prepare_rights_public(self):
+        """
+        Checks rights for "public" form value.
+        """
+        result = self.ingester.prepare_rights('student@brown.edu', 'public')
+        self.assertEqual(result['owner_id'], 'student@brown.edu#discover,display')
+        self.assertIn('admin_group#discover,display', result['additional_rights'])
+        self.assertIn('public_group#discover,display', result['additional_rights'])
+        self.assertIn('brown_group#discover,display', result['additional_rights'])
+
+    @override_settings(BDR_MANAGER_GROUP='admin_group', BDR_PUBLIC_GROUP='public_group', BDR_BROWN_GROUP='brown_group')
+    def test_prepare_rights_private(self):
+        """
+        Checks rights for "private" form value.
+        """
+        result = self.ingester.prepare_rights('student@brown.edu', 'private')
+        self.assertEqual(result['owner_id'], 'student@brown.edu#discover,display')
+        self.assertEqual(result['additional_rights'], 'admin_group#discover,display')
+
+    @override_settings(BDR_MANAGER_GROUP='admin_group', BDR_PUBLIC_GROUP='public_group', BDR_BROWN_GROUP='brown_group')
+    def test_prepare_rights_brown_only_discoverable(self):
+        """
+        Checks rights for "brown_only_discoverable" form value.
+        """
+        result = self.ingester.prepare_rights('student@brown.edu', 'brown_only_discoverable')
+        self.assertEqual(result['owner_id'], 'student@brown.edu#discover,display')
+        self.assertEqual(result['additional_rights'], 'admin_group#discover,display+brown_group#discover,display')
+
+    @override_settings(BDR_MANAGER_GROUP='admin_group', BDR_PUBLIC_GROUP='public_group', BDR_BROWN_GROUP='brown_group')
+    def test_prepare_rights_brown_only_not_discoverable(self):
+        """
+        Checks rights for "brown_only_not_discoverable" form value.
+        """
+        result = self.ingester.prepare_rights('student@brown.edu', 'brown_only_not_discoverable')
+        self.assertEqual(result['owner_id'], 'student@brown.edu#discover,display')
+        self.assertEqual(result['additional_rights'], 'admin_group#discover,display+brown_group#display')
+
+    ## end class IngestTest()
