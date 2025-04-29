@@ -143,7 +143,13 @@ EMAIL_PORT = int(os.environ['EMAIL_PORT'])
 
 ## user uploaded files ----------------------------------------------
 MEDIA_ROOT = os.environ['MEDIA_ROOT']
-# MEDIA_URL = os.environ['MEDIA_URL']  # not yet
+"""
+The two settings below prevent django from auto-running chmod on uploaded files
+    (which can cause permission issues when using a shared volume)
+    see: https://docs.djangoproject.com/en/4.2/ref/settings/#file-upload-permissions
+"""
+FILE_UPLOAD_PERMISSIONS = None
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = None
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
