@@ -75,7 +75,9 @@ class Ingester:
                 self.mods: str = self.prepare_mods(submission.title)
                 self.rights: dict = self.prepare_rights(submission.student_eppn, submission.visibility_options)
                 self.ir: dict = self.prepare_ir(submission.student_eppn, submission.student_email)
-                self.rels: dict = self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
+                # self.rels: dict = self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
+                temp_config_data: dict = submission.app.temp_config_json  # loads as a dict
+                self.rels: dict = self.prepare_rels(temp_config_data)  # temp_config_json loads as a dict
                 self.file_data: dict = self.prepare_file(
                     submission.checksum_type,
                     submission.checksum,

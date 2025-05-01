@@ -12,6 +12,35 @@ log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
 
 
+class ModsMakerTest(SimpleTestCase):
+    """
+    Tests the mods_maker function.
+    """
+
+    def setUp(self):
+        """
+        Set up the test case.
+        """
+        # Set up any necessary data or state for the tests
+        pass
+
+    def test_prepare_mods_A(self):
+        """
+        Tests the mods_maker function.
+        """
+        # ingester = Ingester()
+        # submission = Submission(
+        #     title='Sample Title',
+        #     author='Sample Author',
+        #     date='2023-10-01',
+        #     description='Sample Description',
+        # )
+        # result = ingester.prepare_mods(submission)
+        # log.debug(f'mods_maker result: {result}')
+        # self.assertIn('<mods:title>Sample Title</mods:title>', result)
+        self.assertEqual(1, 2)  # placeholder
+
+
 class ErrorCheckTest(SimpleTestCase):
     """
     Checks urls.
