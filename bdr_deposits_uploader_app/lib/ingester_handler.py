@@ -209,6 +209,8 @@ class Ingester:
         Prepares file-data ingestion.
         """
         log.debug('prepare_file called')
+        ## get bdr-api-filepath -------------------------------------
+        saved_file_path: Path = Path(file_path)
         file_data = {
             'checksum_type': submission_checksum_type,
             'checksum': submission_checksum,
@@ -217,6 +219,22 @@ class Ingester:
         }
         log.debug(f'file_data: {pprint.pformat(file_data)}')
         return file_data
+
+    # def prepare_file(
+    #     self, submission_checksum_type: str, submission_checksum: str, file_path: str, original_file_name: str
+    # ) -> dict:
+    #     """
+    #     Prepares file-data ingestion.
+    #     """
+    #     log.debug('prepare_file called')
+    #     file_data = {
+    #         'checksum_type': submission_checksum_type,
+    #         'checksum': submission_checksum,
+    #         'file_name': original_file_name,
+    #         'path': file_path,
+    #     }
+    #     log.debug(f'file_data: {pprint.pformat(file_data)}')
+    #     return file_data
 
     def parameterize(self) -> dict:
         """
