@@ -1,5 +1,6 @@
 import logging
 import pprint
+from pathlib import Path
 
 from django.conf import settings as project_settings
 from django.test import SimpleTestCase, TestCase  # SimpleTestCase does not require db
@@ -199,5 +200,34 @@ class IngestTest(TestCase):
         result = self.ingester.prepare_rights('student@brown.edu', 'brown_only_not_discoverable')
         self.assertEqual(result['owner_id'], 'student@brown.edu#discover,display')
         self.assertEqual(result['additional_rights'], 'admin_group#discover,display+brown_group#display')
+
+    @override_settings(BDR_API_FILE_PATH_ROOT='/mock/api/root')
+    def test_prepare_file(self):
+        """
+        Checks the prepare_file function.
+        """
+        # Arrange
+        submission_checksum_type = 'md5'
+        submission_checksum = '1234567890abcdef'
+        file_path = '/test/path/to/file.txt'
+        original_file_name = 'original_filename.txt'
+        
+        # Act
+        result = self.ingester.prepare_file(
+            submission_checksum_type,
+            submission_checksum,
+            file_path,
+            original_file_name
+        )
+        
+        # Assert
+        expected_result = {
+            'checksum_type': submission_checksum_type,
+            'checksum': submission_checksum,
+            'file_name': original_file_name,
+            'path': Path('/mock/api/root/file.txt')
+        }
+        
+        self.assertEqual(result, expected_result)
 
     ## end class IngestTest()

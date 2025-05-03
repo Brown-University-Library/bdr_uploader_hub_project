@@ -4,7 +4,7 @@ import json
 import logging
 import pprint
 from datetime import datetime
-
+from pathlib import Path
 import httpx
 from django.conf import settings
 from django.contrib import messages
@@ -211,11 +211,18 @@ class Ingester:
         log.debug('prepare_file called')
         ## get bdr-api-filepath -------------------------------------
         saved_file_path: Path = Path(file_path)
+        rslt: tuple[Path, str] = (saved_file_path.parent, saved_file_path.name)
+        (path, filename) = rslt
+        log.debug(f'path: ``{path}``, filename: ``{filename}``')
+        bdr_api_file_path_root: Path = Path(settings.BDR_API_FILE_PATH_ROOT)
+        bdr_api_file_path: Path = bdr_api_file_path_root / filename
+        log.debug(f'bdr_api_file_path: ``{bdr_api_file_path}``')
+        ## prepare file-data ------------------------------------------
         file_data = {
             'checksum_type': submission_checksum_type,
             'checksum': submission_checksum,
             'file_name': original_file_name,
-            'path': file_path,
+            'path': bdr_api_file_path,
         }
         log.debug(f'file_data: {pprint.pformat(file_data)}')
         return file_data
