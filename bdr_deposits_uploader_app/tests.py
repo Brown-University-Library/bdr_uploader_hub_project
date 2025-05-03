@@ -211,23 +211,18 @@ class IngestTest(TestCase):
         submission_checksum = '1234567890abcdef'
         file_path = '/test/path/to/file.txt'
         original_file_name = 'original_filename.txt'
-        
+
         # Act
-        result = self.ingester.prepare_file(
-            submission_checksum_type,
-            submission_checksum,
-            file_path,
-            original_file_name
-        )
-        
+        result = self.ingester.prepare_file(submission_checksum_type, submission_checksum, file_path, original_file_name)
+
         # Assert
         expected_result = {
             'checksum_type': submission_checksum_type,
             'checksum': submission_checksum,
             'file_name': original_file_name,
-            'path': Path('/mock/api/root/file.txt')
+            'path': Path('/mock/api/root/file.txt'),
         }
-        
+
         self.assertEqual(result, expected_result)
 
     ## end class IngestTest()
