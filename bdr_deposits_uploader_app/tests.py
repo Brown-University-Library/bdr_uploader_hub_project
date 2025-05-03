@@ -2,6 +2,7 @@ import logging
 import pprint
 from pathlib import Path
 
+from django.conf import settings
 from django.conf import settings as project_settings
 from django.test import SimpleTestCase, TestCase  # SimpleTestCase does not require db
 from django.test.utils import override_settings
@@ -201,10 +202,12 @@ class IngestTest(TestCase):
         self.assertEqual(result['owner_id'], 'student@brown.edu#discover,display')
         self.assertEqual(result['additional_rights'], 'admin_group#discover,display+brown_group#display')
 
-    @override_settings(BDR_API_FILE_PATH_ROOT='/mock/api/root')
     def test_prepare_file(self):
         """
-        Checks the prepare_file function.
+        Checks that the prepare_file function:
+        - separates the file path root from the file name,
+        - switches the file path to the BDR API file path root,
+        - returns a dictionary with the expected values.
         """
         # Arrange
         submission_checksum_type = 'md5'
@@ -216,11 +219,12 @@ class IngestTest(TestCase):
         result = self.ingester.prepare_file(submission_checksum_type, submission_checksum, file_path, original_file_name)
 
         # Assert
+        expected_path: Path = Path(settings.BDR_API_FILE_PATH_ROOT) / Path(file_path).name
         expected_result = {
             'checksum_type': submission_checksum_type,
             'checksum': submission_checksum,
             'file_name': original_file_name,
-            'path': Path('/mock/api/root/file.txt'),
+            'path': expected_path,
         }
 
         self.assertEqual(result, expected_result)

@@ -143,6 +143,7 @@ EMAIL_PORT = int(os.environ['EMAIL_PORT'])
 
 ## user uploaded files ----------------------------------------------
 MEDIA_ROOT = os.environ['MEDIA_ROOT']
+BDR_API_FILE_PATH_ROOT = os.environ['BDR_API_FILE_PATH_ROOT']
 """
 The two settings below prevent django from auto-running chmod on uploaded files
     (which can cause permission issues when using a shared volume)
