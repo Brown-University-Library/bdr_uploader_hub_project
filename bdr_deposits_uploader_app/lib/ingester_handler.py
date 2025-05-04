@@ -218,12 +218,13 @@ class Ingester:
         bdr_api_file_path_root: Path = Path(settings.BDR_API_FILE_PATH_ROOT)
         bdr_api_file_path: Path = bdr_api_file_path_root / filename
         log.debug(f'bdr_api_file_path: ``{bdr_api_file_path}``')
+        bdr_api_file_path_str: str = str(bdr_api_file_path)
         ## prepare file-data ------------------------------------------
         file_data = {
             'checksum_type': submission_checksum_type,
             'checksum': submission_checksum,
             'file_name': original_file_name,
-            'path': bdr_api_file_path,
+            'path': bdr_api_file_path_str,
         }
         log.debug(f'file_data: {pprint.pformat(file_data)}')
         return file_data

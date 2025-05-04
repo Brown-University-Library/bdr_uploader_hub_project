@@ -219,7 +219,7 @@ class IngestTest(TestCase):
         result = self.ingester.prepare_file(submission_checksum_type, submission_checksum, file_path, original_file_name)
 
         # Assert
-        expected_path: Path = Path(settings.BDR_API_FILE_PATH_ROOT) / Path(file_path).name
+        expected_path: str = str(Path(settings.BDR_API_FILE_PATH_ROOT) / Path(file_path).name)
         expected_result = {
             'checksum_type': submission_checksum_type,
             'checksum': submission_checksum,
