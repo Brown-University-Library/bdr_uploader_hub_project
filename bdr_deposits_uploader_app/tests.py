@@ -39,6 +39,8 @@ class ModsMakerTest(SimpleTestCase):
             '<mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>',
             result,
         )
+        ## originInfo -----------------------------------------------
+        self.assertIn('<mods:originInfo>', result)
         self.assertIn(
             '<mods:placeTerm type="code" authority="marccountry" authorityURI="http://www.loc.gov/marc/countries/">riu</mods:placeTerm>',
             result,
@@ -51,6 +53,10 @@ class ModsMakerTest(SimpleTestCase):
             '<mods:publisher authority="naf" authorityURI="http://id.loc.gov/authorities/names">Brown University Library</mods:publisher>',
             result,
         )
+        ## physicalDescription ---------------------------------------
+        self.assertIn('<mods:physicalDescription>', result)
+        self.assertIn('<mods:extent>1 document</mods:extent>', result)
+        self.assertIn('<mods:digitalOrigin>born digital</mods:digitalOrigin>', result)
 
     def test_prepare_mods_A(self):
         """

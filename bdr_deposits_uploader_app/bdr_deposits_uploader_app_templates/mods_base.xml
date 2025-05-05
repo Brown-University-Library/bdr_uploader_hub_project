@@ -14,4 +14,10 @@
     <mods:dateCreated keyDate="yes" encoding="w3cdtf">{{ year_created }}</mods:dateCreated>
     <mods:dateIssued encoding="w3cdtf">{{ date_created }}</mods:dateIssued>
   </mods:originInfo>
+
+  <mods:physicalDescription>
+    <mods:extent>1 document</mods:extent>
+    <mods:digitalOrigin>born digital</mods:digitalOrigin>
+  </mods:physicalDescription>
+  
 </mods:mods>
