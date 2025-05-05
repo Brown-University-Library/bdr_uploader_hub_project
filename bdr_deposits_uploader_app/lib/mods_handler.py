@@ -18,9 +18,15 @@ class ModsMaker:
         log.debug('prepare_mods called')
         title = self.submission.title
         abstract = self.submission.abstract
+        ## originInfo -----------------------------------------------
+        year_created = str(self.submission.created_at.year)  # W3CDTF year
+        date_created = self.submission.created_at.strftime('%Y-%m-%d')  # W3CDTF date
+
         context = {
             'title': title,
             'abstract': abstract,
+            'year_created': year_created,
+            'date_created': date_created,
         }
         ## render the template
         template = get_template('mods_base.xml')

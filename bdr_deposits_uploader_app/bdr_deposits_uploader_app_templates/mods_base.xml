@@ -2,6 +2,16 @@
   <mods:titleInfo>
     <mods:title>{{ title }}</mods:title>
   </mods:titleInfo>
-  <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
   <mods:abstract>{{ abstract }}</mods:abstract>
+  <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
+  <mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>
+  <mods:originInfo>
+    <mods:place>
+      <mods:placeTerm type="code" authority="marccountry" authorityURI="http://www.loc.gov/marc/countries/">riu</mods:placeTerm>
+      <mods:placeTerm type="text">Providence, Rhode Island</mods:placeTerm>
+    </mods:place>
+    <mods:publisher authority="naf" authorityURI="http://id.loc.gov/authorities/names">Brown University Library</mods:publisher>
+    <mods:dateCreated keyDate="yes" encoding="w3cdtf">{{ year_created }}</mods:dateCreated>
+    <mods:dateIssued encoding="w3cdtf">{{ date_created }}</mods:dateIssued>
+  </mods:originInfo>
 </mods:mods>

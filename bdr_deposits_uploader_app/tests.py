@@ -1,3 +1,4 @@
+import datetime
 import logging
 import pprint
 from pathlib import Path
@@ -32,11 +33,17 @@ class ModsMakerTest(SimpleTestCase):
         """
         Tests the mods_maker function.
         """
-        submission = Submission(title='foo foo', abstract='bar bar')
+        submission = Submission(
+            title='foo foo',
+            abstract='bar bar',
+            created_at=datetime.datetime(2025, 5, 6, 18, 26, 37),
+        )
         result: str = ModsMaker(submission).prepare_mods()
         log.debug(f'mods_maker result: ``{result}``')
         self.assertIn('<mods:title>foo foo</mods:title>', result)
         self.assertIn('<mods:abstract>bar bar</mods:abstract>', result)
+        self.assertIn('<mods:dateCreated keyDate="yes" encoding="w3cdtf">2025</mods:dateCreated>', result)
+        self.assertIn('<mods:dateIssued encoding="w3cdtf">2025-05-06</mods:dateIssued>', result)
 
 
 class ErrorCheckTest(SimpleTestCase):
