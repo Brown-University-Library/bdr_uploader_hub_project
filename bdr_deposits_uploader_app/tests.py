@@ -29,9 +29,32 @@ class ModsMakerTest(SimpleTestCase):
         # Set up any necessary data or state for the tests
         pass
 
+    def assert_standard_mods_elements(self, result: str):
+        """
+        Not a direct-test; called from different test functions.
+        Asserts common MODS elements that should be present in all MODS XML outputs.
+        """
+        self.assertIn('<mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>', result)
+        self.assertIn(
+            '<mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>',
+            result,
+        )
+        self.assertIn(
+            '<mods:placeTerm type="code" authority="marccountry" authorityURI="http://www.loc.gov/marc/countries/">riu</mods:placeTerm>',
+            result,
+        )
+        self.assertIn(
+            '<mods:placeTerm type="text">Providence, Rhode Island</mods:placeTerm>',
+            result,
+        )
+        self.assertIn(
+            '<mods:publisher authority="naf" authorityURI="http://id.loc.gov/authorities/names">Brown University Library</mods:publisher>',
+            result,
+        )
+
     def test_prepare_mods_A(self):
         """
-        Tests the mods_maker function.
+        Tests the mods_maker function with minimal submitted info.
         """
         submission = Submission(
             title='foo foo',
@@ -44,6 +67,9 @@ class ModsMakerTest(SimpleTestCase):
         self.assertIn('<mods:abstract>bar bar</mods:abstract>', result)
         self.assertIn('<mods:dateCreated keyDate="yes" encoding="w3cdtf">2025</mods:dateCreated>', result)
         self.assertIn('<mods:dateIssued encoding="w3cdtf">2025-05-06</mods:dateIssued>', result)
+        self.assert_standard_mods_elements(result)
+
+    ## end class ModsMakerTest()
 
 
 class ErrorCheckTest(SimpleTestCase):
