@@ -1,10 +1,15 @@
 <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd">
+  
   <mods:titleInfo>
     <mods:title>{{ title }}</mods:title>
   </mods:titleInfo>
+
   <mods:abstract>{{ abstract }}</mods:abstract>
+
   <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
+
   <mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>
+
   <mods:originInfo>
     <mods:place>
       <mods:placeTerm type="code" authority="marccountry" authorityURI="http://www.loc.gov/marc/countries/">riu</mods:placeTerm>
@@ -19,5 +24,9 @@
     <mods:extent>1 document</mods:extent>
     <mods:digitalOrigin>born digital</mods:digitalOrigin>
   </mods:physicalDescription>
+
+  <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
+  <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
+  <mods:accessCondition type="restriction on access">All Rights Reserved</mods:accessCondition>
   
 </mods:mods>

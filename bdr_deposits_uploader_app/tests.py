@@ -57,6 +57,16 @@ class ModsMakerTest(SimpleTestCase):
         self.assertIn('<mods:physicalDescription>', result)
         self.assertIn('<mods:extent>1 document</mods:extent>', result)
         self.assertIn('<mods:digitalOrigin>born digital</mods:digitalOrigin>', result)
+        ## accessCondition -------------------------------------------
+        self.assertIn('<mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>', result)
+        self.assertIn(
+            '<mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>',
+            result,
+        )
+        self.assertIn(
+            '<mods:accessCondition type="restriction on access">All Rights Reserved</mods:accessCondition>', result
+        )
+        ## end def assert_standard_mods_elements()
 
     def test_prepare_mods_A(self):
         """
