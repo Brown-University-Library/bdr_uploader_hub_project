@@ -21,14 +21,14 @@ class ModsMaker:
         ## originInfo -----------------------------------------------
         year_created = str(self.submission.created_at.year)  # W3CDTF year
         date_created = self.submission.created_at.strftime('%Y-%m-%d')  # W3CDTF date
-
+        ## assembling data -------------------------------------------
         context = {
             'title': title,
             'abstract': abstract,
             'year_created': year_created,
             'date_created': date_created,
         }
-        ## render the template
+        ## render the template ---------------------------------------
         template = get_template('mods_base.xml')
         mods_xml: str = template.render(context)
         log.debug(f'mods_xml: ``{mods_xml}``')
