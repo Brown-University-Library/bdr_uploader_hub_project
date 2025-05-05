@@ -9,6 +9,8 @@ from django.test.utils import override_settings
 
 from bdr_deposits_uploader_app.forms.staff_form import StaffForm
 from bdr_deposits_uploader_app.lib.ingester_handler import Ingester
+from bdr_deposits_uploader_app.lib.mods_handler import ModsMaker
+from bdr_deposits_uploader_app.models import Submission
 
 log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
@@ -30,17 +32,11 @@ class ModsMakerTest(SimpleTestCase):
         """
         Tests the mods_maker function.
         """
-        # ingester = Ingester()
-        # submission = Submission(
-        #     title='Sample Title',
-        #     author='Sample Author',
-        #     date='2023-10-01',
-        #     description='Sample Description',
-        # )
-        # result = ingester.prepare_mods(submission)
-        # log.debug(f'mods_maker result: {result}')
-        # self.assertIn('<mods:title>Sample Title</mods:title>', result)
-        self.assertEqual(1, 2)  # placeholder
+        submission = Submission(title='foo foo', abstract='bar bar')
+        result: str = ModsMaker(submission).prepare_mods()
+        log.debug(f'mods_maker result: ``{result}``')
+        self.assertIn('<mods:title>foo foo</mods:title>', result)
+        self.assertIn('<mods:abstract>bar bar</mods:abstract>', result)
 
 
 class ErrorCheckTest(SimpleTestCase):
