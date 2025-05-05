@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from lxml import etree
 
+from bdr_deposits_uploader_app.lib.mods_handler import ModsMaker
 from bdr_deposits_uploader_app.models import Submission
 
 from .emailer import send_ingest_success_email
@@ -74,7 +75,8 @@ class Ingester:
             try:
                 f = submission.primary_file
                 log.debug(f'type of f, ``{type(f)}``')
-                self.mods: str = self.prepare_mods(submission.title)
+                # self.mods: str = self.prepare_mods(submission.title)
+                self.mods: str = ModsMaker(submission).prepare_mods()
                 self.rights: dict = self.prepare_rights(submission.student_eppn, submission.visibility_options)
                 self.ir: dict = self.prepare_ir(submission.student_eppn, submission.student_email)
                 # self.rels: dict = self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
