@@ -69,6 +69,7 @@ class Ingester:
         log.debug('manage_ingest called')
         errors = []
         for submission in queryset:
+            log.debug(f'submission details:\n{pprint.pformat(submission.__dict__, indent=2)}')
             self.submission = submission
             try:
                 f = submission.primary_file
