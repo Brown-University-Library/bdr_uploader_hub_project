@@ -213,7 +213,7 @@ class StaffForm(forms.Form):
         if cleaned_data.get('research_program_required') and not cleaned_data.get('offer_research_program'):
             cleaned_data['offer_research_program'] = True
 
-        ## access/license fields ------------------------------------
+        ## access fields --------------------------------------------
         if cleaned_data.get('license_required') and not cleaned_data.get('offer_license_options'):
             cleaned_data['offer_license_options'] = True
         if cleaned_data.get('offer_license_options'):
@@ -227,20 +227,13 @@ class StaffForm(forms.Form):
                 self.add_error('license_default', 'Default license must be one of the selected license options.')
         if cleaned_data.get('license_options') and not cleaned_data.get('offer_license_options'):
             self.add_error('offer_license_options', 'License options must be offered if selected.')
-        """
-        Commenting out the code below, because I think a staff person should be able to select 
-            a license-setting (ie 'CC_BY') without offering license options.
-        """
-        # if (
-        #     cleaned_data.get('license_default')
-        #     and cleaned_data.get('license_default') != 'ERR'
-        #     and not cleaned_data.get('offer_license_options')
-        # ):
-        #     self.add_error('offer_license_options', 'License options must be offered if a default license is selected.')
-        if cleaned_data.get('license_default') == 'ERR':
-            self.add_error('license_default', 'A default license is required.')
+        if (
+            cleaned_data.get('license_default')
+            and cleaned_data.get('license_default') != 'ERR'
+            and not cleaned_data.get('offer_license_options')
+        ):
+            self.add_error('offer_license_options', 'License options must be offered if a default license is selected.')
 
-        ## access/visibility fields ---------------------------------
         if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
             cleaned_data['offer_visibility_options'] = True
         if cleaned_data.get('offer_visibility_options'):
@@ -254,20 +247,14 @@ class StaffForm(forms.Form):
                 )
         if cleaned_data.get('visibility_options') and not cleaned_data.get('offer_visibility_options'):
             self.add_error('offer_visibility_options', 'Visibility options must be offered if selected.')
-        """
-        Commenting out the code below, because I think a staff person should be able to select 
-            a visibility setting (ie 'Public') without offering visibility options.
-        """
-        # if (
-        #     cleaned_data.get('visibility_default')
-        #     and cleaned_data.get('visibility_default') != 'ERR'
-        #     and not cleaned_data.get('offer_visibility_options')
-        # ):
-        #     self.add_error(
-        #         'offer_visibility_options', 'Visibility options must be offered if a default visibility is selected.'
-        #     )
-        if cleaned_data.get('visibility_default') == 'ERR':
-            self.add_error('visibility_default', 'A default visibility is required.')
+        if (
+            cleaned_data.get('visibility_default')
+            and cleaned_data.get('visibility_default') != 'ERR'
+            and not cleaned_data.get('offer_visibility_options')
+        ):
+            self.add_error(
+                'offer_visibility_options', 'Visibility options must be offered if a default visibility is selected.'
+            )
 
         ## other fields ---------------------------------------------
         if cleaned_data.get('concentrations_required') and not cleaned_data.get('ask_for_concentrations'):
