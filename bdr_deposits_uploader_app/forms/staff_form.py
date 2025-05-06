@@ -213,20 +213,23 @@ class StaffForm(forms.Form):
         if cleaned_data.get('research_program_required') and not cleaned_data.get('offer_research_program'):
             cleaned_data['offer_research_program'] = True
 
-        ## access fields --------------------------------------------
+        ## access/license fields ------------------------------------
         if cleaned_data.get('license_required') and not cleaned_data.get('offer_license_options'):
             cleaned_data['offer_license_options'] = True
+        ## Ensure at least one license option is selected, regardless of offer_license_options
+        if not cleaned_data.get('license_options'):
+            self.add_error('license_options', 'At least one license must be selected.')
         if cleaned_data.get('offer_license_options'):
-            if not cleaned_data.get('license_options'):
-                self.add_error('license_options', 'At least one license must be selected.')
             if not cleaned_data.get('license_default'):
                 self.add_error('license_default', 'A default license is required.')
             log.debug(f'selected license options: {cleaned_data.get("license_options", "")}')
             log.debug(f'license_default: {cleaned_data.get("license_default", "")}')
             if cleaned_data.get('license_default', '') not in cleaned_data.get('license_options', ''):
                 self.add_error('license_default', 'Default license must be one of the selected license options.')
-        if cleaned_data.get('license_options') and not cleaned_data.get('offer_license_options'):
-            self.add_error('offer_license_options', 'License options must be offered if selected.')
+        # if cleaned_data.get('license_options') and not cleaned_data.get('offer_license_options'):
+        #     self.add_error('offer_license_options', 'License options must be offered if selected.')
+        if len(cleaned_data.get('license_options', [])) > 1 and not cleaned_data.get('offer_license_options'):
+            self.add_error('offer_license_options', 'License options must be offered if more than one is selected.')
         if (
             cleaned_data.get('license_default')
             and cleaned_data.get('license_default') != 'ERR'
@@ -234,19 +237,23 @@ class StaffForm(forms.Form):
         ):
             self.add_error('offer_license_options', 'License options must be offered if a default license is selected.')
 
+        ## access/visibility fields ---------------------------------
         if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
             cleaned_data['offer_visibility_options'] = True
+        ## Ensure at least one visibility option is selected, regardless of offer_visibility_options
+        if not cleaned_data.get('visibility_options'):
+            self.add_error('visibility_options', 'At least one visibility-option must be selected.')
         if cleaned_data.get('offer_visibility_options'):
-            if not cleaned_data.get('visibility_options'):
-                self.add_error('visibility_options', 'At least one visibility-option must be selected.')
             if not cleaned_data.get('visibility_default'):
                 self.add_error('visibility_default', 'A default visibility-option is required.')
             if cleaned_data.get('visibility_default', '') not in cleaned_data.get('visibility_options', ''):
                 self.add_error(
                     'visibility_default', 'Default visibility-option must be one of the selected visibility-options.'
                 )
-        if cleaned_data.get('visibility_options') and not cleaned_data.get('offer_visibility_options'):
-            self.add_error('offer_visibility_options', 'Visibility options must be offered if selected.')
+        # if cleaned_data.get('visibility_options') and not cleaned_data.get('offer_visibility_options'):
+        #     self.add_error('offer_visibility_options', 'Visibility options must be offered if selected.')
+        if len(cleaned_data.get('visibility_options', [])) > 1 and not cleaned_data.get('offer_visibility_options'):
+            self.add_error('offer_visibility_options', 'Visibility options must be offered if more than one is selected.')
         if (
             cleaned_data.get('visibility_default')
             and cleaned_data.get('visibility_default') != 'ERR'
