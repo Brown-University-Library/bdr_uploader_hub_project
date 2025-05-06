@@ -29,6 +29,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         widget=forms.Textarea,
     )
     fields['main_file'] = forms.FileField(label='Upload File', required=True, help_text='(required)')
+
     ## Collaborators section ----------------------------------------
     rq_AR = config_data.get('advisors_and_readers_required', False)
     log.debug(f'rq_AR, ``{rq_AR}``')

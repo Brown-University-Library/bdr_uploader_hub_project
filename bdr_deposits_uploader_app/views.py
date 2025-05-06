@@ -331,6 +331,7 @@ def student_confirm(request, slug):
 
     ## retrieve stored data from session ----------------------------
     student_data = request.session.get('student_form_data')
+    log.debug(f'student_data, ``{student_data}``')
     if not student_data:
         ## no data saved; redirect back to upload form --------------
         return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
