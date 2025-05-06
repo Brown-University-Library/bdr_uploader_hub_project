@@ -98,6 +98,19 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         log.debug(f'RP-field after adding field: ``{pprint.pformat(fields["research_program"].__dict__)}``')
 
     ## Access/license section ---------------------------------------
+    # if config_data.get('offer_license_options'):
+    #     selected_license_keys: list[str] = config_data.get('license_options', [])
+    #     selected_license_choices: list[tuple[str, str]] = [
+    #         choice for choice in settings.ALL_LICENSE_OPTIONS if choice[0] in selected_license_keys
+    #     ]
+    #     selected_license_default: str = config_data.get('license_default')
+    #     fields['license_options'] = forms.ChoiceField(
+    #         choices=selected_license_choices,
+    #         label='License Options',
+    #         required=True,
+    #         help_text='(required) select, or leave default',
+    #         initial=selected_license_default,
+    #     )
     if config_data.get('offer_license_options'):
         selected_license_keys: list[str] = config_data.get('license_options', [])
         selected_license_choices: list[tuple[str, str]] = [
@@ -109,6 +122,19 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             label='License Options',
             required=True,
             help_text='(required) select, or leave default',
+            initial=selected_license_default,
+        )
+    else:
+        selected_license_keys: list[str] = config_data.get('license_options', [])
+        selected_license_choices: list[tuple[str, str]] = [
+            choice for choice in settings.ALL_LICENSE_OPTIONS if choice[0] in selected_license_keys
+        ]
+        selected_license_default: str = config_data.get('license_default')
+        fields['license_options'] = forms.ChoiceField(
+            choices=selected_license_choices,
+            label='Selected License',
+            required=False,
+            help_text='not selectable',
             initial=selected_license_default,
         )
 
@@ -124,6 +150,19 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             label='Visibility Options',
             required=True,
             help_text='(required) select, or leave default',
+            initial=selected_visibility_default,
+        )
+    else:
+        selected_visibility_keys: list[str] = config_data.get('visibility_options', [])
+        selected_visibility_choices: list[tuple[str, str]] = [
+            choice for choice in settings.ALL_VISIBILITY_OPTIONS if choice[0] in selected_visibility_keys
+        ]
+        selected_visibility_default: str = config_data.get('visibility_default')
+        fields['visibility_options'] = forms.ChoiceField(
+            choices=selected_visibility_choices,
+            label='Selected Visibility',
+            required=False,
+            help_text='not selectable',
             initial=selected_visibility_default,
         )
 

@@ -304,9 +304,13 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         initial_data = request.session.get('student_form_data', {})
         log.debug(f'initial_data, ``{pprint.pformat(initial_data)}``')
         form = StudentUploadForm(initial=initial_data)
-        # log.debug(f'form.__dict__, ``{form.__dict__}``')
-        log.debug(f'form.license_options, ``{form.license_options}``')
-        log.debug(f'form.visibility_options, ``{form.visibility_options}``')
+        log.debug('Form instance data:')
+        log.debug(f'form.__dict__: {pprint.pformat(form.__dict__)}')
+        log.debug(f'form.fields: {pprint.pformat(form.fields)}')
+        log.debug(f'form.initial: {pprint.pformat(form.initial)}')
+        log.debug(f'form.errors: {pprint.pformat(form.errors)}')
+        log.debug(f'license options choices: {pprint.pformat(form.fields["license_options"].choices)}')
+        log.debug(f'visibility options choices: {pprint.pformat(form.fields["visibility_options"].choices)}')
         request.session['student_form_data'] = {}  # clear the session data
         ## render the form
         resp: HttpResponse = render(
