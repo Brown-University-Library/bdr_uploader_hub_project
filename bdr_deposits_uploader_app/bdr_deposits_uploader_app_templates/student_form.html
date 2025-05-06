@@ -122,7 +122,6 @@
         
         <!-- form-fields ---------------------------------------- -->
 
-        
         <div class="form-section">
             <h3>Basic Information</h3>
             <!-- non-editable data ------------------------------ -->
@@ -178,7 +177,6 @@
 
         </div>  <!-- end of form section -->
 
-
         <div class="form-section">
             <h3>Collaborator Information</h3>
 
@@ -230,7 +228,6 @@
 
         </div>  <!-- end of form section -->
         
-
         <div class="form-section">
             <h3>Department and Program Info</h3>
 
@@ -260,54 +257,35 @@
 
         </div>  <!-- end of form section -->
 
-
         <div class="form-section">
             <h3>Access Info</h3>
 
             {% if form.license_options %}
-                <div class="form-group">
-                    <div class="label-container">
-                        {{ form.license_options.label_tag }} 
-                        {% if form.license_options.help_text %}
-                            <p class="help">{{ form.license_options.help_text|safe }}</p>
-                        {% endif %}
-                    </div>
-                    {{ form.license_options }}
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.license_options.label_tag }} 
+                    {% if form.license_options.help_text %}
+                        <p class="help">{{ form.license_options.help_text|safe }}</p>
+                    {% endif %}
                 </div>
-            {% else %}
-                <!-- non-editable data ------------------------------ -->
-                <div class="form-group">
-                    <div class="label-container">
-                        <label for="id_name">License:</label>
-                        <!-- <p class="help">(from Shib)</p> -->
-                    </div>
-                    <p id="id_name" class="form-control-static">{{ default_license }}</p>
-                </div>
+                {{ form.license_options }}
+            </div>
             {% endif %}
 
             {% if form.visibility_options %}
-                <div class="form-group">
-                    <div class="label-container">
-                        {{ form.visibility_options.label_tag }} 
-                        {% if form.visibility_options.help_text %}
-                            <p class="help">{{ form.visibility_options.help_text|safe }}</p>
-                        {% endif %}
-                    </div>
-                    {{ form.visibility_options }}
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.visibility_options.label_tag }} 
+                    {% if form.visibility_options.help_text %}
+                        <p class="help">{{ form.visibility_options.help_text|safe }}</p>
+                    {% endif %}
                 </div>
-            {% else %}
-                <!-- non-editable data ------------------------------ -->
-                <div class="form-group">
-                    <div class="label-container">
-                        <label for="id_name">Visibility:</label>
-                        <!-- <p class="help">(from Shib)</p> -->
-                    </div>
-                    <p id="id_name" class="form-control-static">{{ default_visibility }}</p>
-                </div>
-            {% endif %} 
+                {{ form.visibility_options }}
+            </div>
+            {% endif %}
+                        
         </div>  <!-- end of form section -->
         
-
         <div class="form-section">
             <h3>Other Info</h3>
             {% if form.concentrations %}

@@ -271,8 +271,6 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
     depositor_email: str = request.user.email
     deposit_iso_date: str = datetime.datetime.now().isoformat()
-    default_license: str = config_data.get('license_default', '')
-    default_visibility: str = config_data.get('visibility_default', '')
 
     ## build form based on staff-config data ------------------------
     StudentUploadForm: django_forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
@@ -319,8 +317,6 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 'depositor_fullname': depositor_fullname,
                 'depositor_email': depositor_email,
                 'deposit_iso_date': deposit_iso_date,
-                'default_license': default_license,
-                'default_visibility': default_visibility,
                 'app_name': app_config.name,
             },
         )
