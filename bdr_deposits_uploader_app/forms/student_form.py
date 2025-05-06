@@ -98,19 +98,6 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         log.debug(f'RP-field after adding field: ``{pprint.pformat(fields["research_program"].__dict__)}``')
 
     ## Access/license section ---------------------------------------
-    # if config_data.get('offer_license_options'):
-    #     selected_license_keys: list[str] = config_data.get('license_options', [])
-    #     selected_license_choices: list[tuple[str, str]] = [
-    #         choice for choice in settings.ALL_LICENSE_OPTIONS if choice[0] in selected_license_keys
-    #     ]
-    #     selected_license_default: str = config_data.get('license_default')
-    #     fields['license_options'] = forms.ChoiceField(
-    #         choices=selected_license_choices,
-    #         label='License Options',
-    #         required=True,
-    #         help_text='(required) select, or leave default',
-    #         initial=selected_license_default,
-    #     )
     if config_data.get('offer_license_options'):
         selected_license_keys: list[str] = config_data.get('license_options', [])
         selected_license_choices: list[tuple[str, str]] = [
@@ -125,6 +112,12 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             initial=selected_license_default,
         )
     else:
+        """
+        This else-block is for when the staff-config doesn't offer multiple license options.
+        I couldn't easily get a "display-only" choice to display, so am using the same logic as above,
+            with a different label and help-text.
+            TODO: review and refactor.
+        """
         selected_license_keys: list[str] = config_data.get('license_options', [])
         selected_license_choices: list[tuple[str, str]] = [
             choice for choice in settings.ALL_LICENSE_OPTIONS if choice[0] in selected_license_keys
@@ -153,6 +146,12 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             initial=selected_visibility_default,
         )
     else:
+        """
+        This else-block is for when the staff-config doesn't offer multiple visibility options.
+        I couldn't easily get a "display-only" choice to display, so am using the same logic as above,
+            with a different label and help-text.
+            TODO: review and refactor.
+        """
         selected_visibility_keys: list[str] = config_data.get('visibility_options', [])
         selected_visibility_choices: list[tuple[str, str]] = [
             choice for choice in settings.ALL_VISIBILITY_OPTIONS if choice[0] in selected_visibility_keys
