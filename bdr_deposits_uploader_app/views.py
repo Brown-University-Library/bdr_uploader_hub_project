@@ -302,10 +302,13 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     else:  # GET
         ## see if there's form session data to pre-populate the form
         initial_data = request.session.get('student_form_data', {})
+        log.debug(f'initial_data, ``{pprint.pformat(initial_data)}``')
         form = StudentUploadForm(initial=initial_data)
+        # log.debug(f'form.__dict__, ``{form.__dict__}``')
+        log.debug(f'form.license_options, ``{form.license_options}``')
+        log.debug(f'form.visibility_options, ``{form.visibility_options}``')
         request.session['student_form_data'] = {}  # clear the session data
         ## render the form
-        form = StudentUploadForm(initial=initial_data)
         resp: HttpResponse = render(
             request,
             'student_form.html',
