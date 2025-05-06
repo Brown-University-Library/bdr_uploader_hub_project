@@ -261,15 +261,24 @@
             <h3>Access Info</h3>
 
             {% if form.license_options %}
-            <div class="form-group">
-                <div class="label-container">
-                    {{ form.license_options.label_tag }} 
-                    {% if form.license_options.help_text %}
-                        <p class="help">{{ form.license_options.help_text|safe }}</p>
-                    {% endif %}
+                <div class="form-group">
+                    <div class="label-container">
+                        {{ form.license_options.label_tag }} 
+                        {% if form.license_options.help_text %}
+                            <p class="help">{{ form.license_options.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    {{ form.license_options }}
                 </div>
-                {{ form.license_options }}
-            </div>
+            {% else %}
+                <!-- non-editable data ------------------------------ -->
+                <div class="form-group">
+                    <div class="label-container">
+                        <label for="id_name">License:</label>
+                    </div>
+                    <p id="id_name" class="form-control-static">{{ form.license_options }}</p>
+                    <!-- <p id="id_name" class="form-control-static">some-license</p> -->
+                </div>
             {% endif %}
 
             {% if form.visibility_options %}
