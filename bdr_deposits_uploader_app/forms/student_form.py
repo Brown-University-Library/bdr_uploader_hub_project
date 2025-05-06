@@ -97,7 +97,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         )
         log.debug(f'RP-field after adding field: ``{pprint.pformat(fields["research_program"].__dict__)}``')
 
-    ## Access section ------------------------------------------------
+    ## Access/license section ---------------------------------------
     if config_data.get('offer_license_options'):
         selected_license_keys: list[str] = config_data.get('license_options', [])
         selected_license_choices: list[tuple[str, str]] = [
@@ -112,6 +112,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             initial=selected_license_default,
         )
 
+    ## Access/visibility section ------------------------------------
     if config_data.get('offer_visibility_options'):
         selected_visibility_keys: list[str] = config_data.get('visibility_options', [])
         selected_visibility_choices: list[tuple[str, str]] = [
