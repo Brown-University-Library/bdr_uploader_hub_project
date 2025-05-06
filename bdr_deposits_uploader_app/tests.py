@@ -3,7 +3,6 @@ import logging
 import pprint
 from pathlib import Path
 
-from django.conf import settings
 from django.conf import settings as project_settings
 from django.test import SimpleTestCase, TestCase  # SimpleTestCase does not require db
 from django.test.utils import override_settings
@@ -264,7 +263,7 @@ class IngestTest(TestCase):
         result = self.ingester.prepare_file(submission_checksum_type, submission_checksum, file_path, original_file_name)
 
         # Assert
-        expected_path: str = str(Path(settings.BDR_API_FILE_PATH_ROOT) / Path(file_path).name)
+        expected_path: str = str(Path(project_settings.BDR_API_FILE_PATH_ROOT) / Path(file_path).name)
         expected_result = {
             'checksum_type': submission_checksum_type,
             'checksum': submission_checksum,
