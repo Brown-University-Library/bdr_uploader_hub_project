@@ -265,6 +265,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     ## load staff-config data ---------------------------------------
     app_config: AppConfig = get_object_or_404(AppConfig, slug=slug)
     config_data: dict = app_config.temp_config_json
+    log.debug(f'config_data, ``{pprint.pformat(config_data)}``')
 
     ## prep other form data -----------------------------------------
     depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
@@ -331,7 +332,7 @@ def student_confirm(request, slug):
 
     ## retrieve stored data from session ----------------------------
     student_data = request.session.get('student_form_data')
-    log.debug(f'student_data, ``{student_data}``')
+    log.debug(f'student_data, ``{pprint.pformat(student_data)}``')
     if not student_data:
         ## no data saved; redirect back to upload form --------------
         return redirect(reverse('student_upload_slug_url', kwargs={'slug': slug}))
