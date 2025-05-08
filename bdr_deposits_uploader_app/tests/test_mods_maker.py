@@ -156,9 +156,17 @@ class ModsMakerTest(SimpleTestCase):
                 'http://id.loc.gov/vocabulary/relators/aut',
                 'Role term should have correct valueURI',
             )
-        ## Verify that both authors are present in the text content
-        self.assertIn('auth1first auth1last', result)
-        self.assertIn('auth2first auth2last', result)
+        ## Verify that both authors have the correct namePart content
+        author1_name = author_names[0].find('namePart')
+        author2_name = author_names[1].find('namePart')
+        self.assertIsNotNone(author1_name, 'First author should have a namePart element')
+        self.assertIsNotNone(author2_name, 'Second author should have a namePart element')
+        self.assertEqual(
+            author1_name.text, 'auth1first auth1last', 'First author name should match expected text'
+        )
+        self.assertEqual(
+            author2_name.text, 'auth2first auth2last', 'Second author name should match expected text'
+        )
         ## check standard MODS elements -----------------------------
         self.assert_standard_mods_elements(result)
 
