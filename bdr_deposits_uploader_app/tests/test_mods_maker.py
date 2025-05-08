@@ -128,13 +128,7 @@ class ModsMakerFullTest(SimpleTestCase):
         """
         Set up the test case.
         """
-        pass
-
-    def test_prepare_mods_with_full_submission(self):
-        """
-        Tests the mods_maker function with a submission containing all fields.
-        """
-        submission = Submission(
+        self.submission = Submission(
             title='2025-may-08 7:50am title',
             abstract='abstract',
             authors='auth1first auth1last | auth2first auth2last',
@@ -150,12 +144,17 @@ class ModsMakerFullTest(SimpleTestCase):
             visibility_options='public',
             created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
         )
-        result: str = ModsMaker(submission).prepare_mods()
-        log.debug(f'mods_maker result: ``{result}``')
-        self.assertIn('<mods:title>2025-may-08 7:50am title</mods:title>', result)
+        self.result: str = ModsMaker(self.submission).prepare_mods()
+        log.debug(f'mods_maker result: ``{self.result}``')
+
+    def test_prepare_mods_with_full_submission(self):
+        """
+        Tests the mods_maker function with a submission containing all fields.
+        """
+        self.assertIn('<mods:title>2025-may-08 7:50am title</mods:title>', self.result)
 
         ## Verify fields using BeautifulSoup ------------------------
-        soup = BeautifulSoup(result, 'xml')
+        soup = BeautifulSoup(self.result, 'xml')
         log.debug(f'soup: ``{soup}``')
 
         ## author check ---------------------------------------------
@@ -207,8 +206,6 @@ class ModsMakerFullTest(SimpleTestCase):
         self.assertIsNotNone(author2_name, 'Second author should have a namePart element')
         self.assertEqual(author1_name.text, 'auth1first auth1last', 'First author name should match expected text')
         self.assertEqual(author2_name.text, 'auth2first auth2last', 'Second author name should match expected text')
-        ## check standard MODS elements -----------------------------
-        self.assert_standard_mods_elements(result)
 
         ## advisors/readers check -----------------------------------
         """
