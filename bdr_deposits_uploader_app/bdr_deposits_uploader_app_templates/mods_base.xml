@@ -28,6 +28,12 @@
     {% endfor %}
   {% endif %}
 
+  {% if concentrations %}
+    {% for concentration in concentrations %}
+        <mods:note displayLabel="Scholarly concentration">{{ concentration }}</mods:note>
+    {% endfor %}
+  {% endif %}
+
   <!--------------------------->
   <!-- unchanging data START -->
   <!--------------------------->
