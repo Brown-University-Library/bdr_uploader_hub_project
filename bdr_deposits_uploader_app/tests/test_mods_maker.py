@@ -144,15 +144,18 @@ class ModsMakerFullTest(SimpleTestCase):
 
     def test_validate_xml_with_valid_xml(self):
         """
-        Tests that the validate_xml function does not raise a ValueError when the XML is well-formed.
+        Tests that the validate_xml function returns True when the XML is well-formed.
+        Doesn't validate MODS specifcally (will).
         """
-        xml_str = self.soup.prettify()
+        xml_str = """<mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
+<titleInfo><title>Test Title</title></titleInfo>
+<typeOfResource>text</typeOfResource></mods:mods>"""
         valid: bool = self.mods_maker.validate_xml(xml_str)
         self.assertEqual(valid, True)
 
     def test_validate_xml_with_invalid_xml(self):
         """
-        Tests that the validate_xml function raises a ValueError when the XML is not well-formed.
+        Tests that the validate_xml function returns False when the XML is not well-formed.
         """
         xml_str = '<mods:mods>'
         valid: bool = self.mods_maker.validate_xml(xml_str)
