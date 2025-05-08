@@ -113,20 +113,19 @@ class ModsMakerTest(SimpleTestCase):
         """
         I want to check for...
         ```xml
-        <mods:name>
+        <mods:name type="personal">
             <mods:namePart>auth1first auth1last</mods:namePart>
             <mods:role>
                 <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
             </mods:role>
         </mods:name>
-        <mods:name>
+        <mods:name type="personal">
             <mods:namePart>auth2first auth2last</mods:namePart>
             <mods:role>
                 <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
             </mods:role>
         </mods:name>
         ```
-        ...in a parent <mods:name> element.
         """
         ## Verify author role structure using BeautifulSoup
         soup = BeautifulSoup(result, 'xml')
@@ -151,7 +150,7 @@ class ModsMakerTest(SimpleTestCase):
                 'Role term should have correct valueURI',
             )
         ## Verify that both authors are present in the text content
-        self.assertIn('author person1', result)
-        self.assertIn('author person2', result)
+        self.assertIn('auth1first auth1last', result)
+        self.assertIn('auth2first auth2last', result)
         ## check standard MODS elements -----------------------------
         self.assert_standard_mods_elements(result)

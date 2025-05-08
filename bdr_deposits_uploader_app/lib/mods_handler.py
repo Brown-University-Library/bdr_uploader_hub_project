@@ -21,10 +21,15 @@ class ModsMaker:
         ## originInfo -----------------------------------------------
         year_created = str(self.submission.created_at.year)  # W3CDTF year
         date_created = self.submission.created_at.strftime('%Y-%m-%d')  # W3CDTF date
+        ## authors --------------------------------------------------
+        author_data: str = self.submission.authors or ''
+        authors: list[str] = [author.strip() for author in author_data.split('|')] if author_data else []
+        log.debug(f'authors: {authors}')
         ## assembling data -------------------------------------------
         context = {
             'title': title,
             'abstract': abstract,
+            'authors': authors,
             'year_created': year_created,
             'date_created': date_created,
         }
