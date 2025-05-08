@@ -12,6 +12,11 @@ log = logging.getLogger(__name__)
 class ModsMakerTest(SimpleTestCase):
     """
     Tests the mods_maker function.
+
+    To add a test:
+    - create a submission-instance
+    - pass it to ModsMaker(submission).prepare_mods()
+    - assert the expected output.
     """
 
     def setUp(self):
@@ -61,6 +66,11 @@ class ModsMakerTest(SimpleTestCase):
     def test_prepare_mods_A(self):
         """
         Tests the mods_maker function with minimal submitted info.
+
+        This test mostly confirms the test-structure is valid.
+
+        TODO: This submission-object would never be passed to the mods because it's missing required fields.
+              Revise to use a valid minimal-info submission-object.
         """
         submission = Submission(
             title='foo foo',
@@ -73,4 +83,29 @@ class ModsMakerTest(SimpleTestCase):
         self.assertIn('<mods:abstract>bar bar</mods:abstract>', result)
         self.assertIn('<mods:dateCreated keyDate="yes" encoding="w3cdtf">2025</mods:dateCreated>', result)
         self.assertIn('<mods:dateIssued encoding="w3cdtf">2025-05-06</mods:dateIssued>', result)
+        self.assert_standard_mods_elements(result)
+
+    def test_prepare_mods_with_full_submission(self):
+        """
+        Tests the mods_maker function with a submission containing all fields.
+        """
+        submission = Submission(
+            title='2025-may-08 7:50am title',
+            abstract='abstract',
+            authors='author person1 | author person2',
+            advisors_and_readers='advisor reader1 | advisor reader2',
+            concentrations='conc name1 | conc name2',
+            degrees='degree name1 | degree name2',
+            department='dept name1 | dept name2',
+            faculty_mentors='faculty mentor1 | faculty mentor2',
+            license_options='CC0',
+            original_file_name='HH018977_0030.pdf',
+            research_program='research program1 | research program2',
+            team_members='team member1 | team member2',
+            visibility_options='public',
+            created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
+        )
+        result: str = ModsMaker(submission).prepare_mods()
+        log.debug(f'mods_maker result: ``{result}``')
+        self.assertIn('<mods:title>2025-may-08 7:50am title</mods:title>', result)
         self.assert_standard_mods_elements(result)
