@@ -94,7 +94,7 @@ class ModsMakerTest(SimpleTestCase):
             title='2025-may-08 7:50am title',
             abstract='abstract',
             authors='auth1first auth1last | auth2first auth2last',
-            advisors_and_readers='advisor reader1 | advisor reader2',
+            advisors_and_readers='adv-rdr1first adv-rdr1last | adv-rdr2first adv-rdr2last',
             concentrations='conc name1 | conc name2',
             degrees='degree name1 | degree name2',
             department='dept name1 | dept name2',
@@ -109,6 +109,10 @@ class ModsMakerTest(SimpleTestCase):
         result: str = ModsMaker(submission).prepare_mods()
         log.debug(f'mods_maker result: ``{result}``')
         self.assertIn('<mods:title>2025-may-08 7:50am title</mods:title>', result)
+
+        ## Verify fields using BeautifulSoup ------------------------
+        soup = BeautifulSoup(result, 'xml')
+        log.debug(f'soup: ``{soup}``')
 
         ## author check ---------------------------------------------
         """
@@ -128,9 +132,6 @@ class ModsMakerTest(SimpleTestCase):
         </mods:name>
         ```
         """
-        ## Verify author role structure using BeautifulSoup
-        soup = BeautifulSoup(result, 'xml')
-        log.debug(f'soup: ``{soup}``')
         ## Find all name elements with author role
         name_elements = soup.find_all('name')
         author_names = []
@@ -160,3 +161,40 @@ class ModsMakerTest(SimpleTestCase):
         self.assertIn('auth2first auth2last', result)
         ## check standard MODS elements -----------------------------
         self.assert_standard_mods_elements(result)
+
+        ## advisors/readers check -----------------------------------
+        """
+        I want to check for...
+        ```xml
+        <mods:name type="personal">
+            <mods:namePart>adv-rdr1first adv-rdr1last</mods:namePart>
+            <mods:role>
+                <mods:roleTerm>Advisor/Reader</mods:roleTerm>   
+            </mods:role>
+        </mods:name>
+        <mods:name type="personal">
+            <mods:namePart>adv-rdr2first adv-rdr2last</mods:namePart>
+            <mods:role>
+                <mods:roleTerm>Advisor/Reader</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        ```
+        """
+        ## Find all name elements with advisor/reader role
+        advisor_names = []
+        for name in name_elements:
+            role_term = name.find('roleTerm', text='Advisor/Reader')
+            if role_term:
+                advisor_names.append(name)
+        log.debug(f'advisor_names: ``{advisor_names}``')
+        self.assertEqual(len(advisor_names), 2, 'Should have found 2 advisor/reader name elements')
+        ## Verify each advisor/reader name has the correct role structure
+        for advisor_name in advisor_names:
+            role = advisor_name.find('role')
+            self.assertIsNotNone(role, 'Advisor/Reader name should have a role element')
+            role_term = role.find('roleTerm')
+            self.assertIsNotNone(role_term, 'Role should have a roleTerm element')
+            self.assertEqual(role_term.text, 'Advisor/Reader', "Role term text should be 'Advisor/Reader'")
+        ## Verify that both advisors/readers are present in the text content
+        self.assertIn('adv-rdr1first adv-rdr1last', result)
+        self.assertIn('adv-rdr2first adv-rdr2last', result)
