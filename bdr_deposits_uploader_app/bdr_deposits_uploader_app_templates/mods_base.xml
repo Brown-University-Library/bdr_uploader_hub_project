@@ -7,14 +7,25 @@
   <mods:abstract>{{ abstract }}</mods:abstract>
 
   {% if authors %}
-  {% for author in authors %}
-    <mods:name type="personal">
-      <mods:namePart>{{ author }}</mods:namePart>
-      <mods:role>
-        <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
-      </mods:role>
-    </mods:name>
-  {% endfor %}
+    {% for author in authors %}
+        <mods:name type="personal">
+        <mods:namePart>{{ author }}</mods:namePart>
+        <mods:role>
+            <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
+        </mods:role>
+        </mods:name>
+    {% endfor %}
+  {% endif %}
+
+  {% if advisor_reader_names %}
+    {% for advisor_reader_name in advisor_reader_names %}
+        <mods:name type="personal">
+        <mods:namePart>{{ advisor_reader_name }}</mods:namePart>
+        <mods:role>
+            <mods:roleTerm>Advisor/Reader</mods:roleTerm>
+        </mods:role>
+        </mods:name>
+    {% endfor %}
   {% endif %}
 
   <!--------------------------->

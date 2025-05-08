@@ -181,20 +181,28 @@ class ModsMakerTest(SimpleTestCase):
         ```
         """
         ## Find all name elements with advisor/reader role
-        advisor_names = []
+        advisor_reader_names = []
         for name in name_elements:
             role_term = name.find('roleTerm', text='Advisor/Reader')
             if role_term:
-                advisor_names.append(name)
-        log.debug(f'advisor_names: ``{advisor_names}``')
-        self.assertEqual(len(advisor_names), 2, 'Should have found 2 advisor/reader name elements')
+                advisor_reader_names.append(name)
+        log.debug(f'advisor_reader_names: ``{advisor_reader_names}``')
+        self.assertEqual(len(advisor_reader_names), 2, 'Should have found 2 advisor/reader name elements')
         ## Verify each advisor/reader name has the correct role structure
-        for advisor_name in advisor_names:
-            role = advisor_name.find('role')
+        for advisor_reader_name in advisor_reader_names:
+            role = advisor_reader_name.find('role')
             self.assertIsNotNone(role, 'Advisor/Reader name should have a role element')
             role_term = role.find('roleTerm')
             self.assertIsNotNone(role_term, 'Role should have a roleTerm element')
             self.assertEqual(role_term.text, 'Advisor/Reader', "Role term text should be 'Advisor/Reader'")
-        ## Verify that both advisors/readers are present in the text content
-        self.assertIn('adv-rdr1first adv-rdr1last', result)
-        self.assertIn('adv-rdr2first adv-rdr2last', result)
+        ## Verify that each advisor/reader has the correct namePart content
+        advisor_reader1_name = advisor_reader_names[0].find('namePart')
+        advisor_reader2_name = advisor_reader_names[1].find('namePart')
+        self.assertIsNotNone(advisor_reader1_name, 'First advisor-reader should have a namePart element')
+        self.assertIsNotNone(advisor_reader2_name, 'Second advisor-reader should have a namePart element')
+        self.assertEqual(
+            advisor_reader1_name.text, 'adv-rdr1first adv-rdr1last', 'First advisor-reader name should match expected text'
+        )
+        self.assertEqual(
+            advisor_reader2_name.text, 'adv-rdr2first adv-rdr2last', 'Second advisor-reader name should match expected text'
+        )

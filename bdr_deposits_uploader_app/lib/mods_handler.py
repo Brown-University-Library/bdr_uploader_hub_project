@@ -25,11 +25,18 @@ class ModsMaker:
         author_data: str = self.submission.authors or ''
         authors: list[str] = [author.strip() for author in author_data.split('|')] if author_data else []
         log.debug(f'authors: {authors}')
+        ## advisors/readers -----------------------------------------
+        advisor_reader_data: str = self.submission.advisors_and_readers or ''
+        advisor_reader_names: list[str] = (
+            [name.strip() for name in advisor_reader_data.split('|')] if advisor_reader_data else []
+        )
+        log.debug(f'advisor_reader_names: {advisor_reader_names}')
         ## assembling data -------------------------------------------
         context = {
             'title': title,
             'abstract': abstract,
             'authors': authors,
+            'advisor_reader_names': advisor_reader_names,
             'year_created': year_created,
             'date_created': date_created,
         }
