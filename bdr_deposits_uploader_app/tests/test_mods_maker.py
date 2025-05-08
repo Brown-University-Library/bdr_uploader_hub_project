@@ -252,7 +252,6 @@ class ModsMakerFullTest(SimpleTestCase):
             role_term = name.find('roleTerm', text='Advisor/Reader')
             if role_term:
                 advisor_reader_names.append(name)
-
         self.assertEqual(len(advisor_reader_names), 2, 'Should have found 2 advisor/reader name elements')
 
         for advisor_reader_name in advisor_reader_names:
@@ -281,6 +280,7 @@ class ModsMakerFullTest(SimpleTestCase):
         Expected XML structure:
         ```xml
         <mods:note displayLabel="Scholarly concentration">conc name1</mods:note>
+        <mods:note displayLabel="Scholarly concentration">conc name2</mods:note>
         ```
         """
         concentration_notes = self.soup.find_all('note', {'displayLabel': 'Scholarly concentration'})
