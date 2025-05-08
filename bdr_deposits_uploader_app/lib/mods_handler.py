@@ -56,4 +56,41 @@ class ModsMaker:
         template = get_template('mods_base.xml')
         mods_xml: str = template.render(context)
         log.debug(f'mods_xml: ``{mods_xml}``')
-        return mods_xml
+
+        ## format the xml --------------------------------------------
+        formatted_mods_xml: str = self.format_item_mods(mods_xml)
+        log.debug(f'formatted_mods_xml: ``{formatted_mods_xml}``')
+
+        ## return the formatted xml ----------------------------------
+        return formatted_mods_xml
+
+        ## end def prepare_mods()
+
+    def format_item_mods(self, mods_xml: str) -> str:
+        """Formats the item_mods object via lxml.
+        I tried formatting with BeautifulSoup, and minidom, but they both had issues; this is perfect for my needs.
+        Note that the BDR-API _requires_ the typeOfResource element to be in the format: opening-element -> text -> closing-element -- which this formatting ensures.
+        Called by manage_item_mods_creation()"""
+        from lxml import etree
+
+        item_mods_bytes: bytes = mods_xml.encode('utf-8')
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.fromstring(item_mods_bytes, parser=parser)
+        item_mods_formatted = etree.tostring(tree, pretty_print=True).decode()  # type: ignore
+        return item_mods_formatted
+
+    # def format_item_mods(self, item_mods: BeautifulSoup) -> str:
+    #     """Formats the item_mods object via lxml.
+    #     I tried formatting with BeautifulSoup, and minidom, but they both had issues; this is perfect for my needs.
+    #     Note that the BDR-API _requires_ the typeOfResource element to be in the format: opening-element -> text -> closing-element -- which this formatting ensures.
+    #     Called by manage_item_mods_creation()"""
+    #     from lxml import etree
+
+    #     log.debug(f'item_mods, ``{item_mods}``')
+    #     assert type(item_mods) == BeautifulSoup, type(item_mods)
+    #     item_mods_string: str = str(item_mods)
+    #     item_mods_bytes: bytes = item_mods_string.encode('utf-8')
+    #     parser = etree.XMLParser(remove_blank_text=True)
+    #     tree = etree.fromstring(item_mods_bytes, parser=parser)
+    #     item_mods_formatted = etree.tostring(tree, pretty_print=True).decode()  # type: ignore
+    #     return item_mods_formatted
