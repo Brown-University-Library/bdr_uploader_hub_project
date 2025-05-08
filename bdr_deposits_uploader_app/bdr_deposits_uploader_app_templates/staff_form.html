@@ -266,9 +266,13 @@
         
         <div class="form-section">
             <h3>Access Options</h3>
+
+            {% comment %} 
             <div class="form-group">
                 {{ form.offer_embargo_access.label_tag }} {{ form.offer_embargo_access }}
             </div>
+            {% endcomment %}
+
             <div class="form-group">
                 {{ form.offer_license_options.label_tag }} {{ form.offer_license_options }}
                 <div class="label-container">
@@ -329,10 +333,13 @@
                 </div>
                 {{ form.degrees_required }}
             </div>
+
+            {% comment %}
             <div class="form-group">
                 {{ form.invite_supplementary_files.label_tag }} {{ form.invite_supplementary_files }}
             </div>
-
+            {% endcomment %}
+            
         </div>  <!-- end of form-section -->
         
         <!-- submit-button -------------------------------------- -->
