@@ -1,6 +1,6 @@
 import datetime
 import logging
-from xml.etree import ElementTree as ET
+from bs4 import BeautifulSoup
 
 from django.test import SimpleTestCase
 
@@ -119,29 +119,26 @@ class ModsMakerTest(SimpleTestCase):
 
         ...in a parent <mods:name> element.
         """
-        # Verify author role structure using XML parsing
-        ns = {'mods': 'http://www.loc.gov/mods/v3'}
-        root = ET.fromstring(result)
+        # Verify author role structure using BeautifulSoup
+        soup = BeautifulSoup(result, 'xml')
 
         # Find all name elements with author role
-        author_names = root.findall(
-            './/mods:name[mods:role/mods:roleTerm[@authority="marcrelator"][@valueURI="http://id.loc.gov/vocabulary/relators/aut"]]',
-            ns,
-        )
+        author_names = soup.find_all('name', role=lambda x: x and x.find('roleTerm', 
+            {'authority': 'marcrelator', 'valueURI': 'http://id.loc.gov/vocabulary/relators/aut'}))
         self.assertEqual(len(author_names), 2, 'Should have found 2 author name elements')
 
         # Verify each author name has the correct role structure
         for author_name in author_names:
-            role = author_name.find('mods:role', ns)
+            role = author_name.find('role')
             self.assertIsNotNone(role, 'Author name should have a role element')
 
-            role_term = role.find('mods:roleTerm', ns)
+            role_term = role.find('roleTerm')
             self.assertIsNotNone(role_term, 'Role should have a roleTerm element')
 
             self.assertEqual(role_term.text, 'Author', "Role term text should be 'Author'")
-            self.assertEqual(role_term.get('authority'), 'marcrelator', 'Role term should have correct authority')
+            self.assertEqual(role_term['authority'], 'marcrelator', 'Role term should have correct authority')
             self.assertEqual(
-                role_term.get('valueURI'),
+                role_term['valueURI'],
                 'http://id.loc.gov/vocabulary/relators/aut',
                 'Role term should have correct valueURI',
             )
