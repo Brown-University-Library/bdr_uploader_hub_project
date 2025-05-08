@@ -161,12 +161,8 @@ class ModsMakerTest(SimpleTestCase):
         author2_name = author_names[1].find('namePart')
         self.assertIsNotNone(author1_name, 'First author should have a namePart element')
         self.assertIsNotNone(author2_name, 'Second author should have a namePart element')
-        self.assertEqual(
-            author1_name.text, 'auth1first auth1last', 'First author name should match expected text'
-        )
-        self.assertEqual(
-            author2_name.text, 'auth2first auth2last', 'Second author name should match expected text'
-        )
+        self.assertEqual(author1_name.text, 'auth1first auth1last', 'First author name should match expected text')
+        self.assertEqual(author2_name.text, 'auth2first auth2last', 'Second author name should match expected text')
         ## check standard MODS elements -----------------------------
         self.assert_standard_mods_elements(result)
 
@@ -214,3 +210,20 @@ class ModsMakerTest(SimpleTestCase):
         self.assertEqual(
             advisor_reader2_name.text, 'adv-rdr2first adv-rdr2last', 'Second advisor-reader name should match expected text'
         )
+
+        ## concentration check --------------------------------------
+        """
+        I want to check for...
+        ```xml
+        <mods:note displayLabel="Scholarly concentration">conc name1</mods:note>
+        <mods:note displayLabel="Scholarly concentration">conc name2</mods:note>        
+        ```
+        """
+        ## Find all note elements with concentration displayLabel
+        concentration_notes = soup.find_all('note', {'displayLabel': 'Scholarly concentration'})
+        self.assertEqual(len(concentration_notes), 2, 'Should have found 2 concentration note elements')
+        ## Verify each concentration note has the correct content
+        concentration1_note = concentration_notes[0].find('note')
+        concentration2_note = concentration_notes[1].find('note')
+        self.assertEqual(concentration1_note.text, 'conc name1', 'First concentration note should match expected text')
+        self.assertEqual(concentration2_note.text, 'conc name2', 'Second concentration note should match expected text')
