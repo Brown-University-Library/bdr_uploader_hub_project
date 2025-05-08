@@ -61,8 +61,8 @@
   <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
   <mods:accessCondition type="restriction on access">All Rights Reserved</mods:accessCondition>
 
-  <!--------------------------->
+  <!------------------------->
   <!-- unchanging data END -->
-  <!--------------------------->
+  <!------------------------->
 
 </mods:mods>
