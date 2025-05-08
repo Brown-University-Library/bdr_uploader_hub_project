@@ -109,6 +109,7 @@ class ModsMakerTest(SimpleTestCase):
         result: str = ModsMaker(submission).prepare_mods()
         log.debug(f'mods_maker result: ``{result}``')
         self.assertIn('<mods:title>2025-may-08 7:50am title</mods:title>', result)
+
         ## author check ---------------------------------------------
         """
         I want to check for...
@@ -129,12 +130,17 @@ class ModsMakerTest(SimpleTestCase):
         """
         ## Verify author role structure using BeautifulSoup
         soup = BeautifulSoup(result, 'xml')
+        log.debug(f'soup: ``{soup}``')
         ## Find all name elements with author role
-        author_names = soup.find_all(
-            'name',
-            role=lambda x: x
-            and x.find('roleTerm', {'authority': 'marcrelator', 'valueURI': 'http://id.loc.gov/vocabulary/relators/aut'}),
-        )
+        name_elements = soup.find_all('name')
+        author_names = []
+        for name in name_elements:
+            role_term = name.find(
+                'roleTerm', {'authority': 'marcrelator', 'valueURI': 'http://id.loc.gov/vocabulary/relators/aut'}
+            )
+            if role_term:
+                author_names.append(name)
+        log.debug(f'author_names: ``{author_names}``')
         self.assertEqual(len(author_names), 2, 'Should have found 2 author name elements')
         ## Verify each author name has the correct role structure
         for author_name in author_names:
