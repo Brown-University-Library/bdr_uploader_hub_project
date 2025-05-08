@@ -1,5 +1,6 @@
 import datetime
 import logging
+from xml.etree import ElementTree as ET
 
 from django.test import SimpleTestCase
 
@@ -108,4 +109,45 @@ class ModsMakerTest(SimpleTestCase):
         result: str = ModsMaker(submission).prepare_mods()
         log.debug(f'mods_maker result: ``{result}``')
         self.assertIn('<mods:title>2025-may-08 7:50am title</mods:title>', result)
+        ## author check ---------------------------------------------
+        """
+        I want to check for...
+
+        <mods:role>
+            <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
+        </mods:role>
+
+        ...in a parent <mods:name> element.
+        """
+        # Verify author role structure using XML parsing
+        ns = {'mods': 'http://www.loc.gov/mods/v3'}
+        root = ET.fromstring(result)
+
+        # Find all name elements with author role
+        author_names = root.findall(
+            './/mods:name[mods:role/mods:roleTerm[@authority="marcrelator"][@valueURI="http://id.loc.gov/vocabulary/relators/aut"]]',
+            ns,
+        )
+        self.assertEqual(len(author_names), 2, 'Should have found 2 author name elements')
+
+        # Verify each author name has the correct role structure
+        for author_name in author_names:
+            role = author_name.find('mods:role', ns)
+            self.assertIsNotNone(role, 'Author name should have a role element')
+
+            role_term = role.find('mods:roleTerm', ns)
+            self.assertIsNotNone(role_term, 'Role should have a roleTerm element')
+
+            self.assertEqual(role_term.text, 'Author', "Role term text should be 'Author'")
+            self.assertEqual(role_term.get('authority'), 'marcrelator', 'Role term should have correct authority')
+            self.assertEqual(
+                role_term.get('valueURI'),
+                'http://id.loc.gov/vocabulary/relators/aut',
+                'Role term should have correct valueURI',
+            )
+
+        # Verify that both authors are present in the text content
+        self.assertIn('author person1', result)
+        self.assertIn('author person2', result)
+
         self.assert_standard_mods_elements(result)
