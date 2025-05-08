@@ -1,7 +1,7 @@
 import datetime
 import logging
-from bs4 import BeautifulSoup
 
+from bs4 import BeautifulSoup
 from django.test import SimpleTestCase
 
 from bdr_deposits_uploader_app.lib.mods_handler import ModsMaker
@@ -93,7 +93,7 @@ class ModsMakerTest(SimpleTestCase):
         submission = Submission(
             title='2025-may-08 7:50am title',
             abstract='abstract',
-            authors='author person1 | author person2',
+            authors='auth1first auth1last | auth2first auth2last',
             advisors_and_readers='advisor reader1 | advisor reader2',
             concentrations='conc name1 | conc name2',
             degrees='degree name1 | degree name2',
@@ -112,29 +112,37 @@ class ModsMakerTest(SimpleTestCase):
         ## author check ---------------------------------------------
         """
         I want to check for...
-
-        <mods:role>
-            <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
-        </mods:role>
-
+        ```xml
+        <mods:name>
+            <mods:namePart>auth1first auth1last</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        <mods:name>
+            <mods:namePart>auth2first auth2last</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        ```
         ...in a parent <mods:name> element.
         """
-        # Verify author role structure using BeautifulSoup
+        ## Verify author role structure using BeautifulSoup
         soup = BeautifulSoup(result, 'xml')
-
-        # Find all name elements with author role
-        author_names = soup.find_all('name', role=lambda x: x and x.find('roleTerm', 
-            {'authority': 'marcrelator', 'valueURI': 'http://id.loc.gov/vocabulary/relators/aut'}))
+        ## Find all name elements with author role
+        author_names = soup.find_all(
+            'name',
+            role=lambda x: x
+            and x.find('roleTerm', {'authority': 'marcrelator', 'valueURI': 'http://id.loc.gov/vocabulary/relators/aut'}),
+        )
         self.assertEqual(len(author_names), 2, 'Should have found 2 author name elements')
-
-        # Verify each author name has the correct role structure
+        ## Verify each author name has the correct role structure
         for author_name in author_names:
             role = author_name.find('role')
             self.assertIsNotNone(role, 'Author name should have a role element')
-
             role_term = role.find('roleTerm')
             self.assertIsNotNone(role_term, 'Role should have a roleTerm element')
-
             self.assertEqual(role_term.text, 'Author', "Role term text should be 'Author'")
             self.assertEqual(role_term['authority'], 'marcrelator', 'Role term should have correct authority')
             self.assertEqual(
@@ -142,9 +150,8 @@ class ModsMakerTest(SimpleTestCase):
                 'http://id.loc.gov/vocabulary/relators/aut',
                 'Role term should have correct valueURI',
             )
-
-        # Verify that both authors are present in the text content
+        ## Verify that both authors are present in the text content
         self.assertIn('author person1', result)
         self.assertIn('author person2', result)
-
+        ## check standard MODS elements -----------------------------
         self.assert_standard_mods_elements(result)
