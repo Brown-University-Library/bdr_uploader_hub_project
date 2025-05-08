@@ -29,7 +29,8 @@ class ModsMakerBasicStaticFieldsTest(SimpleTestCase):
             abstract='bar bar',
             created_at=datetime.datetime(2025, 5, 6, 18, 26, 37),
         )
-        self.result: str = ModsMaker(self.submission).prepare_mods()
+        self.mods_maker = ModsMaker(self.submission)
+        self.result: str = self.mods_maker.prepare_mods()
         log.debug(f'mods_maker result: ``{self.result}``')
 
     def test_assert_standard_mods_elements(self):
@@ -90,7 +91,8 @@ class ModsMakerBasicCustomFieldsTest(SimpleTestCase):
             abstract='bar bar',
             created_at=datetime.datetime(2025, 5, 6, 18, 26, 37),
         )
-        self.result: str = ModsMaker(self.submission).prepare_mods()
+        self.mods_maker = ModsMaker(self.submission)
+        self.result: str = self.mods_maker.prepare_mods()
         log.debug(f'mods_maker result: ``{self.result}``')
 
     def test_prepare_mods_basic(self):
@@ -135,9 +137,46 @@ class ModsMakerFullTest(SimpleTestCase):
             visibility_options='public',
             created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
         )
-        self.result: str = ModsMaker(self.submission).prepare_mods()
+        self.mods_maker = ModsMaker(self.submission)
+        self.result: str = self.mods_maker.prepare_mods()
         self.soup = BeautifulSoup(self.result, 'xml')
         log.debug(f'mods_maker result: ``{self.result}``')
+
+    def test_validate_xml_with_valid_xml(self):
+        """
+        Tests that the validate_xml function does not raise a ValueError when the XML is well-formed.
+        """
+        xml_str = self.soup.prettify()
+        valid: bool = self.mods_maker.validate_xml(xml_str)
+        self.assertEqual(valid, True)
+
+    def test_validate_xml_with_invalid_xml(self):
+        """
+        Tests that the validate_xml function raises a ValueError when the XML is not well-formed.
+        """
+        xml_str = '<mods:mods>'
+        valid: bool = self.mods_maker.validate_xml(xml_str)
+        self.assertEqual(valid, False)
+
+    def test_format_xml(self):
+        """
+        Tests that the format_xml function properly formats XML with proper indentation and line breaks.
+        """
+        ## create a sample XML string with minimal formatting
+        xml_str = """<mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
+<titleInfo><title>Test Title</title></titleInfo>
+<typeOfResource>text</typeOfResource></mods:mods>"""
+        ## expected formatted output
+        expected_formatted = """<mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
+  <titleInfo>
+    <title>Test Title</title>
+  </titleInfo>
+  <typeOfResource>text</typeOfResource>
+</mods:mods>
+"""
+        ## format and test
+        formatted_xml = self.mods_maker.format_xml(xml_str)
+        self.assertEqual(formatted_xml.strip(), expected_formatted.strip())
 
     def test_title_generation(self):
         """
