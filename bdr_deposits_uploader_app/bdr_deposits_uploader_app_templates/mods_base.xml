@@ -6,6 +6,18 @@
 
   <mods:abstract>{{ abstract }}</mods:abstract>
 
+  {% if authors %}
+  {% for author in authors %}
+    <mods:name type="personal">
+      <mods:namePart>{{ author }}</mods:namePart>
+      <mods:role>
+        <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
+      </mods:role>
+    </mods:name>
+  {% endfor %}
+  {% endif %}
+  <!-- unchanging data START -->
+
   <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
 
   <mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>
@@ -28,5 +40,7 @@
   <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
   <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
   <mods:accessCondition type="restriction on access">All Rights Reserved</mods:accessCondition>
-  
+
+  <!-- unchanging data END -->
+
 </mods:mods>
