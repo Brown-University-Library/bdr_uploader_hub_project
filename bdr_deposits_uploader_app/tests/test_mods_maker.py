@@ -271,6 +271,7 @@ class ModsMakerFullTest(SimpleTestCase):
         self.assertEqual(
             advisor_reader2_name.text, 'adv-rdr2first adv-rdr2last', 'Second advisor-reader name should match expected text'
         )
+
         ## end def test_advisor_reader_generation()
 
     def test_concentration_generation(self):
@@ -279,11 +280,11 @@ class ModsMakerFullTest(SimpleTestCase):
 
         Expected XML structure:
         ```xml
-        <mods:note displayLabel="Scholarly concentration">conc name1</mods:note>
-        <mods:note displayLabel="Scholarly concentration">conc name2</mods:note>
+        <mods:note type="fieldOfStudy" displayLabel="Scholarly concentration">conc name1</mods:note>
+        <mods:note type="fieldOfStudy" displayLabel="Scholarly concentration">conc name2</mods:note>
         ```
         """
-        concentration_notes = self.soup.find_all('note', {'displayLabel': 'Scholarly concentration'})
+        concentration_notes = self.soup.find_all('note', {'type': 'fieldOfStudy', 'displayLabel': 'Scholarly concentration'})
         self.assertEqual(len(concentration_notes), 2, 'Should have found 2 concentration note elements')
 
         ## verify each concentration note has the correct content
@@ -291,5 +292,24 @@ class ModsMakerFullTest(SimpleTestCase):
         concentration2_note = concentration_notes[1]
         self.assertEqual(concentration1_note.text, 'conc name1', 'First concentration note should match expected text')
         self.assertEqual(concentration2_note.text, 'conc name2', 'Second concentration note should match expected text')
+
+    # def test_degree_generation(self):
+    #     """
+    #     Tests that degrees are correctly generated as notes with proper displayLabel.
+
+    #     Expected XML structure:
+    #     ```xml
+    #     <mods:note type="degree" displayLabel="Degree">degree name1</mods:note>
+    #     <mods:note type="degree" displayLabel="Degree">degree name2</mods:note>
+    #     ```
+    #     """
+    #     degree_notes = self.soup.find_all('note', {'type': 'degree', 'displayLabel': 'Degree'})
+    #     self.assertEqual(len(degree_notes), 2, 'Should have found 2 degree note elements')
+
+    #     ## verify each degree note has the correct content
+    #     degree1_note = degree_notes[0]
+    #     degree2_note = degree_notes[1]
+    #     self.assertEqual(degree1_note.text, 'degree name1', 'First degree note should match expected text')
+    #     self.assertEqual(degree2_note.text, 'degree name2', 'Second degree note should match expected text')
 
     ## end class ModsMakerFullTest()
