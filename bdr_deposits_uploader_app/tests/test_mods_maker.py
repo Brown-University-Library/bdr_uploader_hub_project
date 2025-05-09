@@ -244,6 +244,12 @@ class ModsMakerFullTest(SimpleTestCase):
                 <mods:roleTerm>Advisor/Reader</mods:roleTerm>
             </mods:role>
         </mods:name>
+        <mods:name type="personal">
+            <mods:namePart>adv-rdr2first adv-rdr2last</mods:namePart>
+            <mods:role>
+                <mods:roleTerm>Advisor/Reader</mods:roleTerm>
+            </mods:role>
+        </mods:name>
         ```
         """
         name_elements = self.soup.find_all('name')
@@ -373,5 +379,49 @@ class ModsMakerFullTest(SimpleTestCase):
         self.assertEqual(
             department2_name.text, 'Molecular Biology, Brown University', 'Second department name should match expected text'
         )
+
+        ## end def test_department_generation()
+
+    def test_faculty_mentors_generation(self):
+        """
+        Tests that the faculty mentors are correctly generated in the MODS XML.
+
+        Expected XML structure:
+        ```xml
+        <mods:name type="personal">
+            <mods:namePart>faculty mentor1</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="local" type="text">Faculty Mentor</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        <mods:name type="personal">
+            <mods:namePart>faculty mentor2</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="local" type="text">Faculty Mentor</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        ```
+        """
+        # Verify the number of faculty mentor name elements
+        soup = BeautifulSoup(self.result, 'lxml-xml')
+        name_elements = soup.find_all('mods:name', {'type': 'personal'})
+        faculty_mentors = [
+            name for name in name_elements if name.find('mods:roleTerm', text=lambda t: t and 'Faculty Mentor' in t)
+        ]
+        self.assertEqual(len(faculty_mentors), 2, 'Should have found 2 faculty mentor name elements')
+
+        # Verify the first faculty mentor
+        first_mentor = faculty_mentors[0]
+        self.assertEqual(first_mentor.find('mods:namePart').text, 'faculty mentor1')
+        self.assertEqual(first_mentor.find('mods:roleTerm').text, 'Faculty Mentor')
+        self.assertEqual(first_mentor.find('mods:roleTerm')['authority'], 'local')
+        self.assertEqual(first_mentor.find('mods:roleTerm')['type'], 'text')
+
+        # Verify the second faculty mentor
+        second_mentor = faculty_mentors[1]
+        self.assertEqual(second_mentor.find('mods:namePart').text, 'faculty mentor2')
+        self.assertEqual(second_mentor.find('mods:roleTerm').text, 'Faculty Mentor')
+        self.assertEqual(second_mentor.find('mods:roleTerm')['authority'], 'local')
+        self.assertEqual(second_mentor.find('mods:roleTerm')['type'], 'text')
 
     ## end class ModsMakerFullTest()

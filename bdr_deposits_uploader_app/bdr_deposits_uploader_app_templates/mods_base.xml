@@ -55,6 +55,17 @@
     {% endfor %}
   {% endif %}
 
+  {% if faculty_mentors %}
+    {% for faculty_mentor in faculty_mentors %}
+        <mods:name type="personal">
+            <mods:namePart>{{ faculty_mentor }}</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="local" type="text">Faculty Mentor</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+    {% endfor %}
+  {% endif %}
+
   <!-- ===================== -->
   <!-- unchanging data START -->
   <!-- ===================== -->

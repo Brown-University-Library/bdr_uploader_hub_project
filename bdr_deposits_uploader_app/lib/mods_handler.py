@@ -60,6 +60,13 @@ class ModsMaker:
                 updated_departments.append(department)
         log.debug(f'updated_departments: {updated_departments}')
 
+        ## faculty mentors --------------------------------------------
+        faculty_mentor_data: str = self.submission.faculty_mentors or ''
+        faculty_mentors: list[str] = (
+            [faculty_mentor.strip() for faculty_mentor in faculty_mentor_data.split('|')] if faculty_mentor_data else []
+        )
+        log.debug(f'faculty_mentors: {faculty_mentors}')
+
         ## assembling data -------------------------------------------
         context = {
             'title': title,
@@ -71,6 +78,7 @@ class ModsMaker:
             'year_created': year_created,
             'date_created': date_created,
             'departments': updated_departments,
+            'faculty_mentors': faculty_mentors,
         }
         ## render the template ---------------------------------------
         template = get_template('mods_base.xml')
