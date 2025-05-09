@@ -314,25 +314,64 @@ class ModsMakerFullTest(SimpleTestCase):
 
     def test_department_generation(self):
         """
-        Tests that departments are correctly generated as notes with proper displayLabel.
+        Tests that departments are correctly generated as corporate names with proper role attributes.
 
         Expected XML structure:
         ```xml
-        <mods:note type="department" displayLabel="Department">Biology, Brown University</mods:note>
-        <mods:note type="department" displayLabel="Department">Molecular Biology, Brown University</mods:note>
+        <mods:name type="corporate">
+            <mods:namePart>Biology, Brown University</mods:namePart>
+            <mods:role>
+                <mods:roleTerm
+                authority="marcrelator"
+                type="text"
+                valueURI="http://id.loc.gov/vocabulary/relators/spn"
+                >sponsor</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        <mods:name type="corporate">
+            <mods:namePart>Molecular Biology, Brown University</mods:namePart>
+            <mods:role>
+                <mods:roleTerm
+                authority="marcrelator"
+                type="text"
+                valueURI="http://id.loc.gov/vocabulary/relators/spn"
+                >sponsor</mods:roleTerm>
+            </mods:role>
+        </mods:name>
         ```
         """
-        department_notes = self.soup.find_all('note', {'type': 'department', 'displayLabel': 'Department'})
-        self.assertEqual(len(department_notes), 2, 'Should have found 2 department note elements')
+        name_elements = self.soup.find_all('name')
+        department_names = []
+        for name in name_elements:
+            if name.get('type') == 'corporate':
+                role_term = name.find(
+                    'roleTerm', {'authority': 'marcrelator', 'valueURI': 'http://id.loc.gov/vocabulary/relators/spn'}
+                )
+                if role_term and role_term.text == 'sponsor':
+                    department_names.append(name)
+        self.assertEqual(len(department_names), 2, 'Should have found 2 department name elements')
 
-        ## verify each department note has the correct content
-        department1_note = department_notes[0]
-        department2_note = department_notes[1]
+        for department_name in department_names:
+            role = department_name.find('role')
+            self.assertIsNotNone(role, 'Department name should have a role element')
+            role_term = role.find('roleTerm')
+            self.assertIsNotNone(role_term, 'Role should have a roleTerm element')
+            self.assertEqual(role_term.text, 'sponsor', "Role term text should be 'sponsor'")
+            self.assertEqual(role_term['authority'], 'marcrelator', 'Role term should have correct authority')
+            self.assertEqual(
+                role_term['valueURI'], 'http://id.loc.gov/vocabulary/relators/spn', 'Role term should have correct valueURI'
+            )
+            self.assertEqual(role_term['type'], 'text', 'Role term should have correct type')
+
+        department1_name = department_names[0].find('namePart')
+        department2_name = department_names[1].find('namePart')
+        self.assertIsNotNone(department1_name, 'First department should have a namePart element')
+        self.assertIsNotNone(department2_name, 'Second department should have a namePart element')
         self.assertEqual(
-            department1_note.text, 'Biology, Brown University', 'First department note should match expected text'
+            department1_name.text, 'Biology, Brown University', 'First department name should match expected text'
         )
         self.assertEqual(
-            department2_note.text, 'Molecular Biology, Brown University', 'Second department note should match expected text'
+            department2_name.text, 'Molecular Biology, Brown University', 'Second department name should match expected text'
         )
 
     ## end class ModsMakerFullTest()

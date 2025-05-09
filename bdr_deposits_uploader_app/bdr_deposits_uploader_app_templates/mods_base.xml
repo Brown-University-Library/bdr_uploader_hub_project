@@ -42,7 +42,16 @@
 
   {% if departments %}
     {% for department in departments %}
-        <mods:note type="department" displayLabel="Department">{{ department }}</mods:note>
+        <mods:name type="corporate">
+            <mods:namePart>{{ department }}</mods:namePart>
+            <mods:role>
+                <mods:roleTerm
+                authority="marcrelator"
+                type="text"
+                valueURI="http://id.loc.gov/vocabulary/relators/spn"
+                >sponsor</mods:roleTerm>
+            </mods:role>
+        </mods:name>
     {% endfor %}
   {% endif %}
 
