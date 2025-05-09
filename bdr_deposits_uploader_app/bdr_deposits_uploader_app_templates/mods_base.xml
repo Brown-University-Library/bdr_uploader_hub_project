@@ -66,6 +66,17 @@
     {% endfor %}
   {% endif %}
 
+  {% if team_members %}
+    {% for team_member in team_members %}
+        <mods:name type="personal">
+            <mods:namePart>{{ team_member }}</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="local" type="text">Team Member</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+    {% endfor %}
+  {% endif %}
+
   <!-- ===================== -->
   <!-- unchanging data START -->
   <!-- ===================== -->

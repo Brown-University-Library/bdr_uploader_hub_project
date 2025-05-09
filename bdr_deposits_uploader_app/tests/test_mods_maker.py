@@ -446,6 +446,44 @@ class ModsMakerFullTest(SimpleTestCase):
         </mods:name>
         ```
         """
-        self.assertEqual(2, 3)
+        name_elements = self.soup.find_all('name')
+        team_member_names = []
+        for name in name_elements:
+            role_term = name.find('roleTerm', text='Team Member')
+            if role_term:
+                team_member_names.append(name)
+
+        log.debug(f'Found {len(team_member_names)} team member name elements')
+        log.debug(f'Actual XML: {self.result}')
+
+        self.assertEqual(len(team_member_names), 2, 'Should have found 2 team member name elements')
+
+        ## verify each team member has correct structure and content
+        team_member1 = team_member_names[0]
+        team_member2 = team_member_names[1]
+
+        ## verify type attribute
+        self.assertEqual(team_member1['type'], 'personal', 'First team member should have type="personal"')
+        self.assertEqual(team_member2['type'], 'personal', 'Second team member should have type="personal"')
+
+        ## verify namePart content
+        team_member1_name = team_member1.find('namePart')
+        team_member2_name = team_member2.find('namePart')
+        self.assertIsNotNone(team_member1_name, 'First team member should have a namePart element')
+        self.assertIsNotNone(team_member2_name, 'Second team member should have a namePart element')
+        self.assertEqual(team_member1_name.text, 'team member1', 'First team member name should match expected text')
+        self.assertEqual(team_member2_name.text, 'team member2', 'Second team member name should match expected text')
+
+        ## verify roleTerm attributes and content
+        team_member1_role_term = team_member1.find('roleTerm')
+        team_member2_role_term = team_member2.find('roleTerm')
+        self.assertIsNotNone(team_member1_role_term, 'First team member should have a roleTerm element')
+        self.assertIsNotNone(team_member2_role_term, 'Second team member should have a roleTerm element')
+        self.assertEqual(team_member1_role_term.text, 'Team Member', 'First team member role term should be "Team Member"')
+        self.assertEqual(team_member2_role_term.text, 'Team Member', 'Second team member role term should be "Team Member"')
+        self.assertEqual(team_member1_role_term['authority'], 'local', 'First team member role term should have authority="local"')
+        self.assertEqual(team_member2_role_term['authority'], 'local', 'Second team member role term should have authority="local"')
+        self.assertEqual(team_member1_role_term['type'], 'text', 'First team member role term should have type="text"')
+        self.assertEqual(team_member2_role_term['type'], 'text', 'Second team member role term should have type="text"')
 
     ## end class ModsMakerFullTest()

@@ -67,6 +67,13 @@ class ModsMaker:
         )
         log.debug(f'faculty_mentors: {faculty_mentors}')
 
+        ## team members --------------------------------------------
+        team_member_data: str = self.submission.team_members or ''
+        team_members: list[str] = (
+            [team_member.strip() for team_member in team_member_data.split('|')] if team_member_data else []
+        )
+        log.debug(f'team_members: {team_members}')
+
         ## assembling data -------------------------------------------
         context = {
             'title': title,
@@ -79,6 +86,7 @@ class ModsMaker:
             'date_created': date_created,
             'departments': updated_departments,
             'faculty_mentors': faculty_mentors,
+            'team_members': team_members,
         }
         ## render the template ---------------------------------------
         template = get_template('mods_base.xml')
