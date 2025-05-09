@@ -424,4 +424,28 @@ class ModsMakerFullTest(SimpleTestCase):
         self.assertEqual(second_mentor.find('mods:roleTerm')['authority'], 'local')
         self.assertEqual(second_mentor.find('mods:roleTerm')['type'], 'text')
 
+        ## end def test_faculty_mentor_generation()
+
+    def test_team_members_generation(self):
+        """
+        Tests that team members are correctly generated as notes with proper displayLabel.
+
+        Expected XML structure:
+        ```xml
+        <mods:name type="personal">
+            <mods:namePart>team1first team1last</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="local" type="text">Team Member</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        <mods:name type="personal">
+            <mods:namePart>team2first team2last</mods:namePart>
+            <mods:role>
+                <mods:roleTerm authority="local" type="text">Team Member</mods:roleTerm>
+            </mods:role>
+        </mods:name>
+        ```
+        """
+        self.assertEqual(2, 3)
+
     ## end class ModsMakerFullTest()
