@@ -11,34 +11,37 @@ log = logging.getLogger(__name__)
 
 
 def _validate_visibility(form, cleaned_data):
-    """Validate visibility-related fields and add appropriate form errors.
-    
+    """
+    Validates visibility-related fields and add appropriate form errors.
+    Called by validate_staff_form().
+
     Args:
         form: The form instance to add errors to
         cleaned_data: Dictionary of cleaned form data
     """
     if cleaned_data.get('visibility_required') and not cleaned_data.get('offer_visibility_options'):
         cleaned_data['offer_visibility_options'] = True
-    
+
     ## Ensure at least one visibility option is selected
     if not cleaned_data.get('visibility_options'):
         form.add_error('visibility_options', 'At least one visibility-option must be selected.')
-    
+
     if cleaned_data.get('offer_visibility_options'):
         if not cleaned_data.get('visibility_default'):
             form.add_error('visibility_default', 'A default visibility-option is required.')
         if cleaned_data.get('visibility_default', '') not in cleaned_data.get('visibility_options', ''):
             form.add_error('visibility_default', 'Default visibility-option must be one of the selected visibility-options.')
-    
+
     if len(cleaned_data.get('visibility_options', [])) > 1 and not cleaned_data.get('offer_visibility_options'):
         form.add_error('offer_visibility_options', 'Visibility options must be offered if more than one is selected.')
-    
+
     if (
         cleaned_data.get('visibility_default')
         and cleaned_data.get('visibility_default') != 'ERR'
         and not cleaned_data.get('offer_visibility_options')
     ):
         form.add_error('offer_visibility_options', 'Visibility options must be offered if a default visibility is selected.')
+
 
 def validate_staff_form(form, cleaned_data):
     log.debug('starting validate_staff_form()')
