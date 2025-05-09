@@ -49,6 +49,17 @@ class ModsMaker:
         degrees: list[str] = [degree.strip() for degree in degree_data.split('|')] if degree_data else []
         log.debug(f'degrees: {degrees}')
 
+        ## departments ----------------------------------------------
+        department_data: str = self.submission.department or ''
+        departments: list[str] = [department.strip() for department in department_data.split('|')] if department_data else []
+        updated_departments: list[str] = []
+        for department in departments:
+            if 'Brown University' not in department:
+                updated_departments.append(f'{department}, Brown University')
+            else:
+                updated_departments.append(department)
+        log.debug(f'updated_departments: {updated_departments}')
+
         ## assembling data -------------------------------------------
         context = {
             'title': title,
@@ -59,6 +70,7 @@ class ModsMaker:
             'degrees': degrees,
             'year_created': year_created,
             'date_created': date_created,
+            'departments': updated_departments,
         }
         ## render the template ---------------------------------------
         template = get_template('mods_base.xml')

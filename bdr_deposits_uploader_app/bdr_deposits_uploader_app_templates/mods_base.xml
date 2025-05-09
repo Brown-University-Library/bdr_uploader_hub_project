@@ -40,6 +40,12 @@
     {% endfor %}
   {% endif %}
 
+  {% if departments %}
+    {% for department in departments %}
+        <mods:note type="department" displayLabel="Department">{{ department }}</mods:note>
+    {% endfor %}
+  {% endif %}
+
   <!-- ===================== -->
   <!-- unchanging data START -->
   <!-- ===================== -->

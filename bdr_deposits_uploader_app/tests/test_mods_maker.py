@@ -128,7 +128,7 @@ class ModsMakerFullTest(SimpleTestCase):
             advisors_and_readers='adv-rdr1first adv-rdr1last | adv-rdr2first adv-rdr2last',
             concentrations='conc name1 | conc name2',
             degrees='degree name1 | degree name2',
-            department='dept name1 | dept name2',
+            department='Biology, Brown University | Molecular Biology',
             faculty_mentors='faculty mentor1 | faculty mentor2',
             license_options='CC0',
             original_file_name='HH018977_0030.pdf',
@@ -311,5 +311,28 @@ class ModsMakerFullTest(SimpleTestCase):
         degree2_note = degree_notes[1]
         self.assertEqual(degree1_note.text, 'degree name1', 'First degree note should match expected text')
         self.assertEqual(degree2_note.text, 'degree name2', 'Second degree note should match expected text')
+
+    def test_department_generation(self):
+        """
+        Tests that departments are correctly generated as notes with proper displayLabel.
+
+        Expected XML structure:
+        ```xml
+        <mods:note type="department" displayLabel="Department">Biology, Brown University</mods:note>
+        <mods:note type="department" displayLabel="Department">Molecular Biology, Brown University</mods:note>
+        ```
+        """
+        department_notes = self.soup.find_all('note', {'type': 'department', 'displayLabel': 'Department'})
+        self.assertEqual(len(department_notes), 2, 'Should have found 2 department note elements')
+
+        ## verify each department note has the correct content
+        department1_note = department_notes[0]
+        department2_note = department_notes[1]
+        self.assertEqual(
+            department1_note.text, 'Biology, Brown University', 'First department note should match expected text'
+        )
+        self.assertEqual(
+            department2_note.text, 'Molecular Biology, Brown University', 'Second department note should match expected text'
+        )
 
     ## end class ModsMakerFullTest()
