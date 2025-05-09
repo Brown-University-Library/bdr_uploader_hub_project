@@ -428,7 +428,7 @@ class ModsMakerFullTest(SimpleTestCase):
 
     def test_team_members_generation(self):
         """
-        Tests that team members are correctly generated as notes with proper displayLabel.
+        Tests that team members are correctly generated as personal name elements with proper role attributes.
 
         Expected XML structure:
         ```xml
