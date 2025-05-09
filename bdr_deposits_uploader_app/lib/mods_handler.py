@@ -44,6 +44,11 @@ class ModsMaker:
         )
         log.debug(f'concentrations: {concentrations}')
 
+        ## degrees --------------------------------------------------
+        degree_data: str = self.submission.degrees or ''
+        degrees: list[str] = [degree.strip() for degree in degree_data.split('|')] if degree_data else []
+        log.debug(f'degrees: {degrees}')
+
         ## assembling data -------------------------------------------
         context = {
             'title': title,
@@ -51,6 +56,7 @@ class ModsMaker:
             'authors': authors,
             'advisor_reader_names': advisor_reader_names,
             'concentrations': concentrations,
+            'degrees': degrees,
             'year_created': year_created,
             'date_created': date_created,
         }

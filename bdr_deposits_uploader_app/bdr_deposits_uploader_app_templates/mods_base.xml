@@ -34,6 +34,12 @@
     {% endfor %}
   {% endif %}
 
+  {% if degrees %}
+    {% for degree in degrees %}
+        <mods:note type="degree" displayLabel="Degree">{{ degree }}</mods:note>
+    {% endfor %}
+  {% endif %}
+
   <!-- ===================== -->
   <!-- unchanging data START -->
   <!-- ===================== -->
