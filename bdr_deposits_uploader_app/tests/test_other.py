@@ -60,7 +60,11 @@ class StaffFormDirectTests(TestCase):
         }
         form = StaffForm(data=data)
         log.debug(f'form.errors-get-json-data BEFORE is-valid(): {pprint.pformat(form.errors.get_json_data())}')
-        self.assertTrue(form.is_valid(), f'Errors: {form.errors.get_json_data()}')
+        if '127.0.0.1' in project_settings.LOGIN_URL:
+            errors = f'{form.errors.get_json_data()} -- note that the pid-title check requires VPN'
+        else:
+            errors = form.errors.get_json_data()
+        self.assertTrue(form.is_valid(), f'Errors: {errors}')
         log.debug(f'form.errors-get-json-data AFTER is-valid(): {pprint.pformat(form.errors.get_json_data())}')
         self.assertEqual(form.cleaned_data.get('offer_license_options'), True)
         self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
