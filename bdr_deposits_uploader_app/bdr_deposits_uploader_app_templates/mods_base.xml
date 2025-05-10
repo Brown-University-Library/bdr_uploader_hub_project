@@ -8,6 +8,7 @@
 
     {% if authors %}
         {% for author in authors %}
+            <!-- author -->
             <mods:name type="personal">
                 <mods:namePart>{{ author }}</mods:namePart>
                 <mods:role>
@@ -19,6 +20,7 @@
 
     {% if advisor_reader_names %}
         {% for advisor_reader_name in advisor_reader_names %}
+            <!-- advisor/reader -->
             <mods:name type="personal">
                 <mods:namePart>{{ advisor_reader_name }}</mods:namePart>
                 <mods:role>
@@ -30,12 +32,14 @@
 
     {% if concentrations %}
         {% for concentration in concentrations %}
+            <!-- concentration -->
             <mods:note type="fieldOfStudy" displayLabel="Scholarly concentration">{{ concentration }}</mods:note>
         {% endfor %}
     {% endif %}
 
     {% if degrees %}
         {% for degree in degrees %}
+            <!-- degree -->
             <mods:note type="degree" displayLabel="Degree">{{ degree }}</mods:note>
         {% endfor %}
     {% endif %}
@@ -58,6 +62,7 @@
 
     {% if faculty_mentors %}
         {% for faculty_mentor in faculty_mentors %}
+            <!-- faculty mentor -->
             <mods:name type="personal">
                 <mods:namePart>{{ faculty_mentor }}</mods:namePart>
                 <mods:role>
@@ -69,6 +74,7 @@
 
     {% if team_members %}
         {% for team_member in team_members %}
+            <!-- team member -->
             <mods:name type="personal">
                 <mods:namePart>{{ team_member }}</mods:namePart>
                 <mods:role>
@@ -78,6 +84,7 @@
         {% endfor %}
     {% endif %}
 
+    <!-- access conditions -->
     {% if selected_license %}
         {% if selected_license == 'all_rights_reserved' %}
             <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
