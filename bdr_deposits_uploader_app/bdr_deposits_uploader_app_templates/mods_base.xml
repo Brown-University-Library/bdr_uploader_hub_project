@@ -1,82 +1,82 @@
 <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd">
   
-  <mods:titleInfo>
-    <mods:title>{{ title }}</mods:title>
-  </mods:titleInfo>
+    <mods:titleInfo>
+        <mods:title>{{ title }}</mods:title>
+    </mods:titleInfo>
 
-  <mods:abstract>{{ abstract }}</mods:abstract>
+    <mods:abstract>{{ abstract }}</mods:abstract>
 
-  {% if authors %}
-    {% for author in authors %}
-        <mods:name type="personal">
-        <mods:namePart>{{ author }}</mods:namePart>
-        <mods:role>
-            <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
-        </mods:role>
-        </mods:name>
-    {% endfor %}
-  {% endif %}
+    {% if authors %}
+        {% for author in authors %}
+            <mods:name type="personal">
+                <mods:namePart>{{ author }}</mods:namePart>
+                <mods:role>
+                    <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
+                </mods:role>
+            </mods:name>
+        {% endfor %}
+    {% endif %}
 
-  {% if advisor_reader_names %}
-    {% for advisor_reader_name in advisor_reader_names %}
-        <mods:name type="personal">
-        <mods:namePart>{{ advisor_reader_name }}</mods:namePart>
-        <mods:role>
-            <mods:roleTerm>Advisor/Reader</mods:roleTerm>
-        </mods:role>
-        </mods:name>
-    {% endfor %}
-  {% endif %}
+    {% if advisor_reader_names %}
+        {% for advisor_reader_name in advisor_reader_names %}
+            <mods:name type="personal">
+                <mods:namePart>{{ advisor_reader_name }}</mods:namePart>
+                <mods:role>
+                    <mods:roleTerm>Advisor/Reader</mods:roleTerm>
+                </mods:role>
+            </mods:name>
+        {% endfor %}
+    {% endif %}
 
-  {% if concentrations %}
-    {% for concentration in concentrations %}
-        <mods:note type="fieldOfStudy" displayLabel="Scholarly concentration">{{ concentration }}</mods:note>
-    {% endfor %}
-  {% endif %}
+    {% if concentrations %}
+        {% for concentration in concentrations %}
+            <mods:note type="fieldOfStudy" displayLabel="Scholarly concentration">{{ concentration }}</mods:note>
+        {% endfor %}
+    {% endif %}
 
-  {% if degrees %}
-    {% for degree in degrees %}
-        <mods:note type="degree" displayLabel="Degree">{{ degree }}</mods:note>
-    {% endfor %}
-  {% endif %}
+    {% if degrees %}
+        {% for degree in degrees %}
+            <mods:note type="degree" displayLabel="Degree">{{ degree }}</mods:note>
+        {% endfor %}
+    {% endif %}
 
-  {% if departments %}
-    {% for department in departments %}
-        <!-- department -->
-        <mods:name type="corporate">
-            <mods:namePart>{{ department }}</mods:namePart>
-            <mods:role>
-                <mods:roleTerm
-                authority="marcrelator"
-                type="text"
-                valueURI="http://id.loc.gov/vocabulary/relators/spn"
-                >sponsor</mods:roleTerm>
-            </mods:role>
-        </mods:name>
-    {% endfor %}
-  {% endif %}
+    {% if departments %}
+        {% for department in departments %}
+            <!-- department -->
+            <mods:name type="corporate">
+                <mods:namePart>{{ department }}</mods:namePart>
+                <mods:role>
+                    <mods:roleTerm
+                        authority="marcrelator"
+                        type="text"
+                        valueURI="http://id.loc.gov/vocabulary/relators/spn"
+                    >sponsor</mods:roleTerm>
+                </mods:role>
+            </mods:name>
+        {% endfor %}
+    {% endif %}
 
-  {% if faculty_mentors %}
-    {% for faculty_mentor in faculty_mentors %}
-        <mods:name type="personal">
-            <mods:namePart>{{ faculty_mentor }}</mods:namePart>
-            <mods:role>
-                <mods:roleTerm authority="local" type="text">Faculty Mentor</mods:roleTerm>
-            </mods:role>
-        </mods:name>
-    {% endfor %}
-  {% endif %}
+    {% if faculty_mentors %}
+        {% for faculty_mentor in faculty_mentors %}
+            <mods:name type="personal">
+                <mods:namePart>{{ faculty_mentor }}</mods:namePart>
+                <mods:role>
+                    <mods:roleTerm authority="local" type="text">Faculty Mentor</mods:roleTerm>
+                </mods:role>
+            </mods:name>
+        {% endfor %}
+    {% endif %}
 
-  {% if team_members %}
-    {% for team_member in team_members %}
-        <mods:name type="personal">
-            <mods:namePart>{{ team_member }}</mods:namePart>
-            <mods:role>
-                <mods:roleTerm authority="local" type="text">Team Member</mods:roleTerm>
-            </mods:role>
-        </mods:name>
-    {% endfor %}
-  {% endif %}
+    {% if team_members %}
+        {% for team_member in team_members %}
+            <mods:name type="personal">
+                <mods:namePart>{{ team_member }}</mods:namePart>
+                <mods:role>
+                    <mods:roleTerm authority="local" type="text">Team Member</mods:roleTerm>
+                </mods:role>
+            </mods:name>
+        {% endfor %}
+    {% endif %}
 
     {% if selected_license %}
         {% if selected_license == 'all_rights_reserved' %}
@@ -109,31 +109,31 @@
         <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
     {% endif %}
 
-  <!-- ===================== -->
-  <!-- unchanging data START -->
-  <!-- ===================== -->
+    <!-- ===================== -->
+    <!-- unchanging data START -->
+    <!-- ===================== -->
 
-  <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
+    <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
 
-  <mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>
+    <mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>
 
-  <mods:originInfo>
-    <mods:place>
-      <mods:placeTerm type="code" authority="marccountry" authorityURI="http://www.loc.gov/marc/countries/">riu</mods:placeTerm>
-      <mods:placeTerm type="text">Providence, Rhode Island</mods:placeTerm>
-    </mods:place>
-    <mods:publisher authority="naf" authorityURI="http://id.loc.gov/authorities/names">Brown University Library</mods:publisher>
-    <mods:dateCreated keyDate="yes" encoding="w3cdtf">{{ year_created }}</mods:dateCreated>
-    <mods:dateIssued encoding="w3cdtf">{{ date_created }}</mods:dateIssued>
-  </mods:originInfo>
+    <mods:originInfo>
+        <mods:place>
+            <mods:placeTerm type="code" authority="marccountry" authorityURI="http://www.loc.gov/marc/countries/">riu</mods:placeTerm>
+            <mods:placeTerm type="text">Providence, Rhode Island</mods:placeTerm>
+        </mods:place>
+        <mods:publisher authority="naf" authorityURI="http://id.loc.gov/authorities/names">Brown University Library</mods:publisher>
+        <mods:dateCreated keyDate="yes" encoding="w3cdtf">{{ year_created }}</mods:dateCreated>
+        <mods:dateIssued encoding="w3cdtf">{{ date_created }}</mods:dateIssued>
+    </mods:originInfo>
 
-  <mods:physicalDescription>
-    <mods:extent>1 document</mods:extent>
-    <mods:digitalOrigin>born digital</mods:digitalOrigin>
-  </mods:physicalDescription>
+    <mods:physicalDescription>
+        <mods:extent>1 document</mods:extent>
+        <mods:digitalOrigin>born digital</mods:digitalOrigin>
+    </mods:physicalDescription>
 
-  <!-- =================== -->
-  <!-- unchanging data END -->
-  <!-- =================== -->
+    <!-- =================== -->
+    <!-- unchanging data END -->
+    <!-- =================== -->
 
 </mods:mods>
