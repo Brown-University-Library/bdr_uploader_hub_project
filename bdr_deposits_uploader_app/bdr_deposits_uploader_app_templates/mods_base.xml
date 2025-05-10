@@ -78,18 +78,36 @@
     {% endfor %}
   {% endif %}
 
-  {% if selected_license %}
-    {% if selected_license == 'CC0' %}
-      <mods:accessCondition type="use and reproduction">Creative Commons Zero (CC0) - No Rights Reserved</mods:accessCondition>
-      <mods:accessCondition type="license" xlink:href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0 1.0 Universal Public Domain Dedication</mods:accessCondition>
-    {% elif selected_license == 'CC_BY' %}
-      <mods:accessCondition type="use and reproduction">Attribution (CC BY)</mods:accessCondition>
-      <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International (CC BY 4.0)</mods:accessCondition>
+    {% if selected_license %}
+        {% if selected_license == 'all_rights_reserved' %}
+            <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
+            <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
+        {% elif selected_license == 'CC_BY' %}
+            <mods:accessCondition type="use and reproduction">Attribution (CC BY)</mods:accessCondition>
+            <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International (CC BY 4.0)</mods:accessCondition>
+        {% elif selected_license == 'CC_BY-SA' %}
+            <mods:accessCondition type="use and reproduction">Attribution-ShareAlike (CC BY-SA)</mods:accessCondition>
+            <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</mods:accessCondition>
+        {% elif selected_license == 'CC_BY-NC-SA' %}
+            <mods:accessCondition type="use and reproduction">Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)</mods:accessCondition>
+            <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</mods:accessCondition>
+        {% elif selected_license == 'CC_BY-NC-ND' %}
+            <mods:accessCondition type="use and reproduction">Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)</mods:accessCondition>
+            <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)</mods:accessCondition>
+        {% elif selected_license == 'CC_BY-NC' %}
+            <mods:accessCondition type="use and reproduction">Attribution-NonCommercial (CC BY-NC)</mods:accessCondition>
+            <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</mods:accessCondition>
+        {% elif selected_license == 'CC_BY-ND' %}
+            <mods:accessCondition type="use and reproduction">Attribution-NoDerivatives (CC BY-ND)</mods:accessCondition>
+            <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nd/4.0/">Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)</mods:accessCondition>
+        {% elif selected_license == 'CC0' %}
+            <mods:accessCondition type="use and reproduction">Creative Commons Zero (CC0) - No Rights Reserved</mods:accessCondition>
+            <mods:accessCondition type="license" xlink:href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0 1.0 Universal Public Domain Dedication</mods:accessCondition>
+        {% endif %}
+    {% else %}
+        <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
+        <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
     {% endif %}
-  {% else %}
-    <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
-    <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
-  {% endif %}
 
   <!-- ===================== -->
   <!-- unchanging data START -->
