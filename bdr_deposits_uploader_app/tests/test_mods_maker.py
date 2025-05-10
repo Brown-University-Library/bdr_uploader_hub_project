@@ -57,17 +57,6 @@ class ModsMakerBasicStaticFieldsTest(SimpleTestCase):
         self.assertIn('<mods:physicalDescription>', self.result)
         self.assertIn('<mods:extent>1 document</mods:extent>', self.result)
         self.assertIn('<mods:digitalOrigin>born digital</mods:digitalOrigin>', self.result)
-        ## accessCondition -------------------------------------------
-        self.assertIn(
-            '<mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>', self.result
-        )
-        self.assertIn(
-            '<mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>',
-            self.result,
-        )
-        self.assertIn(
-            '<mods:accessCondition type="restriction on access">All Rights Reserved</mods:accessCondition>', self.result
-        )
 
     ## end class ModsMakerBasicStaticFieldsTest()
 
@@ -481,9 +470,38 @@ class ModsMakerFullTest(SimpleTestCase):
         self.assertIsNotNone(team_member2_role_term, 'Second team member should have a roleTerm element')
         self.assertEqual(team_member1_role_term.text, 'Team Member', 'First team member role term should be "Team Member"')
         self.assertEqual(team_member2_role_term.text, 'Team Member', 'Second team member role term should be "Team Member"')
-        self.assertEqual(team_member1_role_term['authority'], 'local', 'First team member role term should have authority="local"')
-        self.assertEqual(team_member2_role_term['authority'], 'local', 'Second team member role term should have authority="local"')
+        self.assertEqual(
+            team_member1_role_term['authority'], 'local', 'First team member role term should have authority="local"'
+        )
+        self.assertEqual(
+            team_member2_role_term['authority'], 'local', 'Second team member role term should have authority="local"'
+        )
         self.assertEqual(team_member1_role_term['type'], 'text', 'First team member role term should have type="text"')
         self.assertEqual(team_member2_role_term['type'], 'text', 'Second team member role term should have type="text"')
+
+        ## end def test_team_members_generation()
+
+    def test_mods_access_condition_generation(self):
+        """
+        Tests that the access conditions are correctly generated in the MODS XML.
+
+        Expected XML structure:
+        ```xml
+        <mods:accessCondition type="use and reproduction">Creative Commons Zero (CC0) - No Rights Reserved</mods:accessCondition>
+        <mods:accessCondition type="license" xlink:href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0 1.0 Universal Public Domain Dedication</mods:accessCondition>
+        ```
+        """
+        soup = BeautifulSoup(self.result, 'lxml-xml')
+        access_conditions = soup.find_all('mods:accessCondition')
+        self.assertEqual(len(access_conditions), 2, 'Should have found 2 access condition elements')
+        self.assertEqual(
+            access_conditions[0]['type'],
+            'use and reproduction',
+            'First access condition should have type="use and reproduction"',
+        )
+        self.assertEqual(access_conditions[0].text, 'Creative Commons Zero (CC0) - No Rights Reserved')
+        self.assertEqual(access_conditions[1]['type'], 'license', 'Second access condition should have type="license"')
+        self.assertEqual(access_conditions[1]['xlink:href'], 'https://creativecommons.org/publicdomain/zero/1.0/')
+        self.assertEqual(access_conditions[1].text, 'Creative Commons CC0 1.0 Universal Public Domain Dedication')
 
     ## end class ModsMakerFullTest()

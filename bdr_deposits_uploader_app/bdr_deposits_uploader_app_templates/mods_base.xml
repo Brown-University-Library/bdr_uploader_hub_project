@@ -42,6 +42,7 @@
 
   {% if departments %}
     {% for department in departments %}
+        <!-- department -->
         <mods:name type="corporate">
             <mods:namePart>{{ department }}</mods:namePart>
             <mods:role>
@@ -77,6 +78,19 @@
     {% endfor %}
   {% endif %}
 
+  {% if selected_license %}
+    {% if selected_license == 'CC0' %}
+      <mods:accessCondition type="use and reproduction">Creative Commons Zero (CC0) - No Rights Reserved</mods:accessCondition>
+      <mods:accessCondition type="license" xlink:href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0 1.0 Universal Public Domain Dedication</mods:accessCondition>
+    {% elif selected_license == 'CC_BY' %}
+      <mods:accessCondition type="use and reproduction">Attribution (CC BY)</mods:accessCondition>
+      <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International (CC BY 4.0)</mods:accessCondition>
+    {% endif %}
+  {% else %}
+    <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
+    <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
+  {% endif %}
+
   <!-- ===================== -->
   <!-- unchanging data START -->
   <!-- ===================== -->
@@ -99,10 +113,6 @@
     <mods:extent>1 document</mods:extent>
     <mods:digitalOrigin>born digital</mods:digitalOrigin>
   </mods:physicalDescription>
-
-  <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
-  <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
-  <mods:accessCondition type="restriction on access">All Rights Reserved</mods:accessCondition>
 
   <!-- =================== -->
   <!-- unchanging data END -->

@@ -74,6 +74,10 @@ class ModsMaker:
         )
         log.debug(f'team_members: {team_members}')
 
+        ## accessCondition -------------------------------------------
+        selected_license: str = self.submission.license_options or ''
+        log.debug(f'selected_license: {selected_license}')
+
         ## assembling data -------------------------------------------
         context = {
             'title': title,
@@ -87,6 +91,7 @@ class ModsMaker:
             'departments': updated_departments,
             'faculty_mentors': faculty_mentors,
             'team_members': team_members,
+            'selected_license': selected_license,
         }
         ## render the template ---------------------------------------
         template = get_template('mods_base.xml')
