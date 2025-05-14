@@ -148,14 +148,15 @@ class Ingester:
             ["brown_only_not_discoverable", "Brown Only not discoverable"]
         ]'
 
-        From theses app: ```additional_rights =  f'{brown_group}#{main_rights}+{public_group}#discover'```
+        From theses app: ```additional_rights = f'{brown_group}#{main_rights}+{public_group}#discover'```
         """
         log.debug('prepare_rights called')
-        ## populate the four strings --------------------------------
-        owner_string = f'{student_eppn}#discover,display'
-        admin_string = f'{settings.BDR_MANAGER_GROUP}#discover,display'
+        log.debug(f'student_eppn: {student_eppn}')
+        log.debug(f'visibility: {visibility}')
+        ## populate the additional_rights strings -------------------
         public_string = ''
         brown_string = ''
+        admin_string = f'{settings.BDR_MANAGER_GROUP}#discover,display'
         if visibility == 'public':
             public_string = f'{settings.BDR_PUBLIC_GROUP}#discover,display'
             brown_string = f'{settings.BDR_BROWN_GROUP}#discover,display'
@@ -175,10 +176,9 @@ class Ingester:
             additional_rights = f'{admin_string}+{brown_string}'
         else:  # private
             additional_rights = admin_string
-        log.debug(f'owner_string: {owner_string}')
         ## create the rights json -----------------------------------
         rights: dict = {
-            'owner_id': owner_string,
+            'owner_id': student_eppn,
             'additional_rights': additional_rights,
         }
         log.debug(f'rights: {pprint.pformat(rights)}')
