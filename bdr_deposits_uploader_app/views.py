@@ -408,12 +408,22 @@ def student_confirm(request, slug):
 
 def upload_successful(request) -> HttpResponse:
     """
-    Displays a success message after a student form is submitted.
+    Displays a success message after a student form is submitted and redirects to appropriate view.
     """
     log.debug('\n\nstarting upload_successful()')
-    return HttpResponse(
-        'Student form submitted successfully; info that staff will be notified to review and ingest the upload will go here.'
-    )
+    log.debug(f'user, ``{request.user}``')
+    log.debug(f'is_staff, ``{request.user.is_staff}``')
+
+    # Set the redirect URL in session based on user role
+    if request.user.is_staff:
+        redirect_url: str = reverse('staff_config_new_url')
+    else:
+        redirect_url: str = reverse('student_upload_url')
+    context = {
+        'message': 'Student-upload-form submitted successfully. Staff will be notified to review and ingest the upload.',
+        'redirect_url': redirect_url,
+    }
+    return render(request, 'upload_success.html', context)
 
 
 # -------------------------------------------------------------------
