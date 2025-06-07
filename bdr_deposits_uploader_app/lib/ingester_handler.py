@@ -3,13 +3,11 @@
 import json
 import logging
 import pprint
-from datetime import datetime
 from pathlib import Path
 
 import httpx
 from django.conf import settings
 from django.contrib import messages
-from django.template.loader import render_to_string
 from lxml import etree
 
 from bdr_deposits_uploader_app.lib.mods_handler import ModsMaker
@@ -75,7 +73,6 @@ class Ingester:
             try:
                 f = submission.primary_file
                 log.debug(f'type of f, ``{type(f)}``')
-                # self.mods: str = self.prepare_mods(submission.title)
                 self.mods: str = ModsMaker(submission).prepare_mods()
                 self.rights: dict = self.prepare_rights(submission.student_eppn, submission.visibility_options)
                 self.ir: dict = self.prepare_ir(submission.student_eppn, submission.student_email)
@@ -110,18 +107,6 @@ class Ingester:
             messages.error(request, f'Some errors occurred during ingestion, for items: {", ".join(errors)}')
         else:
             messages.success(request, 'Submissions ingested')
-
-    def prepare_mods(self, title: str) -> str:
-        """
-        Renders the xml_mods.xml template using the given title and returns it as a string.
-        """
-        log.debug('prepare_mods called')
-        year: str = str(datetime.now().year)
-        xml_initial_str = render_to_string('xml_mods.xml', {'title': title, 'iso8601_creation_date': year})
-        log.debug(f'\nmods xml_initial_str: {xml_initial_str}')
-        xml_formatted_str = self.format_mods(xml_initial_str)
-        log.debug(f'\nmods xml_formatted_str: {xml_formatted_str}')
-        return xml_formatted_str
 
     def format_mods(self, unformatted_mods_string: str) -> str:
         """
