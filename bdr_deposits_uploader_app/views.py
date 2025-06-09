@@ -288,21 +288,36 @@ def upload(request) -> HttpResponse:
 
     # Create permitted-apps list
     permitted_apps = []
-    for config in all_configs:
-        # Check if user is in config's group or if email matches
-        if (config.group in user_groups) or (user_email == config.email):
-            permitted_apps.append(config)
+    for app_config in all_configs:
+        temp_app_config_info: dict = app_config.temp_config_json
+        ## email-check
+        authorized_app_student_emails: list[str] = temp_app_config_info.get('authorized_student_emails', [])
+        if user_email in authorized_app_student_emails:
+            permitted_apps.append(app_config)
+            continue
+        ## group-check
+        else:
+            authorized_app_student_groups: list[str] = temp_app_config_info.get('authorized_student_groups', [])
+            for user_group in user_groups:
+                if user_group in authorized_app_student_groups:
+                    permitted_apps.append(app_config)
+                    continue
     log.debug(f'permitted apps: {permitted_apps}')
 
     # Handle based on permitted apps
     if not permitted_apps:
         # Store message in session and redirect to info page
-        request.session['message'] = 'no-permitted-apps'
-        return redirect('info')
+        request.session['message'] = (
+            "Based on your shib-email, and shib-groups, there are no upload-apps you're authorized to use."
+        )
+        log.debug('redirecting to info page')
+        resp = redirect('info_url')
     else:
         # Render uploader_select.html with permitted apps
         context = {'username': request.user.first_name, 'permitted_apps': permitted_apps}
-        return render(request, 'uploader_select.html', context)
+        log.debug('rendering uploader_select.html')
+        resp = render(request, 'uploader_select.html', context)
+    return resp
 
 
 @login_required
