@@ -1,0 +1,19 @@
+[project]
+name = "bdr-deposits-uploader-hub-project"
+version = "0.0.0"
+description = "Allows staff to easily and quickly create and configure webapp-uploader for students."
+readme = "https://github.com/Brown-University-Library/bdr_deposits_uploader_project/blob/main/README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "beautifulsoup4~=4.13.0",
+    "Django~=4.2.0",
+    "httpx~=0.28.0",
+    "lxml~=5.3.0",
+    "python-dotenv~=1.0.0",
+    "trio~=0.26.0",
+]
+
+[dependency-groups]
+local = []
+staging = []
+prod = [ "mysqlclient", ]
