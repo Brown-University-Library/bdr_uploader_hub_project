@@ -51,6 +51,9 @@ dependencies = [
 prod = [
     { name = "mysqlclient" },
 ]
+staging = [
+    { name = "mysqlclient" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -64,8 +67,8 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 local = []
-prod = [{ name = "mysqlclient" }]
-staging = []
+prod = [{ name = "mysqlclient", specifier = "~=2.2.0" }]
+staging = [{ name = "mysqlclient", specifier = "~=2.2.0" }]
 
 [[package]]
 name = "beautifulsoup4"
