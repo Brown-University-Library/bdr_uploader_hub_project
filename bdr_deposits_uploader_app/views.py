@@ -241,17 +241,71 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     return resp
 
 
+# @login_required
+# def upload(request) -> HttpResponse:
+#     """
+#     Default info landing page for student-login.
+#     """
+#     log.debug('\n\nstarting upload()')
+#     log.debug(f'user, ``{request.user}``')
+#     context = {
+#         'username': request.user.first_name,
+#     }
+#     return render(request, 'uploader_select.html', context)
+
+
 @login_required
 def upload(request) -> HttpResponse:
     """
     Default info landing page for student-login.
+
+    Flow...
+    - get user's is-member-of groups
+    - get user's shib-email
+    - get all AppConfigs
+    - create permitted-apps list
+    - for each AppConfig...
+        - if user is in group or if user's shib-email matches AppConfig.email
+            - add AppConfig to permitted-apps list
+    - if permitted-apps list is empty
+        - store "no-permitted-apps" message in django-session
+        - redirect to info page, showing "no-permitted-apps" message
+    - else
+        - render uploader_select.html with permitted-apps list
     """
     log.debug('\n\nstarting upload()')
     log.debug(f'user, ``{request.user}``')
-    context = {
-        'username': request.user.first_name,
-    }
-    return render(request, 'uploader_select.html', context)
+
+    # Get user's groups and email
+    user_groups = request.user.groups.all()
+    user_email = request.user.email
+    log.debug(f'user groups: {user_groups}')
+    log.debug(f'user email: {user_email}')
+
+    # Get all AppConfigs
+    all_configs = AppConfig.objects.all()
+    log.debug(f'found {len(all_configs)} AppConfigs')
+
+    # Create permitted-apps list
+    permitted_apps = []
+    for config in all_configs:
+        # Check if user is in config's group or if email matches
+        if (config.group in user_groups) or (user_email == config.email):
+            permitted_apps.append(config)
+    log.debug(f'permitted apps: {permitted_apps}')
+
+    # Handle based on permitted apps
+    if not permitted_apps:
+        # Store message in session and redirect to info page
+        request.session['message'] = 'no-permitted-apps'
+        return redirect('info')
+    else:
+        # Render uploader_select.html with permitted apps
+        context = {
+            'username': request.user.first_name,
+            'permitted_apps': permitted_apps
+        }
+        return render(request, 'uploader_select.html', context)
 
 
 @login_required
