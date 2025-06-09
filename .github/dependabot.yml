@@ -4,13 +4,11 @@
 # Birkin-note: I'm not sure I'm doing this right, so this is an experiment based on:
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
 
+# Birkin-update: I think this is creating any _version_ updates; I'd like _security_ updates only.
 
 version: 2
 updates:
-  # Enable version updates for uv
   - package-ecosystem: "uv"
-    # Look for `uv.lock` and `pyproject.toml` files in the `root` directory
     directory: "/"
-    # Check the uv registry for updates every day 
     schedule:
       interval: "daily"
