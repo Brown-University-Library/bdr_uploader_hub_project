@@ -14,12 +14,15 @@ log = logging.getLogger(__name__)
 def shib_decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpResponse]:
     """
     Decorator for views that require Shibboleth authentication.
+
     Flow:
     - If user is already authenticated, the view is called as normal.
     - If user is not authenticated, attempts to provision a new user based on Shibboleth metadata.
     - If user creation fails, redirects to login page.
     - If user is successfully provisioned, logs user in and calls view.
-    Called by views.abc()
+
+    This function is triggered by views.shib_login(),
+        which is called automatically by attempting to access an @login_required view.
 
     Note to self: the type-hint `Callable[..., HttpResponse]` above -- means that `func` is a function or method
         that can take any number of arguments, and returns an HttpResponse object
