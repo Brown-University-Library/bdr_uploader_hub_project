@@ -11,6 +11,6 @@ updates:
   - package-ecosystem: "uv"
     # Look for `uv.lock` and `pyproject.toml` files in the `root` directory
     directory: "/"
-    # Check the uv registry for updates every day (weekdays)
+    # Check the uv registry for updates every day 
     schedule:
       interval: "daily"
