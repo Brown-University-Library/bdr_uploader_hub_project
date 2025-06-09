@@ -15,5 +15,9 @@ dependencies = [
 
 [dependency-groups]
 local = []
-staging = [ "mysqlclient",]
-prod = [ "mysqlclient", ]
+staging = [ 
+    "mysqlclient~=2.2.0",  # not yet used on dev, but useful to confirm installation
+    ]
+prod = [ 
+    "mysqlclient~=2.2.0", 
+    ]
