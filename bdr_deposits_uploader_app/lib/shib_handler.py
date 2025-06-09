@@ -111,9 +111,13 @@ def provision_user(shib_metadata: dict) -> User | None:
         (user, created) = result
         log.debug(f'user-created, ``{created}``')
         user.save()
-        ## update userprofile -----------------------------------------
-        user.userprofile.is_member_of_groups = is_member_of_groups
-        user.userprofile.save()
+        try:
+            ## update userprofile -----------------------------------------
+            user.userprofile.is_member_of_groups = is_member_of_groups
+            user.userprofile.save()
+        except Exception:
+            log.exception('Error updating user profile')
+            log.debug(f'User profile details: {pprint.pformat(user.userprofile.__dict__)}')
     except Exception:
         log.exception('Error creating user')
         user = None
