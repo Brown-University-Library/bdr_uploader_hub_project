@@ -277,8 +277,8 @@ def upload(request) -> HttpResponse:
     log.debug(f'user, ``{request.user}``')
 
     # Get user's groups and email
-    user_groups = request.user.groups.all()
-    user_email = request.user.email
+    user_groups: list[str] = request.user.userprofile.is_member_of_groups
+    user_email: str = request.user.email
     log.debug(f'user groups: {user_groups}')
     log.debug(f'user email: {user_email}')
 
@@ -301,10 +301,7 @@ def upload(request) -> HttpResponse:
         return redirect('info')
     else:
         # Render uploader_select.html with permitted apps
-        context = {
-            'username': request.user.first_name,
-            'permitted_apps': permitted_apps
-        }
+        context = {'username': request.user.first_name, 'permitted_apps': permitted_apps}
         return render(request, 'uploader_select.html', context)
 
 
