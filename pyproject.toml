@@ -15,5 +15,5 @@ dependencies = [
 
 [dependency-groups]
 local = []
-staging = []
+staging = [ "mysqlclient",]
 prod = [ "mysqlclient", ]
