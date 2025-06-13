@@ -23,6 +23,12 @@
     <!-- main -->
     {% block main_content %}
     <div class="info-section">
+        {% if problem_message %}
+        <div class="problem-message">
+            <h3>Access Issue</h3>
+            <p>{{ problem_message }}</p>
+        </div>
+        {% endif %}
         <h2>BDR Deposits Uploader App — Information</h2>
         <p>This webapp will allow designated students to upload a document to a designated BDR collection.</p>
         <p></p>
