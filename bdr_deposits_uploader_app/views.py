@@ -39,11 +39,14 @@ def info(request) -> HttpResponse:
     log.debug('\n\nstarting info()')
     log.debug(f'user, ``{request.user}``')
 
+    ## check for problem message ------------------------------------
+    problem_message = request.session.pop('problem_message', None)
+
     ## clear django-session -----------------------------------------
     auth.logout(request)  # TODO: consider forcing shib logout here
 
     ## prep response ------------------------------------------------
-    context = {}
+    context = {'problem_message': problem_message}
     if request.GET.get('format', '') == 'json':  # TODO: remove this
         log.debug('building json response')
         resp = HttpResponse(
@@ -307,7 +310,7 @@ def upload(request) -> HttpResponse:
     # Handle based on permitted apps
     if not permitted_apps:
         # Store message in session and redirect to info page
-        request.session['message'] = (
+        request.session['problem_message'] = (
             "Based on your shib-email, and shib-groups, there are no upload-apps you're authorized to use."
         )
         log.debug('redirecting to info page')
