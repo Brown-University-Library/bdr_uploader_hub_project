@@ -1,5 +1,5 @@
 """
-Implements signals for the bdr_deposits_uploader_app.
+Implements signals for the bdr_student_uploader_hub_app.
 Enables auto-creation of a UserProfile record when a new User record is created.
 See the README for more info.
 """
@@ -12,7 +12,7 @@ from django.db.models import Model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from bdr_deposits_uploader_app.models import UserProfile
+from bdr_student_uploader_hub_app.models import UserProfile
 
 log = logging.getLogger(__name__)
 

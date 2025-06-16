@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bdr_deposits_uploader_app.apps.BdrDepositsUploaderAppConfig',
+    'bdr_student_uploader_hub_app.apps.BdrDepositsUploaderAppConfig',
 ]
 
 MIDDLEWARE = [
@@ -76,8 +76,8 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [ '%s/bdr_deposits_uploader_app' % BASE_DIR ],
-        'DIRS': [f'{BASE_DIR}/bdr_deposits_uploader_app/bdr_deposits_uploader_app_templates'],
+        # 'DIRS': [ '%s/bdr_student_uploader_hub_app' % BASE_DIR ],
+        'DIRS': [f'{BASE_DIR}/bdr_student_uploader_hub_app/bdr_student_uploader_hub_app_templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -193,7 +193,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'bdr_deposits_uploader_app': {
+        'bdr_student_uploader_hub_app': {
             'handlers': ['logfile'],
             'level': 'DEBUG',  # messages above this will get sent to the `logfile` handler
             'propagate': False,

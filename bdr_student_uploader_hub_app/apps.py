@@ -13,10 +13,10 @@ from django.apps import AppConfig
 
 class BdrDepositsUploaderAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'bdr_deposits_uploader_app'
+    name = 'bdr_student_uploader_hub_app'
 
     def ready(self):
-        import bdr_deposits_uploader_app.signals  # this is the reason for this apps.py file
+        import bdr_student_uploader_hub_app.signals  # this is the reason for this apps.py file
 
         ## lightweight way to prevent IDE from removing otherwise-unused import
-        _ = getattr(bdr_deposits_uploader_app.signals, '__name__', None)
+        _ = getattr(bdr_student_uploader_hub_app.signals, '__name__', None)

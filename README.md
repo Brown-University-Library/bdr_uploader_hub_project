@@ -11,7 +11,7 @@ Create a `.env` file in the outer directory based on `sample_dotenv.txt`. You wi
 
 Create a virtual environment using python 3.12 (anything earlier than 3.10 will cause an error due to syntax updates) and install requirements.
 
-Create a directory called `DBs` in the outer directory. Then from the project root run `python manage.py makemigrations bdr_deposits_uploader_app`. Then run `python manage.py migrate`. This should create a sqlite file in the DBs directory and set up all required tables. 
+Create a directory called `DBs` in the outer directory. Then from the project root run `python manage.py makemigrations bdr_student_uploader_hub_app`. Then run `python manage.py migrate`. This should create a sqlite file in the DBs directory and set up all required tables. 
 
 Then bring up the app and log in as staff to trigger the creation of the `staffperson` profile in the DB. 
 
@@ -27,8 +27,8 @@ This webapp is configured to auto-create a UserProfile record, automatically, wh
 
 To enable that:
 - `models.UserProfile()` was created.
-- `apps.py` was added to the `bdr_deposits_uploader_app` -- specifically to load `signals.py`.
+- `apps.py` was added to the `bdr_student_uploader_hub_app` -- specifically to load `signals.py`.
 - `signals.py` was added to trigger the `UserProfile` auto-creation.
-- `settings.py` was updated to specify `bdr_deposits_uploader_app.apps.BdrDepositsUploaderAppConfig`, instead of just `bdr_deposits_uploader_app`.
+- `settings.py` was updated to specify `bdr_student_uploader_hub_app.apps.BdrDepositsUploaderAppConfig`, instead of just `bdr_student_uploader_hub_app`.
 
 ---

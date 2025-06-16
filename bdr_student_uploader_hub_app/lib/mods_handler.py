@@ -4,7 +4,7 @@ from django.template.loader import get_template
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 
-from bdr_deposits_uploader_app.models import Submission
+from bdr_student_uploader_hub_app.models import Submission
 
 log = logging.getLogger(__name__)
 

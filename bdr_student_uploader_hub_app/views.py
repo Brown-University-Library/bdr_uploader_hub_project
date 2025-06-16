@@ -16,12 +16,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import text
 
-from bdr_deposits_uploader_app.forms.staff_form import StaffForm
-from bdr_deposits_uploader_app.forms.student_form import make_student_form_class
-from bdr_deposits_uploader_app.lib import config_new_helper, uploaded_file_handler, version_helper
-from bdr_deposits_uploader_app.lib.shib_handler import shib_decorator
-from bdr_deposits_uploader_app.lib.version_helper import GatherCommitAndBranchData
-from bdr_deposits_uploader_app.models import AppConfig, Submission
+from bdr_student_uploader_hub_app.forms.staff_form import StaffForm
+from bdr_student_uploader_hub_app.forms.student_form import make_student_form_class
+from bdr_student_uploader_hub_app.lib import config_new_helper, uploaded_file_handler, version_helper
+from bdr_student_uploader_hub_app.lib.shib_handler import shib_decorator
+from bdr_student_uploader_hub_app.lib.version_helper import GatherCommitAndBranchData
+from bdr_student_uploader_hub_app.models import AppConfig, Submission
 
 log = logging.getLogger(__name__)
 

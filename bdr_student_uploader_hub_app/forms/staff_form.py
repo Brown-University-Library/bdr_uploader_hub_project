@@ -3,7 +3,7 @@ import logging
 from django import forms
 from django.conf import settings
 
-from bdr_deposits_uploader_app.forms.staff_form_validation import validate_staff_form
+from bdr_student_uploader_hub_app.forms.staff_form_validation import validate_staff_form
 
 log = logging.getLogger(__name__)
 

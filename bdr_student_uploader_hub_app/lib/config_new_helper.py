@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from django.db.models.functions import Lower
 from django.urls import reverse
 
-from bdr_deposits_uploader_app.models import AppConfig
+from bdr_student_uploader_hub_app.models import AppConfig
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ def get_configs() -> list:
         log.debug(f'app_label, ``{app_label}``')
         # model_name = apps[0]._meta.model_name
         # log.debug(f'model_name, ``{model_name}``')
-        base_admin_url = reverse('admin:bdr_deposits_uploader_app_submission_changelist')
+        base_admin_url = reverse('admin:bdr_student_uploader_hub_app_submission_changelist')
         log.debug(f'base_admin_url, ``{base_admin_url}``')
         for app in apps:
             app_data: dict = {}
