@@ -1,38 +1,74 @@
 {% extends "base.html" %}
 {% load static %}
-<!-- Template for templates 🙂
-     The html comments just help remember the overall structure of the page. -->
 
-<!-- html -->
-
-<!-- head -->
 {% block title %}
-<title>BDR Deposits Uploader</title>
+<title>Select Upload Application</title>
 {% endblock title %}
 
-{% block header_other %}  <!-- custom-page CSS can go in here-->
+{% block header_other %}
 <link rel="stylesheet" href="{% static 'bdr_student_uploader_hub_app/css/info.css' %}">
+<style>
+    .app-list {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+    .app-item {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .app-item:hover {
+        background-color: #e9ecef;
+        transform: translateY(-2px);
+    }
+    .app-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #212529;
+    }
+    .app-description {
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+</style>
 {% endblock header_other %}
-<!-- /head -->
 
-<!-- body -->
-
-    <!-- header -->
-    <!-- /header -->
-
-    <!-- main -->
-    {% block main_content %}
-    <div class="info-section">
-        <h2>BDR Deposits Student Uploader Form — Information</h2>
-        <p>This page will show the the upload-apps the student is eligible to use.</p>
-        <p></p>
-        <p>If the student is only eligible to use a single upload-app, that app's form will appear here.</p>
-        <p></p>
-        <p>(Under development.)</p>
+{% block main_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mt-4 mb-4">Select Upload Application</h2>
+            <p class="lead">Hi {{ username }}, please select the web-application you'd like to use:</p>
+            
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="app-list">
+                    {% for app in permitted_apps %}
+                    <div class="app-item" onclick="selectApp('{{ app.slug }}')">
+                        <div class="app-name">{{ app.name }}</div>
+                        {% if app.description %}
+                        <div class="app-description">{{ app.description }}</div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-warning">
+                        No applications available for you at this time.
+                    </div>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
     </div>
-    {% endblock main_content %}
-    <!-- /main -->
+</div>
 
-<!-- /body -->
-
-<!-- /html -->
+<script>
+function selectApp(slug) {
+    window.location.href = `/student_upload/${slug}/`;
+}
+</script>
+{% endblock main_content %}
