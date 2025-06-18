@@ -316,9 +316,13 @@ def upload(request) -> HttpResponse:
         log.debug('redirecting to info page')
         resp = redirect('info_url')
     else:
+        log.debug(f'permitted apps: ``{permitted_apps}``')
         if len(permitted_apps) == 1:  ## if student has one permitted app, redirect to that app's upload page
             log.debug('student has one permitted app, redirecting to that app')
-            resp = redirect(f'/student_upload/{permitted_apps[0].slug}')
+            app_slug: str = permitted_apps[0].slug
+            log.debug(f'app_slug, ``{app_slug}``')
+            url = reverse('student_upload_url', kwargs={'slug': app_slug})
+            resp = redirect(url)
         else:  ## show uploader-select page
             log.debug('student has multiple permitted apps, showing uploader-select page')
             context = {'username': request.user.first_name, 'permitted_apps': permitted_apps}
