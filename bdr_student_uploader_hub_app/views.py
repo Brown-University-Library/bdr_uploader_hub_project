@@ -322,6 +322,7 @@ def upload(request) -> HttpResponse:
             app_slug: str = permitted_apps[0].slug
             log.debug(f'app_slug, ``{app_slug}``')
             url = reverse('student_upload_url', kwargs={'slug': app_slug})
+            log.debug(f'redirect-url, ``{url}``')
             resp = redirect(url)
         else:  ## show uploader-select page
             log.debug('student has multiple permitted apps, showing uploader-select page')
