@@ -248,13 +248,77 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
 # def upload(request) -> HttpResponse:
 #     """
 #     Default info landing page for student-login.
+
+#     Flow...
+#     - get user's is-member-of groups
+#     - get user's shib-email
+#     - get all AppConfigs
+#     - create permitted-apps list
+#     - for each AppConfig...
+#         - if user is in group or if user's shib-email matches AppConfig.email
+#             - add AppConfig to permitted-apps list
+#     - if permitted-apps list is empty
+#         - store "no-permitted-apps" message in django-session
+#         - redirect to info page, showing "no-permitted-apps" message
+#     - else
+#         - render uploader_select.html with permitted-apps list
 #     """
 #     log.debug('\n\nstarting upload()')
 #     log.debug(f'user, ``{request.user}``')
-#     context = {
-#         'username': request.user.first_name,
-#     }
-#     return render(request, 'uploader_select.html', context)
+
+#     # Get user's groups and email
+#     user_groups: list[str] = request.user.userprofile.is_member_of_groups
+#     user_email: str = request.user.email
+#     log.debug(f'user groups: {user_groups}')
+#     log.debug(f'user email: {user_email}')
+
+#     # Get all AppConfigs
+#     all_configs = AppConfig.objects.all()
+#     log.debug(f'found {len(all_configs)} AppConfigs')
+
+#     # Create permitted-apps list
+#     permitted_apps = []
+#     for app_config in all_configs:
+#         temp_app_config_info: dict = app_config.temp_config_json
+#         ## email-check
+#         authorized_app_student_emails: list[str] = temp_app_config_info.get('authorized_student_emails', [])
+#         if user_email in authorized_app_student_emails:
+#             permitted_apps.append(app_config)
+#             continue
+#         ## group-check
+#         else:
+#             authorized_app_student_groups: list[str] = temp_app_config_info.get('authorized_student_groups', [])
+#             for user_group in user_groups:
+#                 if user_group in authorized_app_student_groups:
+#                     permitted_apps.append(app_config)
+#                     continue
+#     log.debug(f'permitted apps: {permitted_apps}')
+
+#     # Handle based on permitted apps
+#     if not permitted_apps:
+#         # Store message in session and redirect to info page
+#         request.session['problem_message'] = (
+#             "Based on your shib-email, and shib-groups, there are no upload-apps you're authorized to use."
+#         )
+#         log.debug('redirecting to info page')
+#         resp = redirect('info_url')
+#     else:
+#         log.debug(f'permitted apps: ``{permitted_apps}``')
+#         if len(permitted_apps) == 1:  ## if student has one permitted app, redirect to that app's upload page
+#             log.debug('student has one permitted app, redirecting to that app')
+#             app_slug: str = permitted_apps[0].slug
+#             log.debug(f'app_slug, ``{app_slug}``')
+#             url = reverse('student_upload_slug_url', kwargs={'slug': app_slug})
+#             log.debug(f'redirect-url, ``{url}``')
+#             resp = redirect(url)
+#         else:  ## show uploader-select page
+#             log.debug('student has multiple permitted apps, showing uploader-select page')
+#             context = {'username': request.user.first_name, 'permitted_apps': permitted_apps}
+#             log.debug('rendering uploader_select.html')
+#             resp = render(request, 'uploader_select.html', context)
+#     return resp
+
+#     ## end def upload()
 
 
 @login_required
@@ -318,18 +382,20 @@ def upload(request) -> HttpResponse:
     else:
         log.debug(f'permitted apps: ``{permitted_apps}``')
         if len(permitted_apps) == 1:  ## if student has one permitted app, redirect to that app's upload page
-            log.debug('student has one permitted app, redirecting to that app')
-            app_slug: str = permitted_apps[0].slug
-            log.debug(f'app_slug, ``{app_slug}``')
-            url = reverse('student_upload_slug_url', kwargs={'slug': app_slug})
-            log.debug(f'redirect-url, ``{url}``')
-            resp = redirect(url)
-        else:  ## show uploader-select page
-            log.debug('student has multiple permitted apps, showing uploader-select page')
-            context = {'username': request.user.first_name, 'permitted_apps': permitted_apps}
-            log.debug('rendering uploader_select.html')
-            resp = render(request, 'uploader_select.html', context)
+            log.debug('student has one permitted app')
+            # app_slug: str = permitted_apps[0].slug
+            # log.debug(f'app_slug, ``{app_slug}``')
+            # url = reverse('student_upload_slug_url', kwargs={'slug': app_slug})
+            # log.debug(f'redirect-url, ``{url}``')
+            # resp = redirect(url)
+        ## show uploader-select page
+        log.debug('student has multiple permitted apps')
+        context = {'username': request.user.first_name, 'permitted_apps': permitted_apps}
+        log.debug('rendering uploader_select.html')
+        resp = render(request, 'uploader_select.html', context)
     return resp
+
+    ## end def upload()
 
 
 @login_required
@@ -390,6 +456,13 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         log.debug(f'license options choices: {pprint.pformat(form.fields["license_options"].choices)}')
         log.debug(f'visibility options choices: {pprint.pformat(form.fields["visibility_options"].choices)}')
         request.session['student_form_data'] = {}  # clear the session data
+        ## prepare 'back' link
+        if request.user.is_staff:
+            back_url: str = reverse('staff_config_new_url')
+            back_url_text: str = 'back to staff config page'
+        else:
+            back_url: str = reverse('student_upload_url')
+            back_url_text: str = 'back to student-landing page'
         ## render the form
         resp: HttpResponse = render(
             request,
@@ -402,6 +475,8 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 'depositor_email': depositor_email,
                 'deposit_iso_date': deposit_iso_date,
                 'app_name': app_config.name,
+                'back_url': back_url,
+                'back_url_text': back_url_text,
             },
         )
     return resp
