@@ -53,7 +53,7 @@
                 {% csrf_token %}
                 <div class="app-list">
                     {% for app in permitted_apps %}
-                    <div class="app-item" onclick="selectApp('{{ app.slug }}')">
+                    <div class="app-item" onclick="window.location.href='{% url 'student_upload_slug_url' app.slug %}'">  <!-- not really the formatting issue the editor claims -->
                         <div class="app-name">{{ app.name }}</div>
                         {% if app.description %}
                         <div class="app-description">{{ app.description }}</div>
@@ -70,10 +70,5 @@
     </div>
 </div>
 
-<script>
-function selectApp(slug) {
-    // window.location.href = `/student_upload/${slug}/`;
-    window.location.href="{% url 'student_upload' slug %}";
-}
-</script>
+
 {% endblock main_content %}
