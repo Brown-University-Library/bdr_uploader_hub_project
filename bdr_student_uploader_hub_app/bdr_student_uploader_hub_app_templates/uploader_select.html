@@ -72,7 +72,8 @@
 
 <script>
 function selectApp(slug) {
-    window.location.href = `/student_upload/${slug}/`;
+    // window.location.href = `/student_upload/${slug}/`;
+    window.location.href="{% url 'student_upload' slug %}";
 }
 </script>
 {% endblock main_content %}
