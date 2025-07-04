@@ -43,7 +43,7 @@ soupsieve==2.7
     # via beautifulsoup4
 sqlparse==0.5.3
     # via django
-trio==0.26.2
+trio==0.30.0
     # via bdr-student-uploader-hub-project (./pyproject.toml)
 typing-extensions==4.14.0
     # via
