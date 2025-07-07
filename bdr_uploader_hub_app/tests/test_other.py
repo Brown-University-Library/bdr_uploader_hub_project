@@ -5,7 +5,7 @@ from django.conf import settings as project_settings
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
-from bdr_student_uploader_hub_app.forms.staff_form import StaffForm
+from bdr_uploader_hub_app.forms.staff_form import StaffForm
 
 log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000

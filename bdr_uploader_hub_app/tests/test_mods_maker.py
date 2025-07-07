@@ -4,8 +4,8 @@ import logging
 from bs4 import BeautifulSoup
 from django.test import SimpleTestCase
 
-from bdr_student_uploader_hub_app.lib.mods_handler import ModsMaker
-from bdr_student_uploader_hub_app.models import Submission
+from bdr_uploader_hub_app.lib.mods_handler import ModsMaker
+from bdr_uploader_hub_app.models import Submission
 
 log = logging.getLogger(__name__)
 

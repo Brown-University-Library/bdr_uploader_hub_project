@@ -28,6 +28,6 @@ To enable that:
 - `models.UserProfile()` was created.
 - `apps.py` was added to the `bdr_student_uploader_hub_app` -- specifically to load `signals.py`.
 - `signals.py` was added to trigger the `UserProfile` auto-creation.
-- `settings.py` was updated to specify `bdr_student_uploader_hub_app.apps.BdrDepositsUploaderAppConfig`, instead of just `bdr_student_uploader_hub_app`.
+- `settings.py` was updated to specify `bdr_student_uploader_hub_app.apps.BdrUploaderHubAppConfig`, instead of just `bdr_student_uploader_hub_app`.
 
 ---

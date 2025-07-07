@@ -10,8 +10,8 @@ from django.conf import settings
 from django.contrib import messages
 from lxml import etree
 
-from bdr_student_uploader_hub_app.lib.mods_handler import ModsMaker
-from bdr_student_uploader_hub_app.models import Submission
+from bdr_uploader_hub_app.lib.mods_handler import ModsMaker
+from bdr_uploader_hub_app.models import Submission
 
 from .emailer import send_ingest_success_email
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from bdr_student_uploader_hub_app import views
+from bdr_uploader_hub_app import views
 
 urlpatterns = [
     ## main ---------------------------------------------------------
