@@ -22,7 +22,7 @@ DATABASES_JSON='
       "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "HOST": "",
-        "NAME": "../DBs/bdr_student_uploader_hub_project.sqlite",
+        "NAME": "../DBs/bdr_uploader_hub_project.sqlite",
         "PASSWORD": "",
         "PORT": "",
         "USER": ""
@@ -42,7 +42,7 @@ EMAIL_PORT="1026"  # will be converted to int in settings.py
 ## Want to see emails on your localbox? In a different terminal, run: ```python3 -m smtpd -n -c DebuggingServer localhost:1026```
 ## ...and then access `http://127.0.0.1:8000/error_check/' to trigger an email.
 
-LOG_PATH="../logs/bdr_student_uploader_hub_project.log"
+LOG_PATH="../logs/bdr_uploader_hub_project.log"
 LOG_LEVEL="DEBUG"
 
 LOGIN_URL='http://127.0.0.1:8000/shib_login/'
