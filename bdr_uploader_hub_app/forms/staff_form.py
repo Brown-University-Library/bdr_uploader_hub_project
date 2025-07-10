@@ -96,6 +96,11 @@ class StaffForm(forms.Form):
     )
 
     ## Form section - Other -----------------------------------------
+    ask_for_keywords = forms.BooleanField(required=False, label='Ask for keywords')
+    keywords_required = forms.BooleanField(
+        required=False, label='Keywords required', help_text='auto-selects `Ask...` on save'
+    )
+
     ask_for_concentrations = forms.BooleanField(required=False, label='Ask for concentrations')
     concentrations_required = forms.BooleanField(
         required=False, label='Concentrations required', help_text='auto-selects `Ask...` on save'
