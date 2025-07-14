@@ -100,6 +100,7 @@ class Submission(models.Model):
     license_options = models.CharField(max_length=100, blank=True, null=True)
     visibility_options = models.CharField(max_length=100, blank=True, null=True)
     ## other ------------------------------------
+    keywords = models.CharField(max_length=255, blank=True, null=True)
     concentrations = models.CharField(max_length=255, blank=True, null=True)
     degrees = models.CharField(max_length=255, blank=True, null=True)
     ## file stuff -------------------------------

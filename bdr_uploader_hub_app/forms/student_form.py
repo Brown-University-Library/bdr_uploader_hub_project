@@ -166,6 +166,17 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         )
 
     ## Other section -------------------------------------------------
+    if config_data.get('ask_for_keywords'):
+        if config_data.get('keywords_required'):
+            help_text = '(required) Keyword1 | Keyword2 | ...'
+        else:
+            help_text = 'Keyword1 | Keyword2 | ...'
+        fields['keywords'] = forms.CharField(
+            label='Keywords',
+            required=config_data.get('keywords_required', False),
+            help_text=help_text,
+        )
+
     if config_data.get('ask_for_concentrations'):
         if config_data.get('concentrations_required'):
             help_text = '(required) Concentration1 | Concentration2 | ...'

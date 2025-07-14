@@ -528,6 +528,7 @@ def student_confirm(request, slug):
                 license_options=student_data.get('license_options'),
                 visibility_options=student_data.get('visibility_options'),
                 ## other --------------------------------------------
+                keywords=student_data.get('keywords'),
                 concentrations=student_data.get('concentrations'),
                 degrees=student_data.get('degrees'),
                 ## file-stuff ---------------------------------------

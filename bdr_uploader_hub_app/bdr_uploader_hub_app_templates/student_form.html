@@ -299,6 +299,16 @@
         
         <div class="form-section">
             <h3>Other Info</h3>
+            {% if form.keywords %}
+            <div class="form-group">
+                {{ form.keywords.label_tag }} {{ form.keywords }}
+                {% if form.keywords.help_text %}
+                <div class="label-container">
+                    <p class="help">{{ form.keywords.help_text|safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
             {% if form.concentrations %}
             <div class="form-group">
                 {{ form.concentrations.label_tag }} {{ form.concentrations }}

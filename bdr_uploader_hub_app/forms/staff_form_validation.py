@@ -166,6 +166,8 @@ def validate_staff_form(form, cleaned_data):
     _validate_visibility(form, cleaned_data)
 
     ## other fields ---------------------------------------------
+    if cleaned_data.get('keywords_required') and not cleaned_data.get('ask_for_keywords'):
+        cleaned_data['ask_for_keywords'] = True
     if cleaned_data.get('concentrations_required') and not cleaned_data.get('ask_for_concentrations'):
         cleaned_data['ask_for_concentrations'] = True
     if cleaned_data.get('degrees_required') and not cleaned_data.get('ask_for_degrees'):
@@ -194,6 +196,7 @@ def validate_staff_form(form, cleaned_data):
             cleaned_data.get('offer_license_options'),
             cleaned_data.get('offer_access_options'),
             cleaned_data.get('offer_visibility_options'),
+            cleaned_data.get('ask_for_keywords'),
             cleaned_data.get('ask_for_concentrations'),
             cleaned_data.get('ask_for_degrees'),
             cleaned_data.get('invite_supplementary_files'),

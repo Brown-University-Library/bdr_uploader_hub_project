@@ -37,6 +37,11 @@ class ModsMaker:
         )
         log.debug(f'advisor_reader_names: {advisor_reader_names}')
 
+        ## keywords --------------------------------------------------
+        keywords_data: str = self.submission.keywords or ''
+        keywords: list[str] = [keyword.strip() for keyword in keywords_data.split('|')] if keywords_data else []
+        log.debug(f'keywords: {keywords}')
+
         ## concentrations -------------------------------------------
         concentration_data: str = self.submission.concentrations or ''
         concentrations: list[str] = (
@@ -84,6 +89,7 @@ class ModsMaker:
             'abstract': abstract,
             'authors': authors,
             'advisor_reader_names': advisor_reader_names,
+            'keywords': keywords,
             'concentrations': concentrations,
             'degrees': degrees,
             'year_created': year_created,

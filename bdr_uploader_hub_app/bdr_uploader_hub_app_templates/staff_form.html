@@ -313,6 +313,18 @@
         
         <div class="form-section">
             <h3>Other Options</h3>
+
+            <div class="form-group">
+                {{ form.ask_for_keywords.label_tag }} {{ form.ask_for_keywords }}
+                <div class="label-container">
+                    {{ form.keywords_required.label_tag }}
+                    {% if form.keywords_required.help_text %}
+                        <p class="help">{{ form.keywords_required.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.keywords_required }}
+            </div>
+            
             <div class="form-group">
                 {{ form.ask_for_concentrations.label_tag }} {{ form.ask_for_concentrations }}
                 <div class="label-container">
@@ -345,7 +357,7 @@
         <!-- submit-button -------------------------------------- -->
 
         <div class="form-field">
-            <input type="submit" value="Submit">
+            <input type="submit" value="Save">
         </div>
         
     </form>
