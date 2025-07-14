@@ -114,7 +114,7 @@ class StaffForm(forms.Form):
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
 
     def clean(self):
-        ## delegate all validation to staff_form_validation.py
+        ## delegate all validation to bdr_uploader_hub_app/forms/staff_form_validation.py
         log.debug('delegating validation to staff_form_validation')
         cleaned_data = super().clean()
         return validate_staff_form(self, cleaned_data)
