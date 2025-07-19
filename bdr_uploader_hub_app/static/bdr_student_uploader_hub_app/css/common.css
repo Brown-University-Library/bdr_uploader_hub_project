@@ -38,6 +38,14 @@ header {
 .header-content h1 {
     margin: 0; /* Ensure no extra margin that might misalign baseline */
     font-size: 1.75rem; /* Adjust as needed for your main title size */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-content h1 .logo-link {
+    display: flex;
+    align-items: center;
 }
 
 .welcome-text {
