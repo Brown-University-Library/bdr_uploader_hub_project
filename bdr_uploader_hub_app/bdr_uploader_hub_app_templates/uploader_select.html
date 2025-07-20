@@ -39,6 +39,19 @@
         margin-top: 2rem;
         margin-bottom: 3rem;
     }
+    
+    /* Visually hidden but accessible to screen readers */
+    .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
 </style>
 {% endblock header_other %}
 
@@ -51,7 +64,8 @@
             
             <form action="" method="post">
                 {% csrf_token %}
-                <div class="app-list">
+                <label for="app-list" class="visually-hidden">Available Applications</label>
+                <div id="app-list" class="app-list" role="list">
                     {% for app in permitted_apps %}
                     <div class="app-item" onclick="window.location.href='{% url 'student_upload_slug_url' app.slug %}'">  <!-- not really the formatting issue the editor claims -->
                         <div class="app-name">{{ app.name }}</div>
