@@ -6,11 +6,11 @@ readme = "https://github.com/Brown-University-Library/bdr_student_uploader_hub_p
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "beautifulsoup4~=4.13.0",
-    "Django~=4.2.0",
+    "Django~=5.2.0",
     "httpx~=0.28.0",
-    "lxml~=5.3.0",
-    "python-dotenv~=1.0.0",
-    "trio~=0.26.0",
+    "lxml~=6.0.0",
+    "python-dotenv~=1.1.0",
+    "trio~=0.30.0",
 ]
 
 [dependency-groups]
