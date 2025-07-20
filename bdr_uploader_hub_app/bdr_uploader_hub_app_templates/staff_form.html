@@ -274,7 +274,13 @@
             {% endcomment %}
 
             <div class="form-group">
-                {{ form.offer_license_options.label_tag }} {{ form.offer_license_options }}
+                <div class="label-container">
+                    {{ form.offer_license_options.label_tag }}
+                    {% if form.offer_license_options.help_text %}
+                        <p id="id_offer_license_options_helptext" class="help">{{ form.offer_license_options.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.offer_license_options }}
                 <div class="label-container">
                     {{ form.license_required.label_tag }}
                     {% if form.license_required.help_text %}
@@ -282,8 +288,20 @@
                     {% endif %}
                 </div>
                 {{ form.license_required }}
-                {{ form.license_options.label_tag }} {{ form.license_options }}
-                {{ form.license_default.label_tag }} {{ form.license_default }}
+                <div class="label-container">
+                    {{ form.license_options.label_tag }}
+                    {% if form.license_options.help_text %}
+                        <p id="id_license_options_helptext" class="help">{{ form.license_options.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.license_options }}
+                <div class="label-container">
+                    {{ form.license_default.label_tag }}
+                    {% if form.license_default.help_text %}
+                        <p id="id_license_default_helptext" class="help">{{ form.license_default.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.license_default }}
             </div>
             <div class="form-group">
                 {{ form.offer_access_options.label_tag }} {{ form.offer_access_options }}
@@ -298,7 +316,13 @@
                 {{ form.access_default.label_tag }} {{ form.access_default }}
             </div>
             <div class="form-group">
-                {{ form.offer_visibility_options.label_tag }} {{ form.offer_visibility_options }}
+                <div class="label-container">
+                    {{ form.offer_visibility_options.label_tag }}
+                    {% if form.offer_visibility_options.help_text %}
+                        <p id="id_offer_visibility_options_helptext" class="help">{{ form.offer_visibility_options.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.offer_visibility_options }}
                 <div class="label-container">
                     {{ form.visibility_required.label_tag }}
                     {% if form.visibility_required.help_text %}
@@ -306,8 +330,20 @@
                     {% endif %}
                 </div>
                 {{ form.visibility_required }}
-                {{ form.visibility_options.label_tag }} {{ form.visibility_options }}                          
-                {{ form.visibility_default.label_tag }} {{ form.visibility_default }}
+                <div class="label-container">
+                    {{ form.visibility_options.label_tag }}
+                    {% if form.visibility_options.help_text %}
+                        <p id="id_visibility_options_helptext" class="help">{{ form.visibility_options.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.visibility_options }}
+                <div class="label-container">
+                    {{ form.visibility_default.label_tag }}
+                    {% if form.visibility_default.help_text %}
+                        <p id="id_visibility_default_helptext" class="help">{{ form.visibility_default.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.visibility_default }}
             </div>
         </div>  <!-- end of form-section -->
         
