@@ -129,24 +129,24 @@
             <!-- non-editable data ------------------------------ -->
             <div class="form-group">
                 <div class="label-container">
-                    <label for="id_name">Name:</label>
+                    <label for="id_depositor_name">Name:</label>
                     <!-- <p class="help">(from Shib)</p> -->
                 </div>
-                <p id="id_name" class="form-control-static">{{ depositor_fullname }}</p>
+                <p id="id_depositor_name" class="form-control-static" aria-labelledby="id_depositor_name_label">{{ depositor_fullname }}</p>
             </div>
             <div class="form-group">
                 <div class="label-container">
-                    <label for="id_name">Email:</label>
+                    <label for="id_depositor_email">Email:</label>
                     <!-- <p class="help">(from Shib)</p> -->
                 </div>
-                <p id="id_name" class="form-control-static">{{ depositor_email }}</p>
+                <p id="id_depositor_email" class="form-control-static" aria-labelledby="id_depositor_email_label">{{ depositor_email }}</p>
             </div>
             <div class="form-group">
                 <div class="label-container">
-                    <label for="id_name">Deposit-date:</label>
+                    <label for="id_deposit_date">Deposit-date:</label>
                     <!-- <p class="help"></p> -->
                 </div>
-                <p id="id_name" class="form-control-static">{{ deposit_iso_date }}</p>
+                <p id="id_deposit_date" class="form-control-static" aria-labelledby="id_deposit_date_label">{{ deposit_iso_date }}</p>
             </div>
             <!-- editable data ---------------------------------- -->
             <div class="form-group">
@@ -276,9 +276,9 @@
                 <!-- non-editable data ------------------------------ -->
                 <div class="form-group">
                     <div class="label-container">
-                        <label for="id_name">License:</label>
-                    </div>
-                    <p id="id_name" class="form-control-static">{{ form.license_options }}</p>
+                        <label for="id_license" id="id_license_label">License:</label>
+                </div>
+                <p id="id_license" class="form-control-static" aria-labelledby="id_license_label">{{ form.license_options }}</p>
                     <!-- <p id="id_name" class="form-control-static">some-license</p> -->
                 </div>
             {% endif %}
