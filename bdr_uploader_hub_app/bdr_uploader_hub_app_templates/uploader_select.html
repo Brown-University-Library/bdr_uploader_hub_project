@@ -12,26 +12,19 @@
         max-width: 600px;
         margin: 2rem auto;
         padding: 1rem;
-        list-style: none;
-        padding-left: 0;
     }
     .app-item {
-        margin-bottom: 1rem;
-    }
-    .app-link {
-        display: block;
         background-color: #f8f9fa;
         border: 1px solid #dee2e6;
         border-radius: 0.25rem;
         padding: 1rem;
-        text-decoration: none;
-        color: inherit;
+        margin-bottom: 1rem;
+        cursor: pointer;
         transition: all 0.2s ease;
     }
-    .app-link:hover, .app-link:focus {
+    .app-item:hover {
         background-color: #e9ecef;
         transform: translateY(-2px);
-        outline: none;
     }
     .app-name {
         font-size: 1.1rem;
@@ -58,22 +51,20 @@
             
             <form action="" method="post">
                 {% csrf_token %}
-                <ul class="app-list" role="list">
+                <div class="app-list">
                     {% for app in permitted_apps %}
-                    <li class="app-item">
-                        <a href="{% url 'student_upload_slug_url' app.slug %}" class="app-link">
-                            <span class="app-name">{{ app.name }}</span>
-                            {% if app.description %}
-                            <span class="app-description">{{ app.description }}</span>
-                            {% endif %}
-                        </a>
-                    </li>
+                    <div class="app-item" onclick="window.location.href='{% url 'student_upload_slug_url' app.slug %}'">  <!-- not really the formatting issue the editor claims -->
+                        <div class="app-name">{{ app.name }}</div>
+                        {% if app.description %}
+                        <div class="app-description">{{ app.description }}</div>
+                        {% endif %}
+                    </div>
                     {% empty %}
-                    <li class="alert alert-warning">
+                    <div class="alert alert-warning">
                         No applications available for you at this time.
-                    </li>
+                    </div>
                     {% endfor %}
-                </ul>
+                </div>
             </form>
         </div>
     </div>
