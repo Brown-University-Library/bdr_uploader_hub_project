@@ -57,12 +57,12 @@ staging = [
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4" },
+    { name = "beautifulsoup4", specifier = "~=4.13.0" },
     { name = "django", specifier = "~=5.2.0" },
-    { name = "httpx" },
-    { name = "lxml" },
-    { name = "python-dotenv" },
-    { name = "trio" },
+    { name = "httpx", specifier = "~=0.28.0" },
+    { name = "lxml", specifier = "~=6.0.0" },
+    { name = "python-dotenv", specifier = "~=1.1.0" },
+    { name = "trio", specifier = "~=0.30.0" },
 ]
 
 [package.metadata.requires-dev]
