@@ -71,8 +71,8 @@
             
             <form action="" method="post">
                 {% csrf_token %}
-                <label for="app-list" class="visually-hidden">Available Applications</label>
-                <ul id="app-list" class="app-list" role="list">
+                <h3 class="visually-hidden">Available Applications</h3>
+                <ul id="app-list" class="app-list" role="list" aria-label="Available Applications">
                     {% for app in permitted_apps %}
                     <li class="app-item">
                         <a href="{% url 'student_upload_slug_url' app.slug %}" class="app-link">
