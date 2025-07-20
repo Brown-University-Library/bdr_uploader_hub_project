@@ -127,51 +127,51 @@
         <div class="form-section">
             <h3>Basic Information</h3>
             <!-- non-editable data ------------------------------ -->
-            <div class="form-group">
+            <div class="form-group" id="depositor_name_group">
                 <div class="label-container">
-                    <label for="id_depositor_name">Name:</label>
+                    Name:
                     <!-- <p class="help">(from Shib)</p> -->
                 </div>
-                <p id="id_depositor_name" class="form-control-static" aria-labelledby="id_depositor_name_label">{{ depositor_fullname }}</p>
+                <p id="id_depositor_name" class="form-control-static">{{ depositor_fullname }}</p>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="depositor_email_group">
                 <div class="label-container">
-                    <label for="id_depositor_email">Email:</label>
+                    Email:
                     <!-- <p class="help">(from Shib)</p> -->
                 </div>
-                <p id="id_depositor_email" class="form-control-static" aria-labelledby="id_depositor_email_label">{{ depositor_email }}</p>
+                <p id="id_depositor_email" class="form-control-static">{{ depositor_email }}</p>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="deposit_date_group">
                 <div class="label-container">
-                    <label for="id_deposit_date">Deposit-date:</label>
+                    Deposit-date:
                     <!-- <p class="help"></p> -->
                 </div>
-                <p id="id_deposit_date" class="form-control-static" aria-labelledby="id_deposit_date_label">{{ deposit_iso_date }}</p>
+                <p id="id_deposit_date" class="form-control-static">{{ deposit_iso_date }}</p>
             </div>
             <!-- editable data ---------------------------------- -->
-            <div class="form-group">
+            <div class="form-group" id="title_group">
                 <div class="label-container">
                     {{ form.title.label_tag }}
                     {% if form.title.help_text %}
-                        <p class="help">{{ form.title.help_text|safe }}</p>
+                        <p id="id_title_helptext" class="help">{{ form.title.help_text|safe }}</p>
                     {% endif %}
                 </div>
                 {{ form.title }}
             </div>
-            <div class="form-group">
+            <div class="form-group" id="abstract_group">
                 <div class="label-container">
                 {{ form.abstract.label_tag }} 
                 {% if form.abstract.help_text %}
-                    <p class="help">{{ form.abstract.help_text|safe }}</p>
+                    <p id="id_abstract_helptext" class="help">{{ form.abstract.help_text|safe }}</p>
                 {% endif %}
                 </div>
                 {{ form.abstract }}
             </div>
-            <div class="form-group">
+            <div class="form-group" id="main_file_group">
                 <div class="label-container">
                 {{ form.main_file.label_tag }} 
                 {% if form.main_file.help_text %}
-                    <p class="help">{{ form.main_file.help_text|safe }}</p>
+                    <p id="id_main_file_helptext" class="help">{{ form.main_file.help_text|safe }}</p>
                 {% endif %}
                 </div>
                 {{ form.main_file }}
@@ -183,11 +183,11 @@
             <h3>Collaborator Information</h3>
 
             {% if form.advisors_and_readers %}
-            <div class="form-group">
+            <div class="form-group" id="advisors_and_readers_group">
                 <div class="label-container">
                     {{ form.advisors_and_readers.label_tag }}
                     {% if form.advisors_and_readers.help_text %}
-                        <p class="help">{{ form.advisors_and_readers.help_text|safe }}</p>
+                        <p id="id_advisors_and_readers_helptext" class="help">{{ form.advisors_and_readers.help_text|safe }}</p>
                     {% endif %}
                 </div>  
                 {{ form.advisors_and_readers }}
@@ -195,11 +195,11 @@
             {% endif %}
 
             {% if form.team_members %}
-            <div class="form-group">
+            <div class="form-group" id="team_members_group">
                 <div class="label-container">
                     {{ form.team_members.label_tag }}
                     {% if form.team_members.help_text %}
-                        <p class="help">{{ form.team_members.help_text|safe }}</p>
+                        <p id="id_team_members_helptext" class="help">{{ form.team_members.help_text|safe }}</p>
                     {% endif %}
                 </div>
                 {{ form.team_members }}
@@ -207,11 +207,11 @@
             {% endif %}
 
             {% if form.faculty_mentors %}
-            <div class="form-group">
+            <div class="form-group" id="faculty_mentors_group">
                 {{ form.faculty_mentors.label_tag }} {{ form.faculty_mentors }}
                 {% if form.faculty_mentors.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.faculty_mentors.help_text|safe }}</p>
+                    <p id="id_faculty_mentors_helptext" class="help">{{ form.faculty_mentors.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -222,7 +222,7 @@
                 {{ form.authors.label_tag }} {{ form.authors }}
                 {% if form.authors.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.authors.help_text|safe }}</p>
+                    <p id="id_authors_helptext" class="help">{{ form.authors.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -234,11 +234,11 @@
             <h3>Department and Program Info</h3>
 
             {% if form.department %}
-            <div class="form-group">
+            <div class="form-group" id="department_group">
                 <div class="label-container">
                     {{ form.department.label_tag }}
                     {% if form.department.help_text %}
-                        <p class="help">{{ form.department.help_text|safe }}</p>
+                        <p id="id_department_helptext" class="help">{{ form.department.help_text|safe }}</p>
                     {% endif %}
                 </div>  
                 {{ form.department }}
@@ -246,11 +246,11 @@
             {% endif %}
 
             {% if form.research_program %}
-            <div class="form-group">
+            <div class="form-group" id="research_program_group">
                 <div class="label-container">
                     {{ form.research_program.label_tag }}
                     {% if form.research_program.help_text %}
-                        <p class="help">{{ form.research_program.help_text|safe }}</p>
+                        <p id="id_research_program_helptext" class="help">{{ form.research_program.help_text|safe }}</p>
                     {% endif %}
                 </div>  
                 {{ form.research_program }}
@@ -267,7 +267,7 @@
                     <div class="label-container">
                         {{ form.license_options.label_tag }} 
                         {% if form.license_options.help_text %}
-                            <p class="help">{{ form.license_options.help_text|safe }}</p>
+                            <p id="id_license_options_helptext" class="help">{{ form.license_options.help_text|safe }}</p>
                         {% endif %}
                     </div>
                     {{ form.license_options }}
@@ -288,7 +288,7 @@
                 <div class="label-container">
                     {{ form.visibility_options.label_tag }} 
                     {% if form.visibility_options.help_text %}
-                        <p class="help">{{ form.visibility_options.help_text|safe }}</p>
+                        <p id="id_visibility_options_helptext" class="help">{{ form.visibility_options.help_text|safe }}</p>
                     {% endif %}
                 </div>
                 {{ form.visibility_options }}
@@ -304,37 +304,37 @@
                 {{ form.keywords.label_tag }} {{ form.keywords }}
                 {% if form.keywords.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.keywords.help_text|safe }}</p>
+                    <p id="id_keywords_helptext" class="help">{{ form.keywords.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
             {% endif %}
             {% if form.concentrations %}
-            <div class="form-group">
+            <div class="form-group" id="concentrations_group">
                 {{ form.concentrations.label_tag }} {{ form.concentrations }}
                 {% if form.concentrations.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.concentrations.help_text|safe }}</p>
+                    <p id="id_concentrations_helptext" class="help">{{ form.concentrations.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
             {% endif %}
             {% if form.degrees %}
-            <div class="form-group">
+            <div class="form-group" id="degrees_group">
                 {{ form.degrees.label_tag }} {{ form.degrees }}
                 {% if form.degrees.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.degrees.help_text|safe }}</p>
+                    <p id="id_degrees_helptext" class="help">{{ form.degrees.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
             {% endif %}
             {% if form.supplementary_files %}
-            <div class="form-group">
+            <div class="form-group" id="supplementary_files_group">
                 {{ form.supplementary_files.label_tag }} {{ form.supplementary_files }}
                 {% if form.supplementary_files.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.supplementary_files.help_text|safe }}</p>
+                    <p id="id_supplementary_files_helptext" class="help">{{ form.supplementary_files.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -344,7 +344,7 @@
                 {{ form.authorized_student_groups.label_tag }} {{ form.authorized_student_groups }}
                 {% if form.authorized_student_groups.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
+                    <p id="id_authorized_student_groups_helptext" class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -354,7 +354,7 @@
                 {{ form.authorized_student_emails.label_tag }} {{ form.authorized_student_emails }}
                 {% if form.authorized_student_emails.help_text %}
                 <div class="label-container">
-                    <p class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
+                    <p id="id_authorized_student_emails_helptext" class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
                 </div>
                 {% endif %}
             </div>
