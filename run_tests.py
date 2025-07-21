@@ -20,8 +20,8 @@ if __name__ == '__main__':
     os.environ['BDR_PUBLIC_STUDIO_ITEM_ROOT_URL'] = 'http://localhost:8000/studio/items/'
     os.environ['CSRF_TRUSTED_ORIGINS_JSON'] = '[]'
     os.environ['DATABASES_JSON'] = '[]'
-    os.environ['DEBUG_JSON'] = 'true'
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
+    os.environ['DEBUG_JSON'] = 'false'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings_run_tests'
     os.environ['EMAIL_HOST'] = 'localhost'
     os.environ['EMAIL_PORT'] = '1025'
     os.environ['FAST_URI'] = 'http://fast.org/url'
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     os.environ['TEST_SHIB_META_DCT_JSON'] = '{}'
     # os.environ['LOG_PATH'] = '/tmp/'
     with tempfile.TemporaryDirectory() as tmp_dir:
-        os.environ['LOG_PATH'] = tmp_dir
+        # os.environ['LOG_PATH'] = tmp_dir
         django.setup()
         TestRunner = get_runner(settings)
         test_runner = TestRunner(verbosity=1, interactive=True)
