@@ -8,6 +8,7 @@ from django.test.utils import get_runner
 
 if __name__ == '__main__':
     os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
+    os.environ['SECRET_KEY'] = 'abcd'
     with tempfile.TemporaryDirectory() as tmp:
         django.setup()
         TestRunner = get_runner(settings)
