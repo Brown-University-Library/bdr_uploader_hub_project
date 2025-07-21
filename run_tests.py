@@ -39,8 +39,9 @@ if __name__ == '__main__':
     os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION'] = 'test:123'
     os.environ['TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION'] = 'Test Collection'
     os.environ['TEST_SHIB_META_DCT_JSON'] = '{}'
-    os.environ['LOG_DIR'] = '/tmp/'
+    os.environ['LOG_PATH'] = '/tmp/'
     with tempfile.TemporaryDirectory() as tmp_dir:
+        # os.environ['LOG_PATH'] = tmp_dir
         django.setup()
         TestRunner = get_runner(settings)
         test_runner = TestRunner(verbosity=1, interactive=True)
