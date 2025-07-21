@@ -2,10 +2,9 @@ import logging
 import pprint
 
 import httpx
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-
-from config.settings import BDR_PUBLIC_API_COLLECTION_ROOT_URL
 
 log = logging.getLogger(__name__)
 
@@ -61,7 +60,7 @@ def validate_staff_form(form, cleaned_data):
         if not collection_pid:
             form.add_error('collection_pid', 'Collection PID is required.')
         else:
-            api_url: str = BDR_PUBLIC_API_COLLECTION_ROOT_URL + str(collection_pid) + '/'
+            api_url: str = settings.BDR_PUBLIC_API_COLLECTION_ROOT_URL + str(collection_pid) + '/'
             log.debug(f'api_url, ``{api_url}``')
             response: httpx.Response | None = None
             try:  # handes, for example network being down

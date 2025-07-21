@@ -1,11 +1,7 @@
 """
-Django settings for bdr_uploader_hub_project.
+Django settings for `run_tests.py`.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/5.2/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/5.2/ref/settings/
+TODO: experiment with a `from .settings import *` approach
 """
 
 import json
@@ -17,9 +13,7 @@ from dotenv import find_dotenv, load_dotenv
 
 ## load envars ------------------------------------------------------
 dotenv_path = pathlib.Path(__file__).resolve().parent.parent.parent / '.env'
-assert dotenv_path.exists(), f'file does not exist, ``{dotenv_path}``'
-load_dotenv(find_dotenv(str(dotenv_path), raise_error_if_not_found=True), override=True)
-
+load_dotenv(find_dotenv(str(dotenv_path)), override=True)
 
 log = logging.getLogger(__name__)
 
@@ -36,10 +30,9 @@ BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-3ory+ty87_wq8-21ki6d&a+x=z9_$2m(gr4@vxri@@^g7u!*oc'
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = '1234'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = json.loads(os.environ['DEBUG_JSON'])
 
 ADMINS = json.loads(os.environ['ADMINS_JSON'])
@@ -74,7 +67,6 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [ '%s/bdr_student_uploader_hub_app' % BASE_DIR ],
         'DIRS': [f'{BASE_DIR}/bdr_uploader_hub_app/bdr_uploader_hub_app_templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -93,7 +85,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASES = json.loads(os.environ['DATABASES_JSON'])
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'local_data.db',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -168,17 +165,17 @@ LOGGING = {
         },
     },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True,
-        },
-        'logfile': {
-            'level': os.environ.get('LOG_LEVEL', 'INFO'),  # add LOG_LEVEL=DEBUG to the .env file to see debug messages
-            'class': 'logging.FileHandler',  # note: configure server to use system's log-rotate to avoid permissions issues
-            'filename': os.environ['LOG_PATH'],
-            'formatter': 'standard',
-        },
+        # 'mail_admins': {
+        #     'level': 'ERROR',
+        #     'class': 'django.utils.log.AdminEmailHandler',
+        #     'include_html': True,
+        # },
+        # 'logfile': {
+        #     'level': os.environ.get('LOG_LEVEL', 'INFO'),  # add LOG_LEVEL=DEBUG to the .env file to see debug messages
+        #     'class': 'logging.FileHandler',  # note: configure server to use system's log-rotate to avoid permissions issues
+        #     'filename': os.environ['LOG_PATH'],
+        #     'formatter': 'standard',
+        # },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -187,12 +184,12 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': False,
         },
         'bdr_uploader_hub_app': {
-            'handlers': ['logfile'],
+            'handlers': ['console'],
             'level': 'DEBUG',  # messages above this will get sent to the `logfile` handler
             'propagate': False,
         },
