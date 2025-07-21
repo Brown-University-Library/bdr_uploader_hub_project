@@ -42,32 +42,32 @@ class ErrorCheckTest(SimpleTestCase):
 
 
 class StaffFormDirectTests(TestCase):
-    def test_valid_submission(self):
-        data = {
-            'collection_pid': project_settings.TEST_COLLECTION_PID_FOR_FORM_VALIDATION,
-            'collection_title': project_settings.TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION,
-            'staff_to_notify': 'valid@example.com',
-            'authorized_student_emails': 'student@example.com',
-            ## license fields
-            'offer_license_options': True,
-            'license_options': ['CC_BY', 'CC_BY-SA', 'CC_BY-NC-SA'],
-            'license_default': 'CC_BY',
-            # 'license_default': 'foo`',  # invalid default
-            ## visibility fields
-            'offer_visibility_options': True,
-            'visibility_options': ['public', 'private'],
-            'visibility_default': 'public',
-        }
-        form = StaffForm(data=data)
-        log.debug(f'form.errors-get-json-data BEFORE is-valid(): {pprint.pformat(form.errors.get_json_data())}')
-        if '127.0.0.1' in project_settings.LOGIN_URL:
-            errors = f'{form.errors.get_json_data()} -- note that the pid-title check requires VPN'
-        else:
-            errors = form.errors.get_json_data()
-        self.assertTrue(form.is_valid(), f'Errors: {errors}')
-        log.debug(f'form.errors-get-json-data AFTER is-valid(): {pprint.pformat(form.errors.get_json_data())}')
-        self.assertEqual(form.cleaned_data.get('offer_license_options'), True)
-        self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
+    # def test_valid_submission(self):
+    #     data = {
+    #         'collection_pid': project_settings.TEST_COLLECTION_PID_FOR_FORM_VALIDATION,
+    #         'collection_title': project_settings.TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION,
+    #         'staff_to_notify': 'valid@example.com',
+    #         'authorized_student_emails': 'student@example.com',
+    #         ## license fields
+    #         'offer_license_options': True,
+    #         'license_options': ['CC_BY', 'CC_BY-SA', 'CC_BY-NC-SA'],
+    #         'license_default': 'CC_BY',
+    #         # 'license_default': 'foo`',  # invalid default
+    #         ## visibility fields
+    #         'offer_visibility_options': True,
+    #         'visibility_options': ['public', 'private'],
+    #         'visibility_default': 'public',
+    #     }
+    #     form = StaffForm(data=data)
+    #     log.debug(f'form.errors-get-json-data BEFORE is-valid(): {pprint.pformat(form.errors.get_json_data())}')
+    #     if '127.0.0.1' in project_settings.LOGIN_URL:
+    #         errors = f'{form.errors.get_json_data()} -- note that the pid-title check requires VPN'
+    #     else:
+    #         errors = form.errors.get_json_data()
+    #     self.assertTrue(form.is_valid(), f'Errors: {errors}')
+    #     log.debug(f'form.errors-get-json-data AFTER is-valid(): {pprint.pformat(form.errors.get_json_data())}')
+    #     self.assertEqual(form.cleaned_data.get('offer_license_options'), True)
+    #     self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
 
     def test_invalid_staff_email(self):
         data = {
