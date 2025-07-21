@@ -6,9 +6,10 @@
 
 # Birkin-update: I think this is creating any _version_ updates; I'd like _security_ updates only.
 
-version: 2
-updates:
-  - package-ecosystem: "uv"
-    directory: "/"
-    schedule:
-      interval: "daily"
+## disabling to see if `requirements.txt` generates security updates
+# version: 2
+# updates:
+#   - package-ecosystem: "uv"
+#     directory: "/"
+#     schedule:
+#       interval: "daily"
