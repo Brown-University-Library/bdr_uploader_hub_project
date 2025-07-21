@@ -24,6 +24,21 @@ if __name__ == '__main__':
     os.environ['FILE_UPLOAD_PERMISSIONS'] = 'None'
     os.environ['FILE_UPLOAD_DIRECTORY_PERMISSIONS'] = 'None'
     os.environ['LOG_PATH'] = '/tmp/'
+    os.environ['LOGIN_URL'] = '/login/'
+    os.environ['TEST_SHIB_META_DCT_JSON'] = '{}'
+    os.environ['SHIB_SP_LOGIN_URL'] = 'http://localhost:8000/shib_login/'
+    os.environ['SHIB_IDP_LOGOUT_URL'] = 'http://localhost:8000/shib_logout/'
+    os.environ['ALL_LICENSE_OPTIONS_JSON'] = '[]'
+    os.environ['ALL_VISIBILITY_OPTIONS_JSON'] = '[]'
+    os.environ['BDR_PUBLIC_API_COLLECTION_ROOT_URL'] = 'http://localhost:8000/api/collections/'
+    os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION'] = 'test:123'
+    os.environ['TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION'] = 'Test Collection'
+    os.environ['BDR_MANAGER_GROUP'] = 'manager_group'
+    os.environ['BDR_BROWN_GROUP'] = 'brown_group'
+    os.environ['BDR_PUBLIC_GROUP'] = 'public_group'
+    os.environ['BDR_PRIVATE_API_ROOT_URL'] = 'http://localhost:8000/api/private/items/'
+    os.environ['BDR_PUBLIC_STUDIO_ITEM_ROOT_URL'] = 'http://localhost:8000/studio/items/'
+    os.environ['FAST_URI'] = 'http://fast.org/url'
     with tempfile.TemporaryDirectory() as tmp:
         django.setup()
         TestRunner = get_runner(settings)
