@@ -27,7 +27,7 @@ if __name__ == '__main__':
     os.environ['FAST_URI'] = 'http://fast.org/url'
     os.environ['FILE_UPLOAD_DIRECTORY_PERMISSIONS'] = 'None'
     os.environ['FILE_UPLOAD_PERMISSIONS'] = 'None'
-    os.environ['LOG_PATH'] = '/tmp/'
+    # os.environ['LOG_PATH'] = '/tmp/'
     os.environ['LOGIN_URL'] = '/login/'
     os.environ['MEDIA_ROOT'] = '/tmp/'
     os.environ['SECRET_KEY'] = 'abcd'
