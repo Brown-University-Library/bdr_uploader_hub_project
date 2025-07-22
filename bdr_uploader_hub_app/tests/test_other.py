@@ -70,7 +70,9 @@ class StaffFormDirectTests(TestCase):
     #     self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
 
     def test_valid_submission(self):
+        log.debug(f'project_settings.LOGIN_URL, ``{project_settings.LOGIN_URL}``')
         if '127.0.0.1' in project_settings.LOGIN_URL:
+            log.debug('localhost found in LOGIN_URL')
             data = {
                 'collection_pid': project_settings.TEST_COLLECTION_PID_FOR_FORM_VALIDATION,
                 'collection_title': project_settings.TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION,
@@ -97,6 +99,7 @@ class StaffFormDirectTests(TestCase):
             self.assertEqual(form.cleaned_data.get('offer_license_options'), True)
             self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
         else:
+            log.debug('localhost not found in LOGIN_URL')
             self.skipTest('LOGIN_URL is not 127.0.0.1')
 
     def test_invalid_staff_email(self):
