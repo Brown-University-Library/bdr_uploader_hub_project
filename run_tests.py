@@ -1,6 +1,6 @@
 import os
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings_run_tests'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings_run_tests'  # need to do this as early as possible
 
 import sys
 import tempfile
