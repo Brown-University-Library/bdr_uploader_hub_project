@@ -98,6 +98,9 @@ class StaffFormDirectTests(TestCase):
             log.debug(f'form.errors-get-json-data AFTER is-valid(): {pprint.pformat(form.errors.get_json_data())}')
             self.assertEqual(form.cleaned_data.get('offer_license_options'), True)
             self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
+        elif 'foo' in project_settings.LOGIN_URL:  # `settings_run_tests.py` for ci-tests
+            log.debug('foo found in LOGIN_URL')
+            self.skipTest('LOGIN_URL is not 127.0.0.1')
         else:
             log.debug('localhost not found in LOGIN_URL')
             self.skipTest('LOGIN_URL is not 127.0.0.1')
