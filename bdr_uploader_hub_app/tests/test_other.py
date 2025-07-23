@@ -1,4 +1,5 @@
 import logging
+import os
 import pprint
 
 from django.conf import settings as project_settings
@@ -70,9 +71,25 @@ class StaffFormDirectTests(TestCase):
     #     self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
 
     def test_valid_submission(self):
-        log.debug(f'project_settings.LOGIN_URL, ``{project_settings.LOGIN_URL}``')
-        if '127.0.0.1' in project_settings.LOGIN_URL:
-            log.debug('localhost found in LOGIN_URL')
+        """
+        Checks valid submission -- part of which requires a dev (so not public) BDR API call. Because of that API call...
+
+        When running locally:
+        - I want this test to run and fail if I'm not on VPN, giving me the helpful error message.
+        - I want this test to run and pass if I'm on VPN.
+        When running in CI:
+        - I want this test to be skipped.
+        When running on the server:
+        - I want this test to run and pass.
+        """
+        is_running_on_github: bool = os.environ.get('GITHUB_ACTIONS', '').lower() == 'true'
+        log.debug(f'is_running_on_github, ``{is_running_on_github}``')
+        if is_running_on_github:
+            msg = 'skipping CI test that requires VPN'
+            log.debug(msg)
+            self.skipTest(msg)
+        else:  # running locally or on server
+            log.debug('running locally or on server, so running test')
             data = {
                 'collection_pid': project_settings.TEST_COLLECTION_PID_FOR_FORM_VALIDATION,
                 'collection_title': project_settings.TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION,
@@ -82,7 +99,6 @@ class StaffFormDirectTests(TestCase):
                 'offer_license_options': True,
                 'license_options': ['CC_BY', 'CC_BY-SA', 'CC_BY-NC-SA'],
                 'license_default': 'CC_BY',
-                # 'license_default': 'foo`',  # invalid default
                 ## visibility fields
                 'offer_visibility_options': True,
                 'visibility_options': ['public', 'private'],
@@ -98,12 +114,7 @@ class StaffFormDirectTests(TestCase):
             log.debug(f'form.errors-get-json-data AFTER is-valid(): {pprint.pformat(form.errors.get_json_data())}')
             self.assertEqual(form.cleaned_data.get('offer_license_options'), True)
             self.assertEqual(form.cleaned_data.get('offer_visibility_options'), True)
-        elif 'foo' in project_settings.LOGIN_URL:  # `settings_run_tests.py` for ci-tests
-            log.debug('foo found in LOGIN_URL')
-            self.skipTest('LOGIN_URL is not 127.0.0.1')
-        else:
-            log.debug('localhost not found in LOGIN_URL')
-            self.skipTest('LOGIN_URL is not 127.0.0.1')
+        ## end def test_valid_submission()
 
     def test_invalid_staff_email(self):
         data = {

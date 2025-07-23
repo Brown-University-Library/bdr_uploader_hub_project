@@ -2,6 +2,7 @@ import datetime
 import logging
 import pathlib
 import pprint
+import subprocess
 
 import trio
 from django.conf import settings
@@ -19,9 +20,7 @@ def make_context(request, rq_now, info_txt):
             'url': '%s://%s%s'
             % (
                 request.scheme,
-                request.META.get(
-                    'HTTP_HOST', '127.0.0.1'
-                ),  # HTTP_HOST doesn't exist for client-tests
+                request.META.get('HTTP_HOST', '127.0.0.1'),  # HTTP_HOST doesn't exist for client-tests
                 request.META.get('REQUEST_URI', request.META['PATH_INFO']),
             ),
             'timestamp': str(rq_now),
@@ -120,3 +119,34 @@ class GatherCommitAndBranchData:
 
 
 ## end class GatherCommitAndBranchData
+
+
+def check_mount_point(mount_point: str) -> tuple[bool, str | None]:
+    """
+    Checks for target mount point by running `df -h` and checking the output.
+    This is a secure implementation that doesn't use shell=True with piping.
+
+    Args:
+        mount_point: The mount point to check for.
+
+    Returns:
+        tuple[bool, str | None]: An (ok, err) tuple where the first element is a boolean indicating success (True)
+        or failure (False), and the second element is an error message (str) if there was an error,
+        or None if the operation was successful.
+    """
+    ok: bool = False
+    err: str | None = None
+    try:
+        ## runs df -h and captures its output
+        df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
+        ## checks if mount_point is in the output
+        if mount_point in df_result.stdout:
+            ok = True
+        else:
+            err = f'`{mount_point}` not found in disk usage call'
+    except subprocess.CalledProcessError as e:
+        err = f'Error running df command: {str(e)}'
+    except Exception as e:
+        err = f'Unexpected error: {str(e)}'
+    log.debug(f'ok, ``{ok}``; err, ``{err}``')
+    return (ok, err)
