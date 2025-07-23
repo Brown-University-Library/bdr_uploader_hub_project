@@ -23,8 +23,8 @@ from django.test.utils import get_runner  # noqa: E402
 
 log = logging.getLogger(__name__)
 log.debug(f'server_name: ``{server_name}``')
-# print(f'server_name: ``{server_name}``')
-# print(f'settings-envar, ``{os.environ.get("DJANGO_SETTINGS_MODULE")}``')
+print(f'server_name: ``{server_name}``')
+print(f'settings-envar, ``{os.environ.get("DJANGO_SETTINGS_MODULE")}``')
 
 
 if __name__ == '__main__':
