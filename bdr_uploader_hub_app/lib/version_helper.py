@@ -2,6 +2,7 @@ import datetime
 import logging
 import pathlib
 import pprint
+import subprocess
 
 import trio
 from django.conf import settings
@@ -19,9 +20,7 @@ def make_context(request, rq_now, info_txt):
             'url': '%s://%s%s'
             % (
                 request.scheme,
-                request.META.get(
-                    'HTTP_HOST', '127.0.0.1'
-                ),  # HTTP_HOST doesn't exist for client-tests
+                request.META.get('HTTP_HOST', '127.0.0.1'),  # HTTP_HOST doesn't exist for client-tests
                 request.META.get('REQUEST_URI', request.META['PATH_INFO']),
             ),
             'timestamp': str(rq_now),
@@ -120,3 +119,28 @@ class GatherCommitAndBranchData:
 
 
 ## end class GatherCommitAndBranchData
+
+
+def check_mount_point(mount_point: str) -> tuple[bool, str | None]:
+    """
+    Check for target mount point via running `df -h | grep {mount_point}`.
+
+    Returns:
+        tuple[bool, str | None]: A tuple where the first element is a boolean indicating success (True)
+        or failure (False), and the second element is an error message (str) if there was an error,
+        or None if the operation was successful.
+    """
+    ok: bool = False
+    err: str | None = None
+    try:
+        subprocess.run(f'df -h | grep {mount_point}', shell=True, check=True, capture_output=True, text=True)
+        ok = True
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 1:  # grep didn't find any matches
+            err = f'`{mount_point}` not found in disk usage call'
+        else:
+            err = f'error checking disk space: ``{str(e)}``'
+    except Exception as e:
+        err = f'Unexpected error: ``{str(e)}``'
+    log.debug(f'ok, ``{ok}``; err, ``{err}``')
+    return (ok, err)
