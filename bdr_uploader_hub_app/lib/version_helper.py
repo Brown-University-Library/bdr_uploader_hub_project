@@ -123,24 +123,30 @@ class GatherCommitAndBranchData:
 
 def check_mount_point(mount_point: str) -> tuple[bool, str | None]:
     """
-    Check for target mount point via running `df -h | grep {mount_point}`.
+    Checks for target mount point by running `df -h` and checking the output.
+    This is a secure implementation that doesn't use shell=True with piping.
+
+    Args:
+        mount_point: The mount point to check for.
 
     Returns:
-        tuple[bool, str | None]: A tuple where the first element is a boolean indicating success (True)
+        tuple[bool, str | None]: An (ok, err) tuple where the first element is a boolean indicating success (True)
         or failure (False), and the second element is an error message (str) if there was an error,
         or None if the operation was successful.
     """
     ok: bool = False
     err: str | None = None
     try:
-        subprocess.run(f'df -h | grep {mount_point}', shell=True, check=True, capture_output=True, text=True)
-        ok = True
-    except subprocess.CalledProcessError as e:
-        if e.returncode == 1:  # grep didn't find any matches
-            err = f'`{mount_point}` not found in disk usage call'
+        ## runs df -h and captures its output
+        df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
+        ## checks if mount_point is in the output
+        if mount_point in df_result.stdout:
+            ok = True
         else:
-            err = f'error checking disk space: ``{str(e)}``'
+            err = f'`{mount_point}` not found in disk usage call'
+    except subprocess.CalledProcessError as e:
+        err = f'Error running df command: {str(e)}'
     except Exception as e:
-        err = f'Unexpected error: ``{str(e)}``'
+        err = f'Unexpected error: {str(e)}'
     log.debug(f'ok, ``{ok}``; err, ``{err}``')
     return (ok, err)
