@@ -127,8 +127,8 @@ class GatherCommitAndBranchData:
         Called by manage_git_calls()
         """
         log.debug('starting fetch_mount_data')
-        ok = False
-        err = None
+        ok: bool = False
+        err: str | None = None
         try:
             ## runs df -h and captures its output
             df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
@@ -142,8 +142,9 @@ class GatherCommitAndBranchData:
         except Exception as e:
             err = f'Unexpected error: {str(e)}'
         log.debug(f'ok, ``{ok}``; err, ``{err}``')
+        ok_status: str = 'all good' if ok else 'not-mounted'
         ## update holder --------------------------------------------
-        results_holder_dct['mount_data'] = (ok, err)
+        results_holder_dct['mount_data'] = ok_status
         return
 
 

@@ -242,3 +242,6 @@ BDR_PRIVATE_API_ROOT_URL: str = os.environ['BDR_PRIVATE_API_ROOT_URL']
 
 ## used for ingest confirmation-email to student
 BDR_PUBLIC_STUDIO_ITEM_ROOT_URL: str = os.environ['BDR_PUBLIC_STUDIO_ITEM_ROOT_URL']
+
+## for mount check on version-url call
+MOUNT_POINT: str = os.environ['MOUNT_POINT']

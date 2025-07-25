@@ -77,5 +77,11 @@ TEST_META_DCT_JSON='{
 
 LOGIN_PROBLEM_EMAIL="bdr_student_uploader_hub_project_problems@domain.edu"
 
+## for mount check
+MOUNT_POINT="FOO"
+
+## not yet used
+FAST_URI="http://id.worldcat.org/fast"
+
 
 ## end --------------------------------------------------------------
