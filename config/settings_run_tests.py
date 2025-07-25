@@ -197,6 +197,9 @@ LOGGING = {
     },
 }
 
+## cache settings ---------------------------------------------------
+CACHES: dict = {}
+
 LOGIN_URL = '/foo/'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
