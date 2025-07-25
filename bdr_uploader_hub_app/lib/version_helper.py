@@ -126,7 +126,9 @@ class GatherCommitAndBranchData:
         Fetches mount-data by running `df -h` and checking the output.
         Called by manage_git_calls()
         """
-        log.debug('startingfetch_mount_data')
+        log.debug('starting fetch_mount_data')
+        ok = False
+        err = None
         try:
             ## runs df -h and captures its output
             df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
