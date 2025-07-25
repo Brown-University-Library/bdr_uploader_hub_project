@@ -135,23 +135,38 @@ class GatherCommitAndBranchData:
 
         Called by manage_git_calls()
         """
+        from django.core.cache import cache
+
         log.debug('starting fetch_mount_data')
-        ok: bool = False
-        err: str | None = None
-        try:
-            ## runs df -h and captures its output
-            df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
+        ## try cache ------------------------------------------------
+        cache_key: str = f'mount_data_{mount_point}'
+        ok_status: str | None = cache.get(cache_key)
+        if ok_status is not None:
+            log.debug(f'using cache for {cache_key}')
+        else:
+            ## not using cache --------------------------------------
+            log.debug(f'not using cache for {cache_key}')
+
             ## checks if mount_point is in the output
-            if mount_point in df_result.stdout:
-                ok = True
-            else:
-                err = f'`{mount_point}` not found in disk usage call'
-        except subprocess.CalledProcessError as e:
-            err = f'Error running df command: {str(e)}'
-        except Exception as e:
-            err = f'Unexpected error: {str(e)}'
-        log.debug(f'ok, ``{ok}``; err, ``{err}``')
-        ok_status: str = 'all good' if ok else 'not-mounted'
+            ok: bool = False
+            err: str | None = None
+            try:
+                ## runs df -h and captures its output
+                df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
+                ## checks if mount_point is in the output
+                if mount_point in df_result.stdout:
+                    ok = True
+                else:
+                    err = f'`{mount_point}` not found in disk usage call'
+            except subprocess.CalledProcessError as e:
+                err = f'Error running df command: {str(e)}'
+            except Exception as e:
+                err = f'Unexpected error: {str(e)}'
+            log.debug(f'ok, ``{ok}``; err, ``{err}``')
+            ok_status: str = 'all good' if ok else 'not-mounted'
+            ## update cache -------------------------------------------
+            log.debug(f'updating cache for {cache_key}')
+            cache.set(cache_key, ok_status)
         return ok_status
 
 
