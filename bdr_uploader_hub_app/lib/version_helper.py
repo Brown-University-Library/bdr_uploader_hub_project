@@ -60,11 +60,11 @@ class GatherCommitAndBranchData:
         async with trio.open_nursery() as nursery:
             nursery.start_soon(self.fetch_commit_data, results_holder_dct)
             nursery.start_soon(self.fetch_branch_data, results_holder_dct)
-            nursery.start_soon(self.fetch_mount_data, settings.MOUNT_POINT, results_holder_dct)
-        log.debug(f'final results_holder_dct, ```{pprint.pformat(results_holder_dct)}```')
+        log.debug(f'git-info results_holder_dct, ```{pprint.pformat(results_holder_dct)}```')
         self.commit = results_holder_dct['commit']
         self.branch = results_holder_dct['branch']
-        self.mount_data = results_holder_dct['mount_data']
+        non_async_mount_data = self.fetch_mount_data(settings.MOUNT_POINT)
+        self.mount_data = non_async_mount_data
         log.debug(f'self.branch, ``{self.branch}``')
         return
 
@@ -121,7 +121,7 @@ class GatherCommitAndBranchData:
         results_holder_dct['branch'] = branch
         return
 
-    async def fetch_mount_data(self, mount_point: str, results_holder_dct):
+    def fetch_mount_data(self, mount_point: str) -> str:
         """
         Fetches mount-data by running `df -h` and checking the output.
         Called by manage_git_calls()
@@ -143,9 +143,7 @@ class GatherCommitAndBranchData:
             err = f'Unexpected error: {str(e)}'
         log.debug(f'ok, ``{ok}``; err, ``{err}``')
         ok_status: str = 'all good' if ok else 'not-mounted'
-        ## update holder --------------------------------------------
-        results_holder_dct['mount_data'] = ok_status
-        return
+        return ok_status
 
 
 ## end class GatherCommitAndBranchData
