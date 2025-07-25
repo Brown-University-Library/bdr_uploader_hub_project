@@ -124,6 +124,15 @@ class GatherCommitAndBranchData:
     def fetch_mount_data(self, mount_point: str) -> str:
         """
         Fetches mount-data by running `df -h` and checking the output.
+        Notes:
+        - not async because django's 5.2x docs say async-caching is coming, but not supported yet.
+        - using caching to ensure hammering doesn't negatively affect server.
+
+        Args:
+            mount_point (str): The mount point to check.
+        Returns:
+            str: 'all good' if the mount_point is found; `not-mounted` otherwise.
+
         Called by manage_git_calls()
         """
         log.debug('starting fetch_mount_data')
