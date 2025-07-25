@@ -204,6 +204,10 @@ LOGGING = {
     },
 }
 
+## cache settings ---------------------------------------------------
+CACHES_JSON = os.environ['CACHES_JSON']
+CACHES: dict = json.loads(CACHES_JSON)
+
 LOGIN_URL = os.environ['LOGIN_URL']
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
