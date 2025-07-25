@@ -10,7 +10,7 @@ from django.conf import settings
 log = logging.getLogger(__name__)
 
 
-def make_context(request, rq_now, info_txt, mount_check_txt):
+def make_context(request, rq_now, info_txt):
     """
     Assembles data-dct.
     Called by views.version()
@@ -29,7 +29,6 @@ def make_context(request, rq_now, info_txt, mount_check_txt):
             'ip': request.META.get('REMOTE_ADDR', 'unknown'),
             'version': info_txt,
             'timetaken': str(datetime.datetime.now() - rq_now),
-            'mount_check': mount_check_txt,
         },
     }
     return context
@@ -45,7 +44,6 @@ class GatherCommitAndBranchData:
     def __init__(self):
         self.commit_data = ''
         self.branch_data = ''
-        self.mount_data = ''
 
     async def manage_git_calls(self):
         """
@@ -60,11 +58,9 @@ class GatherCommitAndBranchData:
         async with trio.open_nursery() as nursery:
             nursery.start_soon(self.fetch_commit_data, results_holder_dct)
             nursery.start_soon(self.fetch_branch_data, results_holder_dct)
-            nursery.start_soon(self.fetch_mount_data, settings.MOUNT_POINT, results_holder_dct)
         log.debug(f'final results_holder_dct, ```{pprint.pformat(results_holder_dct)}```')
         self.commit = results_holder_dct['commit']
         self.branch = results_holder_dct['branch']
-        self.mount_data = results_holder_dct['mount_data']
         log.debug(f'self.branch, ``{self.branch}``')
         return
 
@@ -73,7 +69,7 @@ class GatherCommitAndBranchData:
         Fetches commit-data by reading the `.git/HEAD` file (avoiding calling git via subprocess due to `dubious ownership` issue).
         Called by manage_git_calls()
         """
-        log.debug('startingfetch_commit_data')
+        log.debug('fetch_commit_data')
         git_dir = pathlib.Path(settings.BASE_DIR) / '.git'
         try:
             ## read the HEAD file to find the current branch ------------
@@ -101,7 +97,7 @@ class GatherCommitAndBranchData:
         Fetches branch-data by reading the `.git/HEAD` file (avoiding calling git via subprocess due to `dubious ownership` issue).
         Called by manage_git_calls()
         """
-        log.debug('starting fetch_branch_data')
+        log.debug('fetch_branch_data')
         git_dir = pathlib.Path(settings.BASE_DIR) / '.git'
         try:
             ## read the HEAD file to find the current branch ------------
@@ -119,29 +115,6 @@ class GatherCommitAndBranchData:
             branch = 'branch_not_found'
         ## update holder --------------------------------------------
         results_holder_dct['branch'] = branch
-        return
-
-    async def fetch_mount_data(self, mount_point: str, results_holder_dct):
-        """
-        Fetches mount-data by running `df -h` and checking the output.
-        Called by manage_git_calls()
-        """
-        log.debug('startingfetch_mount_data')
-        try:
-            ## runs df -h and captures its output
-            df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
-            ## checks if mount_point is in the output
-            if mount_point in df_result.stdout:
-                ok = True
-            else:
-                err = f'`{mount_point}` not found in disk usage call'
-        except subprocess.CalledProcessError as e:
-            err = f'Error running df command: {str(e)}'
-        except Exception as e:
-            err = f'Unexpected error: {str(e)}'
-        log.debug(f'ok, ``{ok}``; err, ``{err}``')
-        ## update holder --------------------------------------------
-        results_holder_dct['mount_data'] = (ok, err)
         return
 
 

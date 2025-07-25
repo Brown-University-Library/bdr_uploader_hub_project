@@ -677,17 +677,33 @@ def error_check(request) -> HttpResponse:
 
 def version(request) -> HttpResponse:
     """
-    Returns basic branch and commit data.
+    Returns basic branch and commit data, and mount-check result.
     """
     log.debug('\n\nstarting version()')
     rq_now = datetime.datetime.now()
     gatherer = GatherCommitAndBranchData()
     trio.run(gatherer.manage_git_calls)
     info_txt = f'{gatherer.branch} {gatherer.commit}'
-    context = version_helper.make_context(request, rq_now, info_txt)
+    mount_check_txt = f'{gatherer.mount_data}'
+    context = version_helper.make_context(request, rq_now, info_txt, mount_check_txt)
     output = json.dumps(context, sort_keys=True, indent=2)
     log.debug(f'output, ``{output}``')
     return HttpResponse(output, content_type='application/json; charset=utf-8')
+
+
+# def version(request) -> HttpResponse:
+#     """
+#     Returns basic branch and commit data.
+#     """
+#     log.debug('\n\nstarting version()')
+#     rq_now = datetime.datetime.now()
+#     gatherer = GatherCommitAndBranchData()
+#     trio.run(gatherer.manage_git_calls)
+#     info_txt = f'{gatherer.branch} {gatherer.commit}'
+#     context = version_helper.make_context(request, rq_now, info_txt)
+#     output = json.dumps(context, sort_keys=True, indent=2)
+#     log.debug(f'output, ``{output}``')
+#     return HttpResponse(output, content_type='application/json; charset=utf-8')
 
 
 def root(request) -> HttpResponseRedirect:
