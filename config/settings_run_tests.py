@@ -198,8 +198,11 @@ LOGGING = {
 }
 
 ## cache settings ---------------------------------------------------
-# CACHES: dict = {}  ## raises SystemCheckError: "(caches.E001) You must define a 'default' cache in your CACHES setting.
-CACHES: dict = {'default': {}}
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
 
 LOGIN_URL = '/foo/'
 
