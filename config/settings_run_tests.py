@@ -4,9 +4,7 @@ Django settings for `run_tests.py`.
 TODO: experiment with a `from .settings import *` approach
 """
 
-import json
 import logging
-import os
 import pathlib
 
 ## load envars ------------------------------------------------------
@@ -199,6 +197,13 @@ LOGGING = {
     },
 }
 
+## cache settings ---------------------------------------------------
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 LOGIN_URL = '/foo/'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
@@ -233,3 +238,6 @@ BDR_PRIVATE_API_ROOT_URL: str = 'http://localhost:8000/api/private/items/'
 
 ## used for ingest confirmation-email to student
 BDR_PUBLIC_STUDIO_ITEM_ROOT_URL: str = 'http://localhost:8000/studio/items/'
+
+## for mount check on version-url call
+MOUNT_POINT: str = 'FOO'

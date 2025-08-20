@@ -10,7 +10,7 @@ from django.conf import settings
 log = logging.getLogger(__name__)
 
 
-def make_context(request, rq_now, info_txt, mount_check_txt):
+def make_context(request, rq_now, info_txt):
     """
     Assembles data-dct.
     Called by views.version()
@@ -29,7 +29,6 @@ def make_context(request, rq_now, info_txt, mount_check_txt):
             'ip': request.META.get('REMOTE_ADDR', 'unknown'),
             'version': info_txt,
             'timetaken': str(datetime.datetime.now() - rq_now),
-            'mount_check': mount_check_txt,
         },
     }
     return context
@@ -45,7 +44,6 @@ class GatherCommitAndBranchData:
     def __init__(self):
         self.commit_data = ''
         self.branch_data = ''
-        self.mount_data = ''
 
     async def manage_git_calls(self):
         """
@@ -60,11 +58,9 @@ class GatherCommitAndBranchData:
         async with trio.open_nursery() as nursery:
             nursery.start_soon(self.fetch_commit_data, results_holder_dct)
             nursery.start_soon(self.fetch_branch_data, results_holder_dct)
-        log.debug(f'git-info results_holder_dct, ```{pprint.pformat(results_holder_dct)}```')
+        log.debug(f'final results_holder_dct, ```{pprint.pformat(results_holder_dct)}```')
         self.commit = results_holder_dct['commit']
         self.branch = results_holder_dct['branch']
-        non_async_mount_data = self.fetch_mount_data(settings.MOUNT_POINT)
-        self.mount_data = non_async_mount_data
         log.debug(f'self.branch, ``{self.branch}``')
         return
 
@@ -73,7 +69,7 @@ class GatherCommitAndBranchData:
         Fetches commit-data by reading the `.git/HEAD` file (avoiding calling git via subprocess due to `dubious ownership` issue).
         Called by manage_git_calls()
         """
-        log.debug('startingfetch_commit_data')
+        log.debug('fetch_commit_data')
         git_dir = pathlib.Path(settings.BASE_DIR) / '.git'
         try:
             ## read the HEAD file to find the current branch ------------
@@ -101,7 +97,7 @@ class GatherCommitAndBranchData:
         Fetches branch-data by reading the `.git/HEAD` file (avoiding calling git via subprocess due to `dubious ownership` issue).
         Called by manage_git_calls()
         """
-        log.debug('starting fetch_branch_data')
+        log.debug('fetch_branch_data')
         git_dir = pathlib.Path(settings.BASE_DIR) / '.git'
         try:
             ## read the HEAD file to find the current branch ------------
@@ -121,53 +117,36 @@ class GatherCommitAndBranchData:
         results_holder_dct['branch'] = branch
         return
 
-    def fetch_mount_data(self, mount_point: str) -> str:
-        """
-        Fetches mount-data by running `df -h` and checking the output.
-        Notes:
-        - not async because django's 5.2x docs say async-caching is coming, but not supported yet.
-        - using caching to ensure hammering doesn't negatively affect server.
-
-        Args:
-            mount_point (str): The mount point to check.
-        Returns:
-            str: 'all good' if the mount_point is found; `not-mounted` otherwise.
-
-        Called by manage_git_calls()
-        """
-        from django.core.cache import cache
-
-        log.debug('starting fetch_mount_data')
-        ## try cache ------------------------------------------------
-        cache_key: str = f'mount_data_{mount_point}'
-        ok_status: str | None = cache.get(cache_key)
-        if ok_status is not None:
-            log.debug(f'using cache for {cache_key}')
-        else:
-            ## not using cache --------------------------------------
-            log.debug(f'not using cache for {cache_key}')
-
-            ## checks if mount_point is in the output
-            ok: bool = False
-            err: str | None = None
-            try:
-                ## runs df -h and captures its output
-                df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
-                ## checks if mount_point is in the output
-                if mount_point in df_result.stdout:
-                    ok = True
-                else:
-                    err = f'`{mount_point}` not found in disk usage call'
-            except subprocess.CalledProcessError as e:
-                err = f'Error running df command: {str(e)}'
-            except Exception as e:
-                err = f'Unexpected error: {str(e)}'
-            log.debug(f'ok, ``{ok}``; err, ``{err}``')
-            ok_status: str = 'all good' if ok else 'not-mounted'
-            ## update cache -------------------------------------------
-            log.debug(f'updating cache for {cache_key}')
-            cache.set(cache_key, ok_status)
-        return ok_status
-
 
 ## end class GatherCommitAndBranchData
+
+
+def check_mount_point(mount_point: str) -> tuple[bool, str | None]:
+    """
+    Checks for target mount point by running `df -h` and checking the output.
+    This is a secure implementation that doesn't use shell=True with piping.
+
+    Args:
+        mount_point: The mount point to check for.
+
+    Returns:
+        tuple[bool, str | None]: An (ok, err) tuple where the first element is a boolean indicating success (True)
+        or failure (False), and the second element is an error message (str) if there was an error,
+        or None if the operation was successful.
+    """
+    ok: bool = False
+    err: str | None = None
+    try:
+        ## runs df -h and captures its output
+        df_result = subprocess.run(['df', '-h'], capture_output=True, text=True, check=True)
+        ## checks if mount_point is in the output
+        if mount_point in df_result.stdout:
+            ok = True
+        else:
+            err = f'`{mount_point}` not found in disk usage call'
+    except subprocess.CalledProcessError as e:
+        err = f'Error running df command: {str(e)}'
+    except Exception as e:
+        err = f'Unexpected error: {str(e)}'
+    log.debug(f'ok, ``{ok}``; err, ``{err}``')
+    return (ok, err)
