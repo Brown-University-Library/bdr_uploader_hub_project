@@ -198,7 +198,8 @@ LOGGING = {
 }
 
 ## cache settings ---------------------------------------------------
-CACHES: dict = {}
+# CACHES: dict = {}  ## raises SystemCheckError: "(caches.E001) You must define a 'default' cache in your CACHES setting.
+CACHES: dict = {'default': {}}
 
 LOGIN_URL = '/foo/'
 
