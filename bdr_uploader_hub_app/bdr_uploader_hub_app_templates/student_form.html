@@ -122,33 +122,34 @@
         </div>
         {% endif %}
         
-        <!-- form-fields ---------------------------------------- -->
+        <!-- end of display form errors ---------------------------------------- -->
 
+
+        <!-- Basic Information Section ---------------------------------------- -->
         <div class="form-section">
             <h3>Basic Information</h3>
-            <!-- non-editable data ------------------------------ -->
+            <!-- basic non-editable data ------------------------------ -->
             <div class="form-group" id="depositor_name_group">
                 <div class="label-container">
                     Name:
-                    <!-- <p class="help">(from Shib)</p> -->
+                    <!-- <p class="help">(data from Shib)</p> -->
                 </div>
                 <p id="id_depositor_name" class="form-control-static">{{ depositor_fullname }}</p>
             </div>
             <div class="form-group" id="depositor_email_group">
                 <div class="label-container">
                     Email:
-                    <!-- <p class="help">(from Shib)</p> -->
+                    <!-- <p class="help">(data from Shib)</p> -->
                 </div>
                 <p id="id_depositor_email" class="form-control-static">{{ depositor_email }}</p>
             </div>
             <div class="form-group" id="deposit_date_group">
                 <div class="label-container">
                     Deposit-date:
-                    <!-- <p class="help"></p> -->
                 </div>
                 <p id="id_deposit_date" class="form-control-static">{{ deposit_iso_date }}</p>
             </div>
-            <!-- editable data ---------------------------------- -->
+            <!-- basic editable data ---------------------------------- -->
             <div class="form-group" id="title_group">
                 <div class="label-container">
                     {{ form.title.label_tag }}
@@ -177,9 +178,13 @@
                 {{ form.main_file }}
             </div>
 
-        </div>  <!-- end of form section -->
+        </div>  <!-- end of Basic Information form section -->
 
+
+        {% if form.advisors_and_readers or form.team_members or form.faculty_mentors or form.authors %}
+        <!-- Collaborator Information Section ---------------------------------------- -->
         <div class="form-section">
+            
             <h3>Collaborator Information</h3>
 
             {% if form.advisors_and_readers %}
@@ -227,9 +232,12 @@
                 {% endif %}
             </div>
             {% endif %}
-
-        </div>  <!-- end of form section -->
+        </div>  <!-- end of Collaborator Information form section -->
+        {% endif %} {# end of collaborators section -- the if/endif keeps the header and <hr> from displaying if there's no data #}
         
+
+        {% if form.department or form.research_program %}
+        <!-- Department and Program Information Section ---------------------------------------- -->
         <div class="form-section">
             <h3>Department and Program Info</h3>
 
@@ -255,10 +263,13 @@
                 </div>  
                 {{ form.research_program }}
             </div>
-            {% endif %}
+            {% endif %} {# end of department and program info section -- the if/endif keeps the header and <hr> from displaying if there's no data #}
 
-        </div>  <!-- end of form section -->
+        </div>  <!-- end of Department and Program Information form section -->
+        {% endif %} 
 
+
+        <!-- Access Information Section ---------------------------------------- -->
         <div class="form-section">
             <h3>Access Info</h3>
 
@@ -277,9 +288,8 @@
                 <div class="form-group">
                     <div class="label-container">
                         <label for="id_license" id="id_license_label">License:</label>
-                </div>
-                <p id="id_license" class="form-control-static" aria-labelledby="id_license_label">{{ form.license_options }}</p>
-                    <!-- <p id="id_name" class="form-control-static">some-license</p> -->
+                    </div>
+                    <p id="id_license" class="form-control-static" aria-labelledby="id_license_label">{{ form.license_options }}</p>
                 </div>
             {% endif %}
 
@@ -292,11 +302,14 @@
                     {% endif %}
                 </div>
                 {{ form.visibility_options }}
-            </div>
+            </div> 
             {% endif %}
                         
-        </div>  <!-- end of form section -->
+        </div>  <!-- end of Access Information form section -->
         
+
+        {% if form.keywords or form.concentrations or form.degrees %}
+        <!-- Other Information Section ---------------------------------------- -->
         <div class="form-section">
             <h3>Other Info</h3>
             {% if form.keywords %}
@@ -329,41 +342,16 @@
                 {% endif %}
             </div>
             {% endif %}
-            {% if form.supplementary_files %}
-            <div class="form-group" id="supplementary_files_group">
-                {{ form.supplementary_files.label_tag }} {{ form.supplementary_files }}
-                {% if form.supplementary_files.help_text %}
-                <div class="label-container">
-                    <p id="id_supplementary_files_helptext" class="help">{{ form.supplementary_files.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-            {% if form.authorized_student_groups %}
-            <div class="form-group">
-                {{ form.authorized_student_groups.label_tag }} {{ form.authorized_student_groups }}
-                {% if form.authorized_student_groups.help_text %}
-                <div class="label-container">
-                    <p id="id_authorized_student_groups_helptext" class="help">{{ form.authorized_student_groups.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-            {% if form.authorized_student_emails %}
-            <div class="form-group">
-                {{ form.authorized_student_emails.label_tag }} {{ form.authorized_student_emails }}
-                {% if form.authorized_student_emails.help_text %}
-                <div class="label-container">
-                    <p id="id_authorized_student_emails_helptext" class="help">{{ form.authorized_student_emails.help_text|safe }}</p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-        </div>
+        </div> <!-- end of Other Information form section -->
+        {% endif %} {# end of other info section -- the if/endif keeps the header and <hr> from displaying if there's no data #}
         
+        
+        <!-- Submit Button ---------------------------------------- -->
         <div class="form-field">
             <input type="submit" value="Submit">
         </div>
+
     </form>
+
 </section>
 {% endblock main_content %}
