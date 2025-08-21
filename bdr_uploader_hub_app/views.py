@@ -141,7 +141,7 @@ def shib_login(request) -> HttpResponseRedirect:
 
     Called automatically by attempting to access an `@login_required` view.
     """
-    log.debug('\n\nstarting login()')
+    log.debug('\n\nstarting shib_login()')
     next_url: str | None = request.GET.get('next', None)
     log.debug(f'next_url, ```{next_url}```')
     if not next_url:
