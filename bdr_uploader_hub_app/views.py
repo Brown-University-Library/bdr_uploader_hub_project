@@ -209,7 +209,9 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     log.debug(f'slug, ``{slug}``')
     if not request.user.userprofile.can_create_app:
         log.debug('user does not have permissions to create an app')
-        resp = HttpResponse('You do not have permissions to configure this app.')
+        resp = HttpResponseForbidden(
+            'You do not have permissions to configure this app. If you think this is in error, please email Library staff at its_alerts+bdr_hub_request@brown.edu.'
+        )
     else:
         log.debug('user has permissions to configure app')
         app_config = get_object_or_404(AppConfig, slug=slug)
