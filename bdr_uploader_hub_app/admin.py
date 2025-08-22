@@ -9,7 +9,11 @@ log = logging.getLogger(__name__)
 
 
 ## for django-auth --------------------------------------------------
-admin.site.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    exclude = (
+        'can_configure_these_apps',
+        'can_view_these_apps',
+    )  # not currently using these fields, so hiding them from the form to avoid confusion.
 
 
 ## other models -----------------------------------------------------
@@ -69,5 +73,6 @@ class SubmissionAdmin(admin.ModelAdmin):
     ingest.short_description = 'Ingest selected submissions'
 
 
-admin.site.register(AppConfig)
+admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(AppConfig)  # using default admin-view
 admin.site.register(Submission, SubmissionAdmin)
