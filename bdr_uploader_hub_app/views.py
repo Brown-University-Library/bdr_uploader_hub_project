@@ -135,6 +135,9 @@ def shib_login(request) -> HttpResponseRedirect:
     """
     Handles authentication and initial authorization via shib.
 
+    Note that the user does not get here via a redirect from another function.
+    Instead, this function is called automatically by attempting to access an `@login_required` view.
+
     Then:
     - On successful further UserProfile authorization, logs user in and redirects to the `next_url`.
         - If no `next_url`, redirects to the `info` page.
