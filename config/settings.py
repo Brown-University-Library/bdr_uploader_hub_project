@@ -249,3 +249,6 @@ BDR_PUBLIC_STUDIO_ITEM_ROOT_URL: str = os.environ['BDR_PUBLIC_STUDIO_ITEM_ROOT_U
 
 ## for mount check on version-url call
 MOUNT_POINT: str = os.environ['MOUNT_POINT']
+
+## for "you don't have permissions" messages
+PROBLEM_EMAIL: str = os.environ['PROBLEM_EMAIL']

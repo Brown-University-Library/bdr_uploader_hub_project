@@ -187,9 +187,8 @@ def config_new(request) -> HttpResponse:
     if not request.user.userprofile.can_create_app:
         log.debug(f'user ``{request.user}`` does not have permissions to create an app')
         # return HttpResponse('You do not have permissions to create an app.')
-        return HttpResponseForbidden(
-            'You do not have permissions to create an app. If you think this is in error, please email Library staff at its_alerts+bdr_hub_request@brown.edu.'
-        )
+        msg = f'You do not have permissions to create an app. If you think this is in error, please email Library staff at {project_settings.PROBLEM_EMAIL}.'
+        return HttpResponseForbidden(msg)
     apps_data: list = config_new_helper.get_configs()
     log.debug(f'apps_data, ``{pprint.pformat(apps_data)}``')
     hlpr_check_name_and_slug_url = reverse('hlpr_check_name_and_slug_url')
@@ -209,9 +208,8 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     log.debug(f'slug, ``{slug}``')
     if not request.user.userprofile.can_create_app:
         log.debug('user does not have permissions to create an app')
-        resp = HttpResponseForbidden(
-            'You do not have permissions to configure this app. If you think this is in error, please email Library staff at its_alerts+bdr_hub_request@brown.edu.'
-        )
+        msg = f'You do not have permissions to configure this app. If you think this is in error, please email Library staff at {project_settings.PROBLEM_EMAIL}.'
+        resp = HttpResponseForbidden(msg)
     else:
         log.debug('user has permissions to configure app')
         app_config = get_object_or_404(AppConfig, slug=slug)
