@@ -11,7 +11,7 @@ from django import forms as django_forms
 from django.conf import settings as project_settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import text
@@ -186,7 +186,10 @@ def config_new(request) -> HttpResponse:
     log.debug(f'user, ``{request.user}``')
     if not request.user.userprofile.can_create_app:
         log.debug(f'user ``{request.user}`` does not have permissions to create an app')
-        return HttpResponse('You do not have permissions to create an app.')
+        # return HttpResponse('You do not have permissions to create an app.')
+        return HttpResponseForbidden(
+            'You do not have permissions to create an app. If you think this is in error, please email Library staff at its_alerts+bdr_hub_request@brown.edu.'
+        )
     apps_data: list = config_new_helper.get_configs()
     log.debug(f'apps_data, ``{pprint.pformat(apps_data)}``')
     hlpr_check_name_and_slug_url = reverse('hlpr_check_name_and_slug_url')
