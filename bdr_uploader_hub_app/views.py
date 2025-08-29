@@ -11,7 +11,7 @@ from django import forms as django_forms
 from django.conf import settings as project_settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import text
@@ -135,13 +135,16 @@ def shib_login(request) -> HttpResponseRedirect:
     """
     Handles authentication and initial authorization via shib.
 
+    Note that the user does not get here via a redirect from another function.
+    Instead, this function is called automatically by attempting to access an `@login_required` view.
+
     Then:
     - On successful further UserProfile authorization, logs user in and redirects to the `next_url`.
         - If no `next_url`, redirects to the `info` page.
 
     Called automatically by attempting to access an `@login_required` view.
     """
-    log.debug('\n\nstarting login()')
+    log.debug('\n\nstarting shib_login()')
     next_url: str | None = request.GET.get('next', None)
     log.debug(f'next_url, ```{next_url}```')
     if not next_url:
@@ -183,7 +186,9 @@ def config_new(request) -> HttpResponse:
     log.debug(f'user, ``{request.user}``')
     if not request.user.userprofile.can_create_app:
         log.debug(f'user ``{request.user}`` does not have permissions to create an app')
-        return HttpResponse('You do not have permissions to create an app.')
+        # return HttpResponse('You do not have permissions to create an app.')
+        msg = f'You do not have permissions to create an app. If you think this is in error, please email Library staff at {project_settings.PROBLEM_EMAIL}.'
+        return HttpResponseForbidden(msg)
     apps_data: list = config_new_helper.get_configs()
     log.debug(f'apps_data, ``{pprint.pformat(apps_data)}``')
     hlpr_check_name_and_slug_url = reverse('hlpr_check_name_and_slug_url')
@@ -203,7 +208,8 @@ def config_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     log.debug(f'slug, ``{slug}``')
     if not request.user.userprofile.can_create_app:
         log.debug('user does not have permissions to create an app')
-        resp = HttpResponse('You do not have permissions to configure this app.')
+        msg = f'You do not have permissions to configure this app. If you think this is in error, please email Library staff at {project_settings.PROBLEM_EMAIL}.'
+        resp = HttpResponseForbidden(msg)
     else:
         log.debug('user has permissions to configure app')
         app_config = get_object_or_404(AppConfig, slug=slug)
