@@ -45,7 +45,7 @@ sqlparse==0.5.3
     # via django
 trio==0.30.0
     # via bdr-student-uploader-hub-project (./pyproject.toml)
-typing-extensions==4.14.1
+typing-extensions==4.15.0
     # via
     #   anyio
     #   beautifulsoup4
