@@ -5,7 +5,7 @@ description = "Allows staff to easily and quickly create and configure webapp-up
 readme = "https://github.com/Brown-University-Library/bdr_student_uploader_hub_project/blob/main/README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "beautifulsoup4~=4.13.0",
+    "beautifulsoup4~=4.13.5",
     "Django~=5.2.0",
     "httpx~=0.28.0",
     "lxml~=6.0.0",
