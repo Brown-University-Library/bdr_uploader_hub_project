@@ -57,7 +57,7 @@ staging = [
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4", specifier = "~=4.13.0" },
+    { name = "beautifulsoup4", specifier = "~=4.13.5" },
     { name = "django", specifier = "~=5.2.0" },
     { name = "httpx", specifier = "~=0.28.0" },
     { name = "lxml", specifier = "~=6.0.0" },
