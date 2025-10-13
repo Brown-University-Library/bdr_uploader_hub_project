@@ -43,6 +43,10 @@ class ErrorCheckTest(SimpleTestCase):
 
 
 class FastApiTest(TestCase):
+    """
+    Checks fast-api-related functions.
+    """
+
     def test_call_oclc_fastapi(self):
         """
         Checks that the OCLC FastAPI call works.
