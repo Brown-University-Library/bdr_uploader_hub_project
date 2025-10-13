@@ -1,5 +1,8 @@
 """
 Runs ci-compatible django tests.
+
+Usage:
+    uv run ./run_tests.py
 """
 
 import os
