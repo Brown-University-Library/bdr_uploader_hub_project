@@ -22,7 +22,7 @@ At this point, you should be able to log in as staff and create new apps, edit e
 
 # Running tests
 
-To run tests, django-style:
+## django-style:
 
 all tests:
 ```bash
@@ -43,6 +43,14 @@ uv run ./manage.py test bdr_uploader_hub_app.tests.test_other.StaffFormDirectTes
 ```bash
 uv run ./manage.py test bdr_uploader_hub_app.tests.test_other.StaffFormDirectTests.test_valid_submission
 ```
+
+## github-ci-style:
+
+all tests:
+```bash
+uv run ./run_tests.py
+```
+
 ---
 
 
