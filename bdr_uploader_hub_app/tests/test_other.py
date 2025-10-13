@@ -7,6 +7,7 @@ from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
 from bdr_uploader_hub_app.forms.staff_form import StaffForm
+from bdr_uploader_hub_app.lib import fastapi
 
 log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
