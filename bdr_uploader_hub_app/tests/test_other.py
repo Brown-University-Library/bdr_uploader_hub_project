@@ -42,6 +42,16 @@ class ErrorCheckTest(SimpleTestCase):
         self.assertEqual(404, response.status_code)
 
 
+class FastApiTest(TestCase):
+    def test_call_oclc_fastapi(self):
+        """
+        Checks that the OCLC FastAPI call works.
+        """
+        expected: str = 'foo'
+        result = fastapi.call_oclc_fastapi('bar')
+        self.assertEqual(expected, result)
+
+
 class StaffFormDirectTests(TestCase):
     # def test_valid_submission(self):
     #     data = {
