@@ -28,7 +28,9 @@ def call_oclc_fastapi(param: str) -> dict:
     url = 'https://fast.oclc.org/searchfast/fastsuggest'
     log.debug(f'url, ``{url}``')
     with httpx.Client() as client:
-        response: httpx.Response = client.get(url, params=params)
+        request = client.build_request("GET", url, params=params)
+        log.debug(f'final url, `{request.url}`')
+        response: httpx.Response = client.send(request)
     return_val: dict = response.json()
     log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
     return return_val
