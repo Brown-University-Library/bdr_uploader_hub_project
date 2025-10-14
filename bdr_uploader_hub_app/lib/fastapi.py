@@ -3,21 +3,32 @@ Contains functions for calling and processing the OCLC FastAPI service."
 """
 
 import logging
+import pprint
 
-from django.conf import settings
+import httpx
 
 log = logging.getLogger(__name__)
 
 
-def call_oclc_fastapi(param: str) -> str:
+def call_oclc_fastapi(param: str) -> dict:
     """
     Calls the OCLC FastAPI service with the given string.
     Returns the json response.
     Called by... TBD.
     """
     log.debug('starting call_oclc_fastapi()')
-    url = f'{settings.FASTAPI_URL}/{param}'
+    params = {
+        'query': param,
+        'queryIndex': 'suggestall',
+        'queryReturn': 'idroot,auth,type,suggestall',
+        'suggest': 'autoSubject',
+    }
+    log.debug(f'params, ``{pprint.pformat(params)}``')
+    # url = f'{settings.FASTAPI_URL}/{param}'
+    url = 'https://fast.oclc.org/searchfast/fastsuggest'
     log.debug(f'url, ``{url}``')
-    return_val = 'zzz'
-    log.debug(f'return_val, ``{return_val}``')
+    with httpx.Client() as client:
+        response: httpx.Response = client.get(url, params=params)
+    return_val: dict = response.json()
+    log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
     return return_val
