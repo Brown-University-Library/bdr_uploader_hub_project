@@ -4,6 +4,7 @@ Contains functions for calling and processing the OCLC FastAPI service."
 
 import logging
 import pprint
+import time
 
 import httpx
 
@@ -48,7 +49,16 @@ def call_oclc_fastapi(param: str) -> dict:
     url = 'https://fast.oclc.org/searchfast/fastsuggest'
     log.debug(f'url, ``{url}``')
     client = get_client()
-    request = client.build_request('GET', url, params=params)
+
+    total_timeout: float = 3.0
+    io_timeout: float = 2.0
+    deadline = time.monotonic() + total_timeout
+    # Compute a per-request timeout bounded by the remaining budget.
+    remaining = max(0.1, deadline - time.monotonic())
+    per_req = min(io_timeout, remaining)
+    timeout = httpx.Timeout(connect=per_req, read=per_req, write=per_req, pool=per_req)
+
+    request = client.build_request('GET', url, params=params, timeout=timeout)
     log.debug(f'final url, `{request.url}`')
     response: httpx.Response = client.send(request)
     return_val: dict = response.json()
