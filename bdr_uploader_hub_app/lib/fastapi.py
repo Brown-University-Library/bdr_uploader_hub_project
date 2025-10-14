@@ -64,7 +64,7 @@ def call_oclc_fastapi(param: str) -> dict:
     ## prepare client -----------------------------------------------
     client: httpx.Client = get_client()
     request: httpx.Request = client.build_request('GET', url, params=params, timeout=timeout)
-    log.debug(f'final url, `{request.url}`')
+    log.debug(f'final url, ``{request.url}``')
 
     ## make request -------------------------------------------------
     response: httpx.Response = client.send(request)
