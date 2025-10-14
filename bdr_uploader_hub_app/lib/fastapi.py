@@ -56,14 +56,14 @@ def call_oclc_fastapi(param: str) -> dict:
     """
     total_timeout: float = 3.0
     io_timeout: float = 2.0
-    deadline = time.monotonic() + total_timeout
-    remaining = max(0.1, deadline - time.monotonic())
-    per_req = min(io_timeout, remaining)
+    deadline: float = time.monotonic() + total_timeout
+    remaining: float = max(0.1, deadline - time.monotonic())
+    per_req: float = min(io_timeout, remaining)
     timeout = httpx.Timeout(connect=per_req, read=per_req, write=per_req, pool=per_req)
 
     ## prepare client -----------------------------------------------
-    client = get_client()
-    request = client.build_request('GET', url, params=params, timeout=timeout)
+    client: httpx.Client = get_client()
+    request: httpx.Request = client.build_request('GET', url, params=params, timeout=timeout)
     log.debug(f'final url, `{request.url}`')
 
     ## make request -------------------------------------------------
