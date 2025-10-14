@@ -9,6 +9,26 @@ import httpx
 
 log = logging.getLogger(__name__)
 
+_CLIENT: httpx.Client | None = None
+
+
+def get_client() -> httpx.Client:
+    """
+    Return a process-wide httpx.Client with pooling enabled.
+    """
+    global _CLIENT
+    if _CLIENT is None:
+        _CLIENT = httpx.Client(
+            http2=True,
+            limits=httpx.Limits(
+                max_connections=50,
+                max_keepalive_connections=20,
+                keepalive_expiry=30.0,
+            ),
+            headers={'User-Agent': 'brown_u_library_fast_lookup_1.0'},
+        )
+    return _CLIENT
+
 
 def call_oclc_fastapi(param: str) -> dict:
     """
@@ -27,10 +47,10 @@ def call_oclc_fastapi(param: str) -> dict:
     # url = f'{settings.FASTAPI_URL}/{param}'
     url = 'https://fast.oclc.org/searchfast/fastsuggest'
     log.debug(f'url, ``{url}``')
-    with httpx.Client() as client:
-        request = client.build_request("GET", url, params=params)
-        log.debug(f'final url, `{request.url}`')
-        response: httpx.Response = client.send(request)
+    client = get_client()
+    request = client.build_request('GET', url, params=params)
+    log.debug(f'final url, `{request.url}`')
+    response: httpx.Response = client.send(request)
     return_val: dict = response.json()
     log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
     return return_val
