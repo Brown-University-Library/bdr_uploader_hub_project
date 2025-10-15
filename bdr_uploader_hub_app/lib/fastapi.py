@@ -115,13 +115,13 @@ def manage_oclc_fastapi_call(param: str) -> dict:
     (url, params) = prep_url_params(param)  # (str, dict)
 
     ## prepare client -----------------------------------------------
-    client: httpx.Client = get_client()
+    httpx_client: httpx.Client = get_client()
     timeout = httpx.Timeout(connect=0.4, read=0.8, write=0.4, pool=0.2)
-    request: httpx.Request = client.build_request('GET', url, params=params, timeout=timeout)
+    request: httpx.Request = httpx_client.build_request('GET', url, params=params, timeout=timeout)
     log.debug(f'final url, ``{request.url}``')
 
     ## make request -------------------------------------------------
-    response_dict: dict = make_request(client, request)
+    response_dict: dict = make_request(httpx_client, request)
 
     ## parse response -----------------------------------------------
     parsed_response: dict = parse_response(response_dict)
