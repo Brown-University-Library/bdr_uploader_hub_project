@@ -58,23 +58,23 @@ def make_request(client: httpx.Client, request: httpx.Request) -> dict:
         log.debug(f'response.http_version, ``{response.http_version}``')
         if response.status_code != 200:
             log.warning(f'non-200 from OCLC FastAPI: {response.status_code}')
-            return {"response": {"docs": []}}
+            return {'response': {'docs': []}}
 
         return_val: dict = response.json()
         log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
         return return_val
     except httpx.TimeoutException as exc:
         log.warning(f'timeout calling OCLC FastAPI: {exc}')
-        return {"response": {"docs": []}}
+        return {'response': {'docs': []}}
     except httpx.RequestError as exc:
         log.warning(f'request error calling OCLC FastAPI: {exc}')
-        return {"response": {"docs": []}}
+        return {'response': {'docs': []}}
     except ValueError as exc:
         log.warning(f'error parsing JSON from OCLC FastAPI: {exc}')
-        return {"response": {"docs": []}}
+        return {'response': {'docs': []}}
 
 
-def call_oclc_fastapi(param: str) -> dict:
+def manage_oclc_fastapi_call(param: str) -> dict:
     """
     Calls the OCLC FastAPI service with the given string.
     Returns the json response.

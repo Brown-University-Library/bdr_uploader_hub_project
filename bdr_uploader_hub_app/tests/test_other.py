@@ -53,7 +53,7 @@ class FastApiTest(TestCase):
         Checks that the OCLC FastAPI call works.
         """
         expected: str = 'foo'
-        result = fastapi.call_oclc_fastapi('bar')
+        result = fastapi.manage_oclc_fastapi_call('bar')
         self.assertEqual(expected, result)
 
 
