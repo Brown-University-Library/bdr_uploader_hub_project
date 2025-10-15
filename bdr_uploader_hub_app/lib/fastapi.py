@@ -68,6 +68,7 @@ def call_oclc_fastapi(param: str) -> dict:
 
     ## make request -------------------------------------------------
     response: httpx.Response = client.send(request)
+    log.debug(f'response.http_version, ``{response.http_version}``')
 
     ## process response ---------------------------------------------
     return_val: dict = response.json()
