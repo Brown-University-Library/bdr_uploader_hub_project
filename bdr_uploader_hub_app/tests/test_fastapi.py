@@ -8,13 +8,13 @@ from bdr_uploader_hub_app.lib import fastapi
 
 class TestPrepUrlParams(unittest.TestCase):
     def test_prep_url_params(self):
-        url, params = fastapi.prep_url_params("bar")
-        self.assertEqual(url, "https://fast.oclc.org/searchfast/fastsuggest")
+        url, params = fastapi.prep_url_params('bar')
+        self.assertEqual(url, 'https://fast.oclc.org/searchfast/fastsuggest')
         self.assertIsInstance(params, dict)
-        self.assertEqual(params.get("query"), "bar")
-        self.assertEqual(params.get("queryIndex"), "suggestall")
-        self.assertEqual(params.get("queryReturn"), "idroot,auth,type,suggestall")
-        self.assertEqual(params.get("suggest"), "autoSubject")
+        self.assertEqual(params.get('query'), 'bar')
+        self.assertEqual(params.get('queryIndex'), 'suggestall')
+        self.assertEqual(params.get('queryReturn'), 'idroot,auth,type,suggestall')
+        self.assertEqual(params.get('suggest'), 'autoSubject')
 
 
 class FakeClient:
@@ -35,8 +35,8 @@ class FakeClient:
 class TestMakeRequest(unittest.TestCase):
     def test_make_request_success(self):
         client = FakeClient()
-        req = client.build_request("GET", "https://example.org/")
-        payload = {"response": {"docs": [{"auth": "X"}]}}
+        req = client.build_request('GET', 'https://example.org/')
+        payload = {'response': {'docs': [{'auth': 'X'}]}}
 
         def send_ok(request):
             return httpx.Response(status_code=200, request=request, json=payload)
@@ -47,30 +47,30 @@ class TestMakeRequest(unittest.TestCase):
 
     def test_make_request_non_200(self):
         client = FakeClient()
-        req = client.build_request("GET", "https://example.org/")
+        req = client.build_request('GET', 'https://example.org/')
 
         def send_500(request):
-            return httpx.Response(status_code=500, request=request, json={"error": "boom"})
+            return httpx.Response(status_code=500, request=request, json={'error': 'boom'})
 
         client.send = send_500
         result = fastapi.make_request(client, req)
-        self.assertEqual(result, {"response": {"docs": []}})
+        self.assertEqual(result, {'response': {'docs': []}})
 
     def test_make_request_timeout(self):
         client = FakeClient()
-        req = client.build_request("GET", "https://example.org/")
+        req = client.build_request('GET', 'https://example.org/')
 
         def send_timeout(request):
-            raise httpx.TimeoutException("timeout")
+            raise httpx.TimeoutException('timeout')
 
         client.send = send_timeout
         result = fastapi.make_request(client, req)
-        self.assertEqual(result, {"response": {"docs": []}})
+        self.assertEqual(result, {'response': {'docs': []}})
 
 
 class TestParseResponse(unittest.TestCase):
     def test_parse_identity(self):
-        data = {"response": {"docs": []}}
+        data = {'response': {'docs': []}}
         self.assertEqual(fastapi.parse_response(data), data)
 
 
@@ -82,29 +82,29 @@ class TestGetClient(unittest.TestCase):
 
 
 class TestManageCall(unittest.TestCase):
-    @patch("bdr_uploader_hub_app.lib.fastapi.get_client")
+    @patch('bdr_uploader_hub_app.lib.fastapi.get_client')
     def test_manage_oclc_fastapi_call_success(self, mock_get_client):
         # Arrange fake client with controlled behavior
         client = FakeClient()
 
         def send_ok(request):
             # Assert URL looks like the OCLC endpoint with query params
-            self.assertIn("fast.oclc.org/searchfast/fastsuggest", str(request.url))
-            self.assertIn("query=bar", str(request.url))
-            payload = {"response": {"docs": [{"auth": "Bar"}]}}
+            self.assertIn('fast.oclc.org/searchfast/fastsuggest', str(request.url))
+            self.assertIn('query=bar', str(request.url))
+            payload = {'response': {'docs': [{'auth': 'Bar'}]}}
             return httpx.Response(status_code=200, request=request, json=payload)
 
         client.send = send_ok
         mock_get_client.return_value = client
 
         # Act
-        result = fastapi.manage_oclc_fastapi_call("bar")
+        result = fastapi.manage_oclc_fastapi_call('bar')
 
         # Assert
         self.assertIsInstance(result, dict)
-        self.assertIn("response", result)
-        self.assertIn("docs", result["response"])
+        self.assertIn('response', result)
+        self.assertIn('docs', result['response'])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main(verbosity=2)
