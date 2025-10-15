@@ -4,7 +4,6 @@ Contains functions for calling and processing the OCLC FastAPI service."
 
 import logging
 import pprint
-import time
 
 import httpx
 
@@ -22,9 +21,9 @@ def get_client() -> httpx.Client:
         _CLIENT = httpx.Client(
             http2=True,
             limits=httpx.Limits(
-                max_connections=50,
-                max_keepalive_connections=20,
-                keepalive_expiry=30.0,
+                max_connections=20,
+                max_keepalive_connections=10,
+                keepalive_expiry=60.0,
             ),
             headers={'User-Agent': 'brown_u_library_fast_lookup_1.0'},
         )
@@ -54,12 +53,13 @@ def call_oclc_fastapi(param: str) -> dict:
     """
     compute a per-request timeout bounded by the remaining budget
     """
-    total_timeout: float = 3.0
-    io_timeout: float = 2.0
-    deadline: float = time.monotonic() + total_timeout
-    remaining: float = max(0.1, deadline - time.monotonic())
-    per_req: float = min(io_timeout, remaining)
-    timeout = httpx.Timeout(connect=per_req, read=per_req, write=per_req, pool=per_req)
+    # total_timeout: float = 3.0
+    # io_timeout: float = 2.0
+    # deadline: float = time.monotonic() + total_timeout
+    # remaining: float = max(0.1, deadline - time.monotonic())
+    # per_req: float = min(io_timeout, remaining)
+    # timeout = httpx.Timeout(connect=per_req, read=per_req, write=per_req, pool=per_req)
+    timeout = httpx.Timeout(connect=0.4, read=0.8, write=0.4, pool=0.2)
 
     ## prepare client -----------------------------------------------
     client: httpx.Client = get_client()
