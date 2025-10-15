@@ -30,7 +30,7 @@ def get_client() -> httpx.Client:
     return _CLIENT
 
 
-def prep_url_params() -> tuple[str, dict]:
+def prep_url_params(param: str) -> tuple[str, dict]:
     """
     Prepares the url and params for the OCLC FastAPI service.
     Returns a tuple of (url, params).
@@ -49,24 +49,10 @@ def prep_url_params() -> tuple[str, dict]:
     return (url, params)
 
 
-def call_oclc_fastapi(param: str) -> dict:
+def make_request(client: httpx.Client, request: httpx.Request) -> dict:
     """
-    Calls the OCLC FastAPI service with the given string.
-    Returns the json response.
-    Called by... TBD.
+    Sends the request and returns JSON, handling errors gracefully.
     """
-    log.debug('starting call_oclc_fastapi()')
-
-    ## prep url and params ------------------------------------------
-    (url, params) = prep_url_params()  # (str, dict)
-
-    ## prepare client -----------------------------------------------
-    client: httpx.Client = get_client()
-    timeout = httpx.Timeout(connect=0.4, read=0.8, write=0.4, pool=0.2)
-    request: httpx.Request = client.build_request('GET', url, params=params, timeout=timeout)
-    log.debug(f'final url, ``{request.url}``')
-
-    ## make request -------------------------------------------------
     try:
         response: httpx.Response = client.send(request)
         log.debug(f'response.http_version, ``{response.http_version}``')
@@ -74,7 +60,6 @@ def call_oclc_fastapi(param: str) -> dict:
             log.warning(f'non-200 from OCLC FastAPI: {response.status_code}')
             return {"response": {"docs": []}}
 
-        ## process response ---------------------------------------------
         return_val: dict = response.json()
         log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
         return return_val
@@ -87,3 +72,25 @@ def call_oclc_fastapi(param: str) -> dict:
     except ValueError as exc:
         log.warning(f'error parsing JSON from OCLC FastAPI: {exc}')
         return {"response": {"docs": []}}
+
+
+def call_oclc_fastapi(param: str) -> dict:
+    """
+    Calls the OCLC FastAPI service with the given string.
+    Returns the json response.
+    Called by... TBD.
+    """
+    log.debug('starting call_oclc_fastapi()')
+
+    ## prep url and params ------------------------------------------
+    (url, params) = prep_url_params(param)  # (str, dict)
+
+    ## prepare client -----------------------------------------------
+    client: httpx.Client = get_client()
+    timeout = httpx.Timeout(connect=0.4, read=0.8, write=0.4, pool=0.2)
+    request: httpx.Request = client.build_request('GET', url, params=params, timeout=timeout)
+    log.debug(f'final url, ``{request.url}``')
+
+    ## make request -------------------------------------------------
+    response_json: dict = make_request(client, request)
+    return response_json
