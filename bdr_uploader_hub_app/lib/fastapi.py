@@ -30,6 +30,25 @@ def get_client() -> httpx.Client:
     return _CLIENT
 
 
+def prep_url_params() -> tuple[str, dict]:
+    """
+    Prepares the url and params for the OCLC FastAPI service.
+    Returns a tuple of (url, params).
+    Called by... TBD.
+    """
+    log.debug('starting prep_url_params()')
+    url: str = 'https://fast.oclc.org/searchfast/fastsuggest'
+    log.debug(f'url, ``{url}``')
+    params: dict = {
+        'query': param,
+        'queryIndex': 'suggestall',
+        'queryReturn': 'idroot,auth,type,suggestall',
+        'suggest': 'autoSubject',
+    }
+    log.debug(f'params, ``{pprint.pformat(params)}``')
+    return (url, params)
+
+
 def call_oclc_fastapi(param: str) -> dict:
     """
     Calls the OCLC FastAPI service with the given string.
@@ -39,30 +58,11 @@ def call_oclc_fastapi(param: str) -> dict:
     log.debug('starting call_oclc_fastapi()')
 
     ## prep url and params ------------------------------------------
-    url = 'https://fast.oclc.org/searchfast/fastsuggest'
-    log.debug(f'url, ``{url}``')
-    params = {
-        'query': param,
-        'queryIndex': 'suggestall',
-        'queryReturn': 'idroot,auth,type,suggestall',
-        'suggest': 'autoSubject',
-    }
-    log.debug(f'params, ``{pprint.pformat(params)}``')
-
-    ## prep timeout -------------------------------------------------
-    """
-    compute a per-request timeout bounded by the remaining budget
-    """
-    # total_timeout: float = 3.0
-    # io_timeout: float = 2.0
-    # deadline: float = time.monotonic() + total_timeout
-    # remaining: float = max(0.1, deadline - time.monotonic())
-    # per_req: float = min(io_timeout, remaining)
-    # timeout = httpx.Timeout(connect=per_req, read=per_req, write=per_req, pool=per_req)
-    timeout = httpx.Timeout(connect=0.4, read=0.8, write=0.4, pool=0.2)
+    (url, params) = prep_url_params()  # (str, dict)
 
     ## prepare client -----------------------------------------------
     client: httpx.Client = get_client()
+    timeout = httpx.Timeout(connect=0.4, read=0.8, write=0.4, pool=0.2)
     request: httpx.Request = client.build_request('GET', url, params=params, timeout=timeout)
     log.debug(f'final url, ``{request.url}``')
 
