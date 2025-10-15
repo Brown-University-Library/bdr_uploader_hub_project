@@ -1,5 +1,7 @@
 """
-Contains functions for calling and processing the OCLC FastAPI service."
+Contains functions for calling and processing the OCLC FastAPI service.
+
+Helper functions are followed by the manager function that calls them.
 """
 
 import logging
@@ -12,9 +14,15 @@ log = logging.getLogger(__name__)
 _CLIENT: httpx.Client | None = None
 
 
+## helper functions -------------------------------------------------
+
+
 def get_client() -> httpx.Client:
     """
     Return a process-wide httpx.Client with pooling enabled.
+
+    The `limits` are optimized for the purpose of receiving quick inputs of letters from a web keyword form,
+      and take into account that the OCLC FastAPI service tends to respond quickly, and uses HTTP/2.
     """
     global _CLIENT
     if _CLIENT is None:
@@ -59,7 +67,6 @@ def make_request(client: httpx.Client, request: httpx.Request) -> dict:
         if response.status_code != 200:
             log.warning(f'non-200 from OCLC FastAPI: {response.status_code}')
             return {'response': {'docs': []}}
-
         return_val: dict = response.json()
         log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
         return return_val
@@ -82,6 +89,9 @@ def parse_response(response_dict: dict) -> dict:
     """
     log.debug('starting parse_response()')
     return response_dict
+
+
+## manager function -------------------------------------------------
 
 
 def manage_oclc_fastapi_call(param: str) -> dict:
