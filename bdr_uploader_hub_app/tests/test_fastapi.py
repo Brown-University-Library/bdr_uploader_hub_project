@@ -27,7 +27,7 @@ class FakeHttpxClient(httpx.Client):
         self.last_request = req
         return req
 
-    def send(self, request: httpx.Request):
+    def send(self, request: httpx.Request) -> httpx.Response:
         # Overridden per-test via monkeypatch or by replacing the method
         raise NotImplementedError
 
@@ -82,9 +82,17 @@ class TestGetClient(unittest.TestCase):
 
 
 class TestManageCall(unittest.TestCase):
+    """
+    How the @patch() decorator works...
+    - It temporarily replaces `lib.fastapi.get_client` with a MagicMock.
+    - A MagicMock is a flexible mock object that records calls and simulates behaviors.
+    - The MagicMock is passed as the `mock_get_client` argument to the test function.
+    - We
+    """
+
     @patch('bdr_uploader_hub_app.lib.fastapi.get_client')
     def test_manage_oclc_fastapi_call_success(self, mock_get_client: MagicMock):
-        # Arrange fake client with controlled behavior
+        ## setup fake client with controlled behavior ---------------
         fake_httpx_client = FakeHttpxClient()
 
         def send_ok(request):
