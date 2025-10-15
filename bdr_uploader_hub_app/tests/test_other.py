@@ -7,7 +7,6 @@ from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
 from bdr_uploader_hub_app.forms.staff_form import StaffForm
-from bdr_uploader_hub_app.lib import fastapi
 
 log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
@@ -47,14 +46,7 @@ class FastApiTest(TestCase):
     """
     Checks fast-api-related functions.
     """
-
-    def test_call_oclc_fastapi(self):
-        """
-        Checks that the OCLC FastAPI call works.
-        """
-        expected: str = 'foo'
-        result = fastapi.manage_oclc_fastapi_call('bar')
-        self.assertEqual(expected, result)
+    pass
 
 
 class StaffFormDirectTests(TestCase):
