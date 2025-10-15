@@ -28,7 +28,7 @@ llm_code_directives = [
   "structure scripts with `if __name__ == '__main__': main()`",
   "keep main() as simple as possible; delegate to helper functions",
   "for tests, use standard unittest framework, not pytest",
-  "to run tests, always use `uv`; example: `uv run -m unittest discover -v`",
+  "to run tests, always use `uv`; example: `uv run ./manage.py test`",
   "use httpx for all HTTP calls",
   "don't use functions within functions",
   "prefer single-return functions",
