@@ -2,6 +2,15 @@
 Contains functions for calling and processing the OCLC FastAPI service.
 
 Helper functions are followed by the manager function that calls them.
+
+Possible TODOs:
+- add tests for all functions where possible.
+- move timeout values to settings
+- move "limits" to settings
+- move "User-Agent" to settings
+- since the base url and most of the params are constant -- consider refactoring to not recreate them each time.
+    Maybe in class.
+- consider adding a month-long cache to avoid network calls for common queries.
 """
 
 import logging
