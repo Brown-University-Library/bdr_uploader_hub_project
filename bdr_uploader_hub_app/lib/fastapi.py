@@ -67,11 +67,23 @@ def call_oclc_fastapi(param: str) -> dict:
     log.debug(f'final url, ``{request.url}``')
 
     ## make request -------------------------------------------------
-    response: httpx.Response = client.send(request)
-    log.debug(f'response.http_version, ``{response.http_version}``')
+    try:
+        response: httpx.Response = client.send(request)
+        log.debug(f'response.http_version, ``{response.http_version}``')
+        if response.status_code != 200:
+            log.warning(f'non-200 from OCLC FastAPI: {response.status_code}')
+            return {"response": {"docs": []}}
 
-    ## process response ---------------------------------------------
-    return_val: dict = response.json()
-    log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
-
-    return return_val
+        ## process response ---------------------------------------------
+        return_val: dict = response.json()
+        log.debug(f'return_val, ``{pprint.pformat(return_val)}``')
+        return return_val
+    except httpx.TimeoutException as exc:
+        log.warning(f'timeout calling OCLC FastAPI: {exc}')
+        return {"response": {"docs": []}}
+    except httpx.RequestError as exc:
+        log.warning(f'request error calling OCLC FastAPI: {exc}')
+        return {"response": {"docs": []}}
+    except ValueError as exc:
+        log.warning(f'error parsing JSON from OCLC FastAPI: {exc}')
+        return {"response": {"docs": []}}
