@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import httpx
 
@@ -17,7 +17,7 @@ class TestPrepUrlParams(unittest.TestCase):
         self.assertEqual(params.get('suggest'), 'autoSubject')
 
 
-class FakeClient:
+class FakeHttpxClient(httpx.Client):
     def __init__(self):
         self.last_request = None
 
@@ -34,19 +34,19 @@ class FakeClient:
 
 class TestMakeRequest(unittest.TestCase):
     def test_make_request_success(self):
-        client = FakeClient()
-        req = client.build_request('GET', 'https://example.org/')
+        fake_httpx_client = FakeHttpxClient()
+        req = fake_httpx_client.build_request('GET', 'https://example.org/')
         payload = {'response': {'docs': [{'auth': 'X'}]}}
 
         def send_ok(request):
             return httpx.Response(status_code=200, request=request, json=payload)
 
-        client.send = send_ok
-        result = fastapi.make_request(client, req)
+        fake_httpx_client.send = send_ok
+        result = fastapi.make_request(fake_httpx_client, req)
         self.assertEqual(result, payload)
 
     def test_make_request_non_200(self):
-        client = FakeClient()
+        client = FakeHttpxClient()
         req = client.build_request('GET', 'https://example.org/')
 
         def send_500(request):
@@ -57,7 +57,7 @@ class TestMakeRequest(unittest.TestCase):
         self.assertEqual(result, {'response': {'docs': []}})
 
     def test_make_request_timeout(self):
-        client = FakeClient()
+        client = FakeHttpxClient()
         req = client.build_request('GET', 'https://example.org/')
 
         def send_timeout(request):
@@ -83,9 +83,9 @@ class TestGetClient(unittest.TestCase):
 
 class TestManageCall(unittest.TestCase):
     @patch('bdr_uploader_hub_app.lib.fastapi.get_client')
-    def test_manage_oclc_fastapi_call_success(self, mock_get_client):
+    def test_manage_oclc_fastapi_call_success(self, mock_get_client: MagicMock):
         # Arrange fake client with controlled behavior
-        client = FakeClient()
+        fake_httpx_client = FakeHttpxClient()
 
         def send_ok(request):
             # Assert URL looks like the OCLC endpoint with query params
@@ -94,8 +94,8 @@ class TestManageCall(unittest.TestCase):
             payload = {'response': {'docs': [{'auth': 'Bar'}]}}
             return httpx.Response(status_code=200, request=request, json=payload)
 
-        client.send = send_ok
-        mock_get_client.return_value = client
+        fake_httpx_client.send = send_ok
+        mock_get_client.return_value = fake_httpx_client
 
         # Act
         result = fastapi.manage_oclc_fastapi_call('bar')
