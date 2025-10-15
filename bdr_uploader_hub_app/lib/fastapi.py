@@ -51,7 +51,7 @@ def prep_url_params(param: str) -> tuple[str, dict]:
 
 def make_request(client: httpx.Client, request: httpx.Request) -> dict:
     """
-    Sends the request and returns JSON, handling errors gracefully.
+    Sends the request and returns response-dict, handling errors gracefully.
     """
     try:
         response: httpx.Response = client.send(request)
@@ -74,13 +74,23 @@ def make_request(client: httpx.Client, request: httpx.Request) -> dict:
         return {'response': {'docs': []}}
 
 
+def parse_response(response_dict: dict) -> dict:
+    """
+    Parses the response-dict from the OCLC FastAPI service.
+    Returns the parsed response-dict.
+    Called by... TBD.
+    """
+    log.debug('starting parse_response()')
+    return response_dict
+
+
 def manage_oclc_fastapi_call(param: str) -> dict:
     """
-    Calls the OCLC FastAPI service with the given string.
+    Manager function -- Calls the OCLC FastAPI service with the given query-string.
     Returns the json response.
     Called by... TBD.
     """
-    log.debug('starting call_oclc_fastapi()')
+    log.debug('starting manage_oclc_fastapi_call()')
 
     ## prep url and params ------------------------------------------
     (url, params) = prep_url_params(param)  # (str, dict)
@@ -92,5 +102,10 @@ def manage_oclc_fastapi_call(param: str) -> dict:
     log.debug(f'final url, ``{request.url}``')
 
     ## make request -------------------------------------------------
-    response_json: dict = make_request(client, request)
-    return response_json
+    response_dict: dict = make_request(client, request)
+
+    ## parse response -----------------------------------------------
+    parsed_response: dict = parse_response(response_dict)
+
+    ## return -------------------------------------------------------
+    return parsed_response
