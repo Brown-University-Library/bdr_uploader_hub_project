@@ -9,7 +9,7 @@ Four things:
 
 the htmx requirement -- more info
 
-In the student-form django template, if the form will display the keyword field, I'd like to add an htmx feature that calls the url ZZZ endpoint with text as the user types. The endpoint will return authority-keyword suggestions that the user should be able to choose, or ignore.
+In the student-form django template, if the form will display the keyword field, I'd like to add an htmx feature that calls the url "check_oclc_fastapi" endpoint with text as the user types. The endpoint will return authority-keyword suggestions that the user should be able to choose, or ignore.
 
 But one additional feature...
 
