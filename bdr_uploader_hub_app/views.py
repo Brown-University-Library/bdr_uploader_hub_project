@@ -659,6 +659,12 @@ def hlpr_check_name_and_slug(request) -> HttpResponse | JsonResponse:
     return response
 
 
+def check_oclc_fastapi(request) -> HttpResponse:
+    """ """
+    log.debug('\n\nstarting check_oclc_fastapi()')
+    return HttpResponse('check_oclc_fastapi implementation coming')
+
+
 # -------------------------------------------------------------------
 # support urls
 # -------------------------------------------------------------------

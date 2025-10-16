@@ -21,6 +21,7 @@ urlpatterns = [
     ## htmx helpers -------------------------------------------------
     path('hlpr_generate_slug/', views.hlpr_generate_slug, name='hlpr_generate_slug_url'),
     path('hlpr_check_name_and_slug/', views.hlpr_check_name_and_slug, name='hlpr_check_name_and_slug_url'),
+    path('check_oclc_fastapi/', views.check_oclc_fastapi, name='check_oclc_fastapi_url'),  # for student upload-form
     ## other --------------------------------------------------------
     path('', views.root, name='root_url'),
     path('admin/', admin.site.urls),
