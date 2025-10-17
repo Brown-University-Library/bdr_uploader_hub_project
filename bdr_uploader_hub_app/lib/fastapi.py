@@ -90,14 +90,44 @@ def make_request(client: httpx.Client, request: httpx.Request) -> dict:
         return {'response': {'docs': []}}
 
 
-def parse_response(response_dict: dict) -> dict:
+def parse_response(response_dict: dict) -> list[dict[str, str]]:
     """
-    Parses the response-dict from the OCLC FastAPI service.
-    Returns the parsed response-dict.
-    Called by... TBD.
+    Parses OCLC FAST Suggest response into a normalized suggestions list.
+
+    Returns a list of dicts: [{'label': str, 'fast_id': str, 'type': str}, ...].
     """
     log.debug('starting parse_response()')
-    return response_dict
+    docs = response_dict.get('response', {}).get('docs', [])
+    if not isinstance(docs, list):
+        return []
+
+    suggestions: list[dict[str, str]] = []
+    for doc in docs:
+        if not isinstance(doc, dict):
+            continue
+        raw_id = doc.get('idroot', '')
+        fast_id = str(raw_id).strip() if raw_id is not None else ''
+        # Prefer 'auth'; fall back to 'suggestall'
+        raw_auth = doc.get('auth', '')
+        if isinstance(raw_auth, list):
+            label = str(raw_auth[0]).strip() if raw_auth else ''
+        else:
+            label = str(raw_auth).strip() if raw_auth is not None else ''
+        if not label:
+            raw_suggest = doc.get('suggestall', '')
+            if isinstance(raw_suggest, list):
+                label = str(raw_suggest[0]).strip() if raw_suggest else ''
+            else:
+                label = str(raw_suggest).strip() if raw_suggest is not None else ''
+        raw_type = doc.get('type', '')
+        if isinstance(raw_type, list):
+            type_val = str(raw_type[0]).strip() if raw_type else ''
+        else:
+            type_val = str(raw_type).strip() if raw_type is not None else ''
+        if label and fast_id:
+            suggestions.append({'label': label, 'fast_id': fast_id, 'type': type_val})
+    log.debug(f'normalized suggestions, ``{pprint.pformat(suggestions)}``')
+    return suggestions
 
 
 ## manager function -------------------------------------------------
@@ -124,7 +154,7 @@ def manage_oclc_fastapi_call(param: str) -> dict:
     response_dict: dict = make_request(httpx_client, request)
 
     ## parse response -----------------------------------------------
-    parsed_response: dict = parse_response(response_dict)
+    parsed_response: dict = {'suggestions': parse_response(response_dict)}
 
     ## return -------------------------------------------------------
     return parsed_response
