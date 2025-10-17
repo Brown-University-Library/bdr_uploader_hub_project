@@ -1,7 +1,7 @@
 # OCLC FAST Suggest Integration: Implementation Plan
 
 ## Summary
-Implement live authority-term suggestions for the student upload form's `keywords` field using htmx calling the existing Django endpoint `check_oclc_fastapi_url`. The UI must support multiple keywords in a single input separated by pipes (`|`). Only the last segment (text after the last `|`) will be sent to the suggest endpoint as the query; selecting a suggestion replaces only that last segment, preserving earlier segments.
+Implement live authority-term suggestions for the student upload form's `keywords` field using htmx calling the existing Django endpoint `check_oclc_fastapi_url`. The UI must support multiple keywords in a single input separated by pipes (`|`). The query for suggestions uses the active segment: if there is no `|`, use the entire input; if there is one or more `|`, use only the text after the last `|` (trimmed). Selecting a suggestion replaces only that last segment, preserving earlier segments.
 
 This plan only describes changes and the sequence. No code is included in this document.
 
@@ -30,7 +30,7 @@ Impact: We will keep helpers in `bdr_uploader_hub_app/lib/fastapi.py` typed, con
 ## Requirements recap
 - As a user types in the single `keywords` input, call `check_oclc_fastapi_url` to retrieve authority-term suggestions.
 - The input allows multiple keywords separated by pipes: `economic development | world bank`.
-- Only the text after the last pipe character (trimmed) should be used for autosuggest requests.
+- Use the active segment for autosuggest requests: if the input has no `|`, use the entire value; otherwise use only the text after the last `|` (trimmed).
 - Selecting a suggestion replaces only the final segment after the last pipe, preserving earlier segments.
 - User may choose or ignore suggestions.
 - Good UX: debounce, cancel stale requests, show a spinner, accessible list.
@@ -38,7 +38,7 @@ Impact: We will keep helpers in `bdr_uploader_hub_app/lib/fastapi.py` typed, con
 
 ## Design overview
 - Keep the visible input as the authoritative form field (`#id_keywords`).
-- Add a hidden input `name="q"` used only for the suggest endpoint; update it on every keystroke to the last segment of `#id_keywords`.
+- Add a hidden input `name="q"` used only for the suggest endpoint; keep it in sync with the last segment of `#id_keywords`, but trigger network requests only after a debounce (e.g., 300–400 ms of inactivity) and when the segment length meets a minimum (e.g., 2+ chars).
 - Trigger htmx requests on input with a debounce. Use `hx-sync="this:replace"` to abort in-flight requests.
 - Restrict params to only `q` for the suggest endpoint via `hx-params`.
 - Render results into a dedicated suggestions container below the field.
