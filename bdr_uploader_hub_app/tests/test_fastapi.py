@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import httpx
+from django.test import TestCase
 
 from bdr_uploader_hub_app.lib import fastapi
 
@@ -69,9 +70,30 @@ class TestMakeRequest(unittest.TestCase):
 
 
 class TestParseResponse(unittest.TestCase):
-    def test_parse_identity(self):
-        data = {'response': {'docs': []}}
-        self.assertEqual(fastapi.parse_response(data), data)
+    def test_parse_normalizes(self):
+        data = {
+            'response': {
+                'docs': [
+                    {'idroot': '123', 'auth': 'World Bank', 'type': 'topic'},
+                    {'idroot': 456, 'auth': ['Economics'], 'type': ['topic']},
+                    {'idroot': '789', 'suggestall': ['Fallback Label'], 'type': ''},
+                    {'idroot': '', 'auth': 'No ID should be dropped'},
+                    'not a dict',
+                ]
+            }
+        }
+        result = fastapi.parse_response(data)
+        self.assertIsInstance(result, list)
+        # Should keep only entries with label and fast_id
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result[0]['label'], 'World Bank')
+        self.assertEqual(result[0]['fast_id'], '123')
+        self.assertEqual(result[0]['type'], 'topic')
+        self.assertEqual(result[1]['label'], 'Economics')
+        self.assertEqual(result[1]['fast_id'], '456')
+        self.assertEqual(result[1]['type'], 'topic')
+        self.assertEqual(result[2]['label'], 'Fallback Label')
+        self.assertEqual(result[2]['fast_id'], '789')
 
 
 class TestGetClient(unittest.TestCase):
@@ -99,7 +121,7 @@ class TestManageCall(unittest.TestCase):
             # Assert URL looks like the OCLC endpoint with query params
             self.assertIn('fast.oclc.org/searchfast/fastsuggest', str(request.url))
             self.assertIn('query=bar', str(request.url))
-            payload = {'response': {'docs': [{'auth': 'Bar'}]}}
+            payload = {'response': {'docs': [{'idroot': '1', 'auth': 'Bar', 'type': 'topic'}]}}
             return httpx.Response(status_code=200, request=request, json=payload)
 
         fake_httpx_client.send = send_ok
@@ -110,8 +132,31 @@ class TestManageCall(unittest.TestCase):
 
         # Assert
         self.assertIsInstance(result, dict)
-        self.assertIn('response', result)
-        self.assertIn('docs', result['response'])
+        self.assertIn('suggestions', result)
+        self.assertEqual(len(result['suggestions']), 1)
+        self.assertEqual(result['suggestions'][0]['label'], 'Bar')
+
+
+class TestCheckOclcFastApiView(TestCase):
+    def test_short_query_returns_prompt(self):
+        resp = self.client.get('/check_oclc_fastapi/', {'q': 'a'})
+        self.assertEqual(200, resp.status_code)
+        self.assertIn('Type at least 2 characters', resp.content.decode('utf-8'))
+
+    @patch('bdr_uploader_hub_app.views.manage_oclc_fastapi_call')
+    def test_view_returns_suggestions(self, mock_mgr):
+        mock_mgr.return_value = {
+            'suggestions': [
+                {'label': 'World Bank', 'fast_id': '123', 'type': 'topic'},
+                {'label': 'Economics', 'fast_id': '456', 'type': 'topic'},
+            ]
+        }
+        resp = self.client.get('/check_oclc_fastapi/', {'q': 'world'})
+        self.assertEqual(200, resp.status_code)
+        text = resp.content.decode('utf-8')
+        self.assertIn('World Bank', text)
+        self.assertIn('FAST 123', text)
+        self.assertIn('Economics', text)
 
 
 if __name__ == '__main__':
