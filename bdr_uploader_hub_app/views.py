@@ -19,6 +19,7 @@ from django.utils import text
 from bdr_uploader_hub_app.forms.staff_form import StaffForm
 from bdr_uploader_hub_app.forms.student_form import make_student_form_class
 from bdr_uploader_hub_app.lib import config_new_helper, uploaded_file_handler, version_helper
+from bdr_uploader_hub_app.lib.fastapi import manage_oclc_fastapi_call
 from bdr_uploader_hub_app.lib.shib_handler import shib_decorator
 from bdr_uploader_hub_app.lib.version_helper import GatherCommitAndBranchData
 from bdr_uploader_hub_app.models import AppConfig, Submission
@@ -660,9 +661,34 @@ def hlpr_check_name_and_slug(request) -> HttpResponse | JsonResponse:
 
 
 def check_oclc_fastapi(request) -> HttpResponse:
-    """ """
+    """Return an HTML partial list of OCLC FAST suggestions for the keywords field."""
     log.debug('\n\nstarting check_oclc_fastapi()')
-    return HttpResponse('check_oclc_fastapi implementation coming')
+    q: str = request.GET.get('q', '').strip()
+    log.debug(f'q, ``{q}``')
+
+    template_name = 'partials/_keyword_suggestions.html'
+
+    # Short or empty input returns a gentle prompt
+    if len(q) < 2:
+        context = {'suggestions': [], 'prompt': 'Type at least 2 characters'}
+        return render(request, template_name, context)
+
+    # Call manager to fetch suggestions
+    try:
+        result: dict = manage_oclc_fastapi_call(q)
+        suggestions: list[dict[str, str]] = result.get('suggestions', [])
+    except Exception as e:
+        log.warning(f'error in manage_oclc_fastapi_call: {e}')
+        suggestions = []
+
+    # If no results, return a "No suggestions" message
+    if not suggestions:
+        context = {'suggestions': [], 'prompt': 'No suggestions'}
+        return render(request, template_name, context)
+
+    # Otherwise return the suggestions
+    context = {'suggestions': suggestions}
+    return render(request, template_name, context)
 
 
 # -------------------------------------------------------------------
