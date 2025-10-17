@@ -1,0 +1,27 @@
+{% comment %}
+Renders suggestion <li> items for the FAST suggestions listbox.
+Expected context:
+- suggestions: list of {label, fast_id, type}
+- prompt: optional string for status messages
+{% endcomment %}
+
+{% if prompt %}
+<li class="suggestion-prompt" role="option" aria-disabled="true">
+  <span>{{ prompt }}</span>
+</li>
+{% elif suggestions %}
+  {% for s in suggestions %}
+  <li role="option">
+    <button type="button"
+            class="keyword-suggestion"
+            data-text="{{ s.label }}"
+            hx-on:click="BDRKeywords.replaceLastSegment(document.getElementById('id_keywords'), this.dataset.text)">
+      {{ s.label }}{% if s.fast_id %} (FAST {{ s.fast_id }}){% endif %}{% if s.type %} — {{ s.type }}{% endif %}
+    </button>
+  </li>
+  {% endfor %}
+{% else %}
+<li class="suggestion-empty" role="option" aria-disabled="true">
+  <span>No suggestions</span>
+</li>
+{% endif %}
