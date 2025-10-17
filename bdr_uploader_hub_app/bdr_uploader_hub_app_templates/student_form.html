@@ -90,6 +90,18 @@
     }
     
 </style>
+<script src="{% static 'bdr_student_uploader_hub_app/js/keywords.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var kw = document.getElementById('id_keywords');
+    var q = document.getElementById('id_keyword_q');
+    if (kw && q && window.BDRKeywords) {
+      function updateQ() { q.value = window.BDRKeywords.lastSegment(kw.value || ''); }
+      updateQ();
+      kw.addEventListener('input', updateQ);
+    }
+  });
+</script>
 {% endblock header_other %}
 
 {% block main_content %}
@@ -313,8 +325,20 @@
         <div class="form-section">
             <h3>Other Info</h3>
             {% if form.keywords %}
-            <div class="form-group">
+            <div class="form-group" id="keywords_group">
                 {{ form.keywords.label_tag }} {{ form.keywords }}
+                <input type="hidden" name="q" id="id_keyword_q" value="">
+                <div id="keyword-hx-wrapper"
+                     hx-get="{% url 'check_oclc_fastapi_url' %}"
+                     hx-trigger="input from:#id_keywords changed delay:350ms, keyup[key=='Enter'] from:#id_keywords"
+                     hx-indicator=".keyword-spinner"
+                     hx-target="#keyword-suggestions"
+                     hx-include="#id_keyword_q"
+                     hx-params="q"
+                     hx-sync="this:replace">
+                    <div class="keyword-spinner htmx-indicator" aria-hidden="true" style="display:none">Searching…</div>
+                    <ul id="keyword-suggestions" role="listbox" aria-label="FAST suggestions"></ul>
+                </div>
                 {% if form.keywords.help_text %}
                 <div class="label-container">
                     <p id="id_keywords_helptext" class="help">{{ form.keywords.help_text|safe }}</p>
