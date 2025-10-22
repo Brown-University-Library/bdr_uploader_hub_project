@@ -95,10 +95,48 @@
   document.addEventListener('DOMContentLoaded', function () {
     var kw = document.getElementById('id_keywords');
     var q = document.getElementById('id_keyword_q');
+    var sug = document.getElementById('keyword-suggestions');
     if (kw && q && window.BDRKeywords) {
+      var inactivityTimer = null;
+
       function updateQ() { q.value = window.BDRKeywords.lastSegment(kw.value || ''); }
+      function clearSuggestions() { if (sug) { sug.innerHTML = ''; } }
+      function resetInactivityTimer() {
+        if (inactivityTimer) { clearTimeout(inactivityTimer); }
+        inactivityTimer = setTimeout(function () { clearSuggestions(); }, 3000);
+      }
+
+      // Initialize hidden query value
       updateQ();
-      kw.addEventListener('input', updateQ);
+
+      // On input: update hidden query and (re)start inactivity timer
+      kw.addEventListener('input', function () {
+        updateQ();
+        resetInactivityTimer();
+      });
+
+      // On blur (e.g., tabbing out), hide suggestions immediately
+      kw.addEventListener('blur', function () {
+        // Use a timeout to allow click events on suggestions to process first if any
+        setTimeout(clearSuggestions, 0);
+      });
+
+      // After clicking a suggestion item, hide the list
+      if (sug) {
+        sug.addEventListener('click', function () {
+          // Defer to allow any replacement logic to run first
+          setTimeout(clearSuggestions, 0);
+        });
+      }
+
+      // When htmx swaps in new suggestions, restart inactivity timer
+      document.body.addEventListener('htmx:afterSwap', function (evt) {
+        try {
+          if (evt && evt.detail && evt.detail.elt && evt.detail.elt.id === 'keyword-suggestions') {
+            resetInactivityTimer();
+          }
+        } catch (e) { /* ignore */ }
+      });
     }
   });
 </script>
