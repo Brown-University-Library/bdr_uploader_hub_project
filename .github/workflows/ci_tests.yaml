@@ -3,14 +3,23 @@ name: ci-tests-yaml
 on:
   push:
     branches: [ main ]
+
   pull_request:
     branches: [ main ]
+
+  ## enables manual runs from any branch without a PR; minimal notifications.
   workflow_dispatch:
     inputs:
       run_merge_sim:
         description: 'Simulate PR by merging main before tests?'
         type: boolean
         default: true
+
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 
 jobs:
 
@@ -20,6 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ## full history so we can merge main when simulating PRs
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
