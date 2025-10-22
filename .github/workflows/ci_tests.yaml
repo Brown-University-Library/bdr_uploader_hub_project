@@ -5,6 +5,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      run_merge_sim:
+        description: 'Simulate PR by merging main before tests?'
+        type: boolean
+        default: true
 
 jobs:
 
@@ -25,6 +31,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version-file: "pyproject.toml"
+
+      - name: Simulate PR merge with main (non-PR runs)
+        if: ${{ github.event_name != 'pull_request' && (github.event.inputs.run_merge_sim != 'false') }}
+        run: |
+          git fetch origin main
+          git merge --no-ff --no-edit origin/main
 
       - name: Install dependencies
         run: uv sync --locked 
