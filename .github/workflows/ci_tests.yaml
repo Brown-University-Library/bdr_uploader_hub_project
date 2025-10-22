@@ -1,11 +1,10 @@
-# .github/workflows/ci-tests.yml
 name: ci-tests-yaml
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
-
-  # Manual runs from any branch; no PR created, minimal notifications.
   workflow_dispatch:
     inputs:
       run_merge_sim:
@@ -13,28 +12,15 @@ on:
         type: boolean
         default: true
 
-  # (Optional) uncomment if you also want "push to sandbox branches" to run CI
-  # push:
-  #   branches:
-  #     - main
-  #     - ci-sandbox/**
-
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
+
   build:
     name: continuous_integration
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Full history so we can merge main when simulating PRs
-          fetch-depth: 0
 
-      # --- Python + uv setup (kept close to your original) ---
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
@@ -44,10 +30,8 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          # Uses your pinned version from pyproject.toml
           python-version-file: "pyproject.toml"
 
-      # --- (Optional but recommended) simulate the PR merge locally for non-PR runs ---
       - name: Simulate PR merge with main (non-PR runs)
         if: ${{ github.event_name != 'pull_request' && (github.event.inputs.run_merge_sim != 'false') }}
         run: |
@@ -55,7 +39,7 @@ jobs:
           git merge --no-ff --no-edit origin/main
 
       - name: Install dependencies
-        run: uv sync --locked
+        run: uv sync --locked 
 
       - name: Run tests
         run: uv run ./run_tests.py
