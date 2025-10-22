@@ -6,13 +6,20 @@ on:
 
   pull_request:
     branches: [ main ]
-    
+
+  ## enables manual runs from any branch without a PR; minimal notifications.
   workflow_dispatch:
     inputs:
       run_merge_sim:
         description: 'Simulate PR by merging main before tests?'
         type: boolean
         default: true
+
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 
 jobs:
 
@@ -22,6 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ## full history so we can merge main when simulating PRs
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -37,7 +47,7 @@ jobs:
       - name: Simulate PR merge with main (non-PR runs)
         if: ${{ github.event_name != 'pull_request' && (github.event.inputs.run_merge_sim != 'false') }}
         run: |
-          git fetch origin main --allow-unrelated-histories
+          git fetch origin main
           git merge --no-ff --no-edit origin/main
 
       - name: Install dependencies
