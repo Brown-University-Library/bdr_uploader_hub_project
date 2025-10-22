@@ -1,5 +1,5 @@
 # .github/workflows/ci-tests.yml
-name: CI Tests
+name: ci-tests-yaml
 
 on:
   pull_request:
