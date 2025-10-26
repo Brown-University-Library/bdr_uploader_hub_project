@@ -44,6 +44,12 @@ jobs:
         with:
           python-version-file: "pyproject.toml"
 
+      - name: Configure git identity (for merge)
+        if: ${{ github.event_name != 'pull_request' && (github.event.inputs.run_merge_sim != 'false') }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Simulate PR merge with main (non-PR runs)
         if: ${{ github.event_name != 'pull_request' && (github.event.inputs.run_merge_sim != 'false') }}
         run: |
@@ -54,4 +60,6 @@ jobs:
         run: uv sync --locked 
 
       - name: Run tests
-        run: uv run ./run_tests.py
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings_run_tests
+        run: uv run ./manage.py test
