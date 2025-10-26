@@ -28,7 +28,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           ## full history so we can merge main when simulating PRs
           fetch-depth: 0
@@ -88,6 +89,8 @@ jobs:
 #
 # concurrency:
 #   group: ci-${{ github.workflow }}-${{ github.ref }}
+#     - Defines the concurrency "group key". Any runs that share this exact 
+#       key are considered mutually exclusive.
 #   cancel-in-progress: true
 #     - Ensures only one run per workflow/ref combination; newer runs cancel
 #       any previous in-progress run to save CI resources.
@@ -99,22 +102,26 @@ jobs:
 #       installation, and test execution on Ubuntu.
 #
 # steps:
-#   - actions/checkout@v4 (fetch-depth: 0)
-#       Fetches the full git history so we can merge main when simulating PRs.
+#   - Checkout code
+#     - "v4" is the version of the GitHub checkout action.
+#     - "fetch-depth: 0" ensures we get the full git history, which is needed
+#       for simulating PR merges.
 #
-#   - astral-sh/setup-uv@v6
-#       Installs uv (version 0.8.0) and enables caching to speed up installs.
+#   - Install uv
+#     - "v6" is the version of the GitHub setup-uv action.
+#     - Installs uv (version 0.8.0) and enables caching to speed up installs.
 #
-#   - actions/setup-python@v5
-#       Selects the Python version declared in pyproject.toml via
+#   - Setup Python
+#     - Selects the Python version declared in pyproject.toml via
 #       python-version-file, ensuring local and CI Python versions match.
 #
 #   - Configure git identity (for merge)
-#       Only on non-PR runs and when run_merge_sim is not 'false'. Sets a bot
-#       identity required by git for creating merge commits.
+#     - Ensures step only runs on non-PR runs and when run_merge_sim is not 
+#       'false'. Sets a bot identity required by git for creating merge 
+#       commits.
 #
 #   - Simulate PR merge with main (non-PR runs)
-#       When manually triggered (or other non-PR events), fetches and merges
+#     - When manually triggered (or other non-PR events), fetches and merges
 #       origin/main into the current branch to test the code as it would look
 #       after merging. Helps catch integration issues early.
 #
