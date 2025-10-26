@@ -63,3 +63,67 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: config.settings_run_tests
         run: uv run ./manage.py test
+
+
+# =============================================================================
+# CI WORKFLOW DOCUMENTATION
+# -----------------------------------------------------------------------------
+# name: ci-tests-yaml
+#   - The display name of this workflow in the GitHub Actions UI.
+#   - Note: If you change this, the GitHub Actions UI will continue to display,
+#     as long as the old name is used in any previous runs. You can ddelete
+#     those runs manually, and then the old name will no longer be visible.
+#
+# on:
+#   push: [ main ]
+#     - Run the workflow on any push to the main branch.
+#   pull_request: [ main ]
+#     - Run the workflow for PRs targeting main. GitHub automatically creates
+#       a temporary merge commit for PR runs, so we do NOT perform our manual
+#       merge simulation in this case.
+#   workflow_dispatch:
+#     - Allows manual runs from any branch. Includes an input, run_merge_sim,
+#       to control whether we simulate merging main before tests (default: true).
+#     - Helpful for ad-hoc CI runs without opening a PR.
+#
+# concurrency:
+#   group: ci-${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
+#     - Ensures only one run per workflow/ref combination; newer runs cancel
+#       any previous in-progress run to save CI resources.
+#
+# jobs.build:
+#   name: continuous_integration
+#   runs-on: ubuntu-latest
+#     - Single job that performs checkout, environment setup, dependency
+#       installation, and test execution on Ubuntu.
+#
+# steps:
+#   - actions/checkout@v4 (fetch-depth: 0)
+#       Fetches the full git history so we can merge main when simulating PRs.
+#
+#   - astral-sh/setup-uv@v6
+#       Installs uv (version 0.8.0) and enables caching to speed up installs.
+#
+#   - actions/setup-python@v5
+#       Selects the Python version declared in pyproject.toml via
+#       python-version-file, ensuring local and CI Python versions match.
+#
+#   - Configure git identity (for merge)
+#       Only on non-PR runs and when run_merge_sim is not 'false'. Sets a bot
+#       identity required by git for creating merge commits.
+#
+#   - Simulate PR merge with main (non-PR runs)
+#       When manually triggered (or other non-PR events), fetches and merges
+#       origin/main into the current branch to test the code as it would look
+#       after merging. Helps catch integration issues early.
+#
+#   - Install dependencies
+#       Uses 'uv sync --locked' to create a reproducible environment strictly
+#       from the lockfile.
+#
+#   - Run tests
+#       Exports DJANGO_SETTINGS_MODULE=config.settings_run_tests and runs the
+#       Django test suite with 'uv run ./manage.py test'. This mirrors the
+#       project's recommended local test command.
+# =============================================================================
