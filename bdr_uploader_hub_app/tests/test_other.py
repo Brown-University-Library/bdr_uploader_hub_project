@@ -12,15 +12,6 @@ log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
 
 
-class DummyTempTest(SimpleTestCase):
-    """
-    Dummy test to ensure CI runs successfully.
-    """
-
-    def test_dummy(self):
-        self.assertEqual(1, 1)
-
-
 class ErrorCheckTest(SimpleTestCase):
     """
     Checks urls.
