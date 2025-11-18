@@ -129,6 +129,6 @@ jobs:
 #
 #   - Run tests
 #       Runs the Django test suite via './run_tests.py' using uv:
-#       'uv run python ./run_tests.py'. The script sets
+#       'uv run ./run_tests.py'. The script sets
 #       DJANGO_SETTINGS_MODULE=config.settings_run_tests on GitHub Actions.
 # =============================================================================
