@@ -61,9 +61,7 @@ jobs:
         run: uv sync --locked 
 
       - name: Run tests
-        env:
-          DJANGO_SETTINGS_MODULE: config.settings_run_tests
-        run: uv run ./manage.py test
+        run: uv run ./run_tests.py
 
 
 # =============================================================================
@@ -130,7 +128,7 @@ jobs:
 #       from the lockfile.
 #
 #   - Run tests
-#       Exports DJANGO_SETTINGS_MODULE=config.settings_run_tests and runs the
-#       Django test suite with 'uv run ./manage.py test'. This mirrors the
-#       project's recommended local test command.
+#       Runs the Django test suite via './run_tests.py' using uv:
+#       'uv run python ./run_tests.py'. The script sets
+#       DJANGO_SETTINGS_MODULE=config.settings_run_tests on GitHub Actions.
 # =============================================================================
