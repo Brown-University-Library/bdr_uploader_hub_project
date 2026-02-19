@@ -10,7 +10,7 @@ attrs==25.3.0
     #   trio
 beautifulsoup4==4.13.4
     # via bdr-student-uploader-hub-project (./pyproject.toml)
-certifi==2025.7.14
+certifi==2025.10.5
     # via
     #   httpcore
     #   httpx
