@@ -2,6 +2,9 @@
 Fetches the Brown departments mapping and writes it to a JSON file.
 
 Called by: main()
+
+Usage:
+    uv run --env-file="/path/to/.env" "/path/to/update_department_map.py"
 """
 
 import json
@@ -10,20 +13,22 @@ import pathlib
 
 import httpx
 
-DEPARTMENTS_URL = 'https://repository.library.brown.edu/services/departments-select2/'
 
-
-def fetch_departments_map() -> list[dict[str, object]]:
+def fetch_departments_map(department_map_url: str) -> list[dict[str, object]]:
     """
     Fetches the departments mapping from the Brown repository service.
 
     Called by: main()
     """
-    response = httpx.get(DEPARTMENTS_URL, timeout=30.0)
+    response = httpx.get(department_map_url, timeout=30.0)
     response.raise_for_status()
     data: object = response.json()
+
+    if isinstance(data, dict):
+        data = data.get('results', data.get('items', data.get('data')))
+
     if not isinstance(data, list):
-        msg = f'Expected a list from {DEPARTMENTS_URL}, got {type(data).__name__}'
+        msg = f'Expected a list from {department_map_url}, got {type(data).__name__}'
         raise ValueError(msg)
 
     departments: list[dict[str, object]] = []
@@ -54,13 +59,18 @@ def main() -> None:
 
     Called by: __main__
     """
+    department_map_url = os.environ.get('DEPARTMENT_MAP_URL')
+    if not department_map_url:
+        msg = 'DEPARTMENT_MAP_URL is not set'
+        raise RuntimeError(msg)
+
     output_filepath = os.environ.get('DEPARTMENT_MAP_FILEPATH')
     if not output_filepath:
         msg = 'DEPARTMENT_MAP_FILEPATH is not set'
         raise RuntimeError(msg)
 
     filepath = pathlib.Path(output_filepath)
-    departments = fetch_departments_map()
+    departments = fetch_departments_map(department_map_url)
     write_departments_map(filepath, departments)
 
 
