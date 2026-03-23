@@ -27,8 +27,9 @@ class FetchDepartmentsMapTest(SimpleTestCase):
             {'id': '3', 'text': 'Biology'},
         ]
         mock_get.return_value = mock_response
+        department_map_url = 'https://example.test/departments-select2/'
 
-        result = fetch_departments_map()
+        result = fetch_departments_map(department_map_url)
 
         self.assertEqual(['Anthropology', 'Biology', 'Zoology'], [item['text'] for item in result])
 
