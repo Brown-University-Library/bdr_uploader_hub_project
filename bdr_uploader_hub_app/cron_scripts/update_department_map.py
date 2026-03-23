@@ -52,18 +52,38 @@ def write_departments_map(filepath: pathlib.Path, departments: list[dict[str, ob
     """
     filepath.parent.mkdir(parents=True, exist_ok=True)
     serialized = json.dumps(departments, indent=2, sort_keys=True, ensure_ascii=False)
-    with tempfile.NamedTemporaryFile(
-        mode='w',
-        encoding='utf-8',
-        dir=filepath.parent,
-        delete=False,
-        prefix=f'.{filepath.name}.',
-        suffix='.tmp',
-    ) as temp_file:
-        temp_filepath = pathlib.Path(temp_file.name)
-        temp_file.write(f'{serialized}\n')
+    temp_filepath: pathlib.Path | None = None
 
-    os.replace(temp_filepath, filepath)
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode='w',
+            encoding='utf-8',
+            dir=filepath.parent,
+            delete=False,
+            prefix=f'.{filepath.name}.',
+            suffix='.tmp',
+        ) as temp_file:
+            temp_filepath = pathlib.Path(temp_file.name)
+            temp_file.write(f'{serialized}\n')
+            temp_file.flush()
+            os.fsync(temp_file.fileno())
+
+        if filepath.exists():
+            existing_stat = filepath.stat()
+            os.chmod(temp_filepath, existing_stat.st_mode)
+
+        os.replace(temp_filepath, filepath)
+
+        dir_fd = os.open(filepath.parent, os.O_RDONLY)
+        try:
+            os.fsync(dir_fd)
+        finally:
+            os.close(dir_fd)
+
+    except Exception:
+        if temp_filepath is not None:
+            temp_filepath.unlink(missing_ok=True)
+        raise
 
 
 def main() -> None:
