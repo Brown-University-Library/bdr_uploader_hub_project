@@ -4,7 +4,8 @@ Fetches the Brown departments mapping and writes it to a JSON file.
 Called by: main()
 
 Usage:
-    uv run --env-file="/path/to/.env" "/path/to/update_department_map.py"
+    cd /path/to/bdr_uploader_hub_project/
+    uv run --env-file="/path/to/.env" "./bdr_uploader_hub_app/cron_scripts/update_department_map.py"
 """
 
 import json
