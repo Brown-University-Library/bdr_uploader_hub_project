@@ -11,6 +11,7 @@ Usage:
 import json
 import os
 import pathlib
+import tempfile
 
 import httpx
 
@@ -51,7 +52,18 @@ def write_departments_map(filepath: pathlib.Path, departments: list[dict[str, ob
     """
     filepath.parent.mkdir(parents=True, exist_ok=True)
     serialized = json.dumps(departments, indent=2, sort_keys=True, ensure_ascii=False)
-    filepath.write_text(f'{serialized}\n', encoding='utf-8')
+    with tempfile.NamedTemporaryFile(
+        mode='w',
+        encoding='utf-8',
+        dir=filepath.parent,
+        delete=False,
+        prefix=f'.{filepath.name}.',
+        suffix='.tmp',
+    ) as temp_file:
+        temp_filepath = pathlib.Path(temp_file.name)
+        temp_file.write(f'{serialized}\n')
+
+    os.replace(temp_filepath, filepath)
 
 
 def main() -> None:
