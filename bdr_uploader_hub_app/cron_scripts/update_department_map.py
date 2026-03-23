@@ -47,6 +47,7 @@ def fetch_departments_map(department_map_url: str) -> list[dict[str, object]]:
 def write_departments_map(filepath: pathlib.Path, departments: list[dict[str, object]]) -> None:
     """
     Writes the departments mapping to disk as sorted JSON.
+    Takes extra effort to ensure the write doesn't corrupt the pre-existing file if interrupted.
 
     Called by: main()
     """
