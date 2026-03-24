@@ -1,43 +1,8 @@
 # Plan: implement dropdown department option
 
-## Prompt
+## Recent Prompt
 
-Goal:
-- Add a feature that will allow a staff member to create a webapp with either a pre-selected Collection-PID and Collection-Title, or allow an end-user to select an academic department. The end-user selection of that academic department will end up selecting a collection-PID to which the staged-upload will be assigned.
-
-Context:
-- Review `bdr_uploader_hub_project/README.md` to understand the purpose of the webapp.
-- Review `https://docs.google.com/document/d/1mv3rotcsfdT3IVEG0ky--PYD_q309UpSzA8Yel8iNa4/` to understand how staff can currently work with this webapp.
-- There is a new requirement: an option to allow a staff-person the ability to configure a new webapp so that an allowed user-of-the-webapp can select from a menu of possible Departments.
-- Behind-the-scenes, that menu of academic-departments will be built from a json file available from the `DEPARTMENT_MAP_FILEPATH` environment variable. Expected structure:
-
-```json
-{
-  "err": null,
-  "results": [
-    {
-      "id": "Computer Science\ttest:3dhnp23z",
-      "text": "Computer Science"
-    },
-    {
-      "id": "School of Engineering\ttest:7njxkjy3",
-      "text": "School of Engineering"
-    },
-    {
-      "id": "Political Science\ttest:w5rnk8ux",
-      "text": "Political Science"
-    }
-  ]
-}
-```
-
-Tasks:
-- Review `bdr_uploader_hub_project/AGENTS.md` for coding-directives to follow.
-- Review `bdr_uploader_hub_project/bdr_uploader_hub_app` to get a sense of the code implementing the features described in the README and the library-staff-documentation.
-- Make a plan to add an option in the staff-configurator, in the "Basics" configurator section, to either allow the configuring staff-person to enter the "Collection PID" and "Collection Title", which would function as it currently does, or allow the configuring staff-person to select a "Department Collection Menu" option, which would allow and require the user to select a Department from a menu drop-down.
-- Add to the plan to implement the drop-down menu to be created from the json-data in a file at the filepath-envar `DEPARTMENT_MAP_FILEPATH`.
-- Add to the plan to implement it so that if that option is selected, and the end-user selects an academic department, the selected Department maps to a selected collection-PID that the file will be assigned to.
-- Don’t change any code yet, just create a plan and save it to `bdr_uploader_hub_project/PLAN__implement_dropdown_department_option.md`.
+Coming.
 
 ## Current understanding
 
@@ -46,7 +11,6 @@ Tasks:
 - Staff-form validation currently validates the configured collection by calling the BDR public API in `bdr_uploader_hub_app/forms/staff_form_validation.py`.
 - The student upload form is built dynamically from config in `bdr_uploader_hub_app/forms/student_form.py`.
 - Student submissions store free-text `department` on `Submission`, but ingest currently assigns collection membership from `submission.app.temp_config_json['collection_pid']` in `bdr_uploader_hub_app/lib/ingester_handler.py`.
-- The Google Doc was publicly readable only at a metadata/sign-in level from this environment, so implementation details should be derived primarily from the repository code unless a fuller doc export becomes available.
 
 ## High-level implementation direction
 
@@ -274,7 +238,6 @@ Also keep human-readable department display available either in:
 - Current ingest assumes app-level `collection_pid`; this is the key behavior that must be generalized.
 - The existing free-text `department` metadata field could be confused with the new routing dropdown unless naming is kept explicit.
 - If the department map uses display text as the only key, duplicate department names could become ambiguous. Prefer a stable internal value.
-- The Google Doc could contain operational expectations not visible from this environment, so before implementation it would be wise to compare planned UX wording with staff expectations if fuller doc access becomes available.
 
 ## Recommended implementation order
 
