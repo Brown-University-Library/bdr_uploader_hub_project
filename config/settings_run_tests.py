@@ -227,6 +227,7 @@ ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = []
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = 'http://localhost:8000/api/collections/'
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = 'test:123'
 TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION: str = 'Test Collection'
+DEPARTMENT_MAP_FILEPATH: str = str(BASE_DIR.parent / 'department_map.json')
 
 ## used for rightsMetadata xml file
 BDR_MANAGER_GROUP: str = 'manager_group'

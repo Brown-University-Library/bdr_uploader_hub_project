@@ -6,6 +6,12 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
+from bdr_uploader_hub_app.lib.department_collection_helper import (
+    DEPARTMENT_COLLECTION_MENU_MODE,
+    FIXED_COLLECTION_MODE,
+    load_department_collection_data,
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -49,14 +55,21 @@ def validate_staff_form(form, cleaned_data):
 
     ## basics fields --------------------------------------------
 
+    mode = cleaned_data.get('collection_assignment_mode') or FIXED_COLLECTION_MODE
+    if mode not in {FIXED_COLLECTION_MODE, DEPARTMENT_COLLECTION_MENU_MODE}:
+        form.add_error('collection_assignment_mode', 'Collection assignment mode is invalid.')
+        mode = FIXED_COLLECTION_MODE
+
     ## validate collection PID/title
     generic_pid_collection_error = 'Error validating that collection-pid and collection-title match. Please try again later.'
-    if cleaned_data.get('collection_pid', ''):
+    if mode == FIXED_COLLECTION_MODE and not cleaned_data.get('collection_pid', '').strip():
+        form.add_error('collection_pid', 'Collection PID is required.')
+    if mode == FIXED_COLLECTION_MODE and not cleaned_data.get('collection_title', '').strip():
+        form.add_error('collection_title', 'Collection title is required.')
+
+    if mode == FIXED_COLLECTION_MODE and cleaned_data.get('collection_pid', ''):
         collection_pid = cleaned_data.get('collection_pid', '').strip()
         log.debug(f'collection_pid: {collection_pid}')
-        # Not sure if this is necessary, because the field is required it can't be blank.
-        # Argument for adding might be if there ever becomes an API call that doesn't go through the regular
-        # form submission, but I think that's unlikely
         if not collection_pid:
             form.add_error('collection_pid', 'Collection PID is required.')
         else:
@@ -92,6 +105,12 @@ def validate_staff_form(form, cleaned_data):
                     form.add_error('collection_pid', 'Error connecting to the BDR. Please try again later.')
                 else:
                     form.add_error('collection_pid', generic_pid_collection_error)
+
+    if mode == DEPARTMENT_COLLECTION_MENU_MODE:
+        try:
+            load_department_collection_data()
+        except ValueError as exc:
+            form.add_error('collection_assignment_mode', str(exc))
 
     if cleaned_data.get('staff_to_notify', ''):
         data = cleaned_data.get('staff_to_notify', '')
@@ -180,6 +199,7 @@ def validate_staff_form(form, cleaned_data):
     ## if nothing is filled out, raise an error
     if not any(
         [
+            cleaned_data.get('collection_assignment_mode'),
             cleaned_data.get('collection_pid'),
             cleaned_data.get('collection_title'),
             cleaned_data.get('staff_to_notify'),

@@ -142,6 +142,16 @@
 
             <div class="form-group">
                 <div class="label-container">
+                    {{ form.collection_assignment_mode.label_tag }}
+                    {% if form.collection_assignment_mode.help_text %}
+                        <p id="id_collection_assignment_mode_helptext" class="help">{{ form.collection_assignment_mode.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.collection_assignment_mode }}
+            </div>
+
+            <div class="form-group">
+                <div class="label-container">
                     {{ form.collection_pid.label_tag }}
                     {% if form.collection_pid.help_text %}
                         <p id="id_collection_pid_helptext" class="help">{{ form.collection_pid.help_text|safe }}</p>

@@ -19,6 +19,7 @@ from django.utils import text
 from bdr_uploader_hub_app.forms.staff_form import StaffForm
 from bdr_uploader_hub_app.forms.student_form import make_student_form_class
 from bdr_uploader_hub_app.lib import config_new_helper, uploaded_file_handler, version_helper
+from bdr_uploader_hub_app.lib.department_collection_helper import add_department_collection_submission_data
 from bdr_uploader_hub_app.lib.shib_handler import shib_decorator
 from bdr_uploader_hub_app.lib.version_helper import GatherCommitAndBranchData
 from bdr_uploader_hub_app.models import AppConfig, Submission
@@ -446,6 +447,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
                 ## store uuid-path, not file-obj, in session --------
                 cleaned_data['staged_file_path'] = str(saved_path)  # for Submission record, not for confirmation-display
                 del cleaned_data['main_file']  # remove the file-obj from the cleaned_data
+            cleaned_data = add_department_collection_submission_data(config_data, cleaned_data)
             request.session['student_form_data'] = cleaned_data
             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
 
@@ -530,6 +532,7 @@ def student_confirm(request, slug):
                 ## departments/programs ------------------------------
                 department=student_data.get('department'),
                 research_program=student_data.get('research_program'),
+                target_collection_pid=student_data.get('target_collection_pid'),
                 ## access and visibility -----------------------------
                 license_options=student_data.get('license_options'),
                 visibility_options=student_data.get('visibility_options'),

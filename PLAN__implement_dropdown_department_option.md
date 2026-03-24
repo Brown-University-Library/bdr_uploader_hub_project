@@ -3,13 +3,9 @@
 ## Recent Prompt
 
 - Review `bdr_uploader_hub_project/AGENTS.md` for coding-directives to follow.
-- Review the `bdr_uploader_hub_project/PLAN__implement_dropdown_department_option.md` plan.
-- Make these updates to the plan, addressing the "Questions to resolve..." section:
-  - The end-user-facing academic-department drop-down that is the focus of this new feature has nothing at all to do with the `Submission.department` free-text field, and its `offer_department` metadata toggle, at all. Leave the free-text department field, and its `offer_department` metadata toggle, as-is -- it has nothing to do with this new feature that's designed for the purpose of assigning the item to a collection.
-  - On the config-page, staff do not need to be able to preview the available department options.
-  - There should not be a default selected department -- the user must choose a department.
-- Also add to the plan any contextual information that would be useful if implementation occurs in a new session.
-- After updating the plan, add this prompt under the `## Recent Prompt` section, near the top.
+- Review `bdr_uploader_hub_project/PLAN__implement_dropdown_department_option.md` for a sense of what to do.
+- Implement the plan.
+- Replace the `## Recent Prompt` content in the plan with this prompt.
 
 ## Current understanding
 
