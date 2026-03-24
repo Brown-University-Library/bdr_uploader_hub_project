@@ -130,7 +130,7 @@
 
     <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
 
-    <mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>
+    <mods:genre authority="THE-AUTHORITY" valueURI="THE-VALUE-URI">THE-GENRE-VALUE</mods:genre>
 
     <mods:originInfo>
         <mods:place>
