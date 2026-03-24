@@ -130,7 +130,7 @@
 
     <mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>
 
-    <mods:genre authority="THE-AUTHORITY" valueURI="THE-VALUE-URI">THE-GENRE-VALUE</mods:genre>
+    <mods:genre authority="{{ genre_authority }}" valueURI="{{ genre_value_uri }}">{{ genre_text }}</mods:genre>
 
     <mods:originInfo>
         <mods:place>

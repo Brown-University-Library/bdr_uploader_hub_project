@@ -231,6 +231,11 @@ all_visibilities_json: str = os.environ['ALL_VISIBILITY_OPTIONS_JSON']
 visibilities_list: list = json.loads(all_visibilities_json)
 ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = [tuple(item) for item in visibilities_list]
 
+## creates, eg: [{'menu_label': 'document', 'mods_string': 'publications (documents)', ...}, ...]
+genre_options_json: str = os.environ.get('GENRE_OPTIONS_JSON', '[]')
+genre_options_list: list = json.loads(genre_options_json)
+GENRE_OPTIONS: list[dict] = [dict(item) for item in genre_options_list]
+
 ## used for pid<-->collection-name validation
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = os.environ['BDR_PUBLIC_API_COLLECTION_ROOT_URL']
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION']

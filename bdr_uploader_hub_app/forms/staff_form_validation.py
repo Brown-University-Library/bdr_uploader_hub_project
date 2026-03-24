@@ -11,6 +11,7 @@ from bdr_uploader_hub_app.lib.department_collection_helper import (
     FIXED_COLLECTION_MODE,
     load_department_collection_data,
 )
+from bdr_uploader_hub_app.lib.genre_helper import get_genre_entry
 
 log = logging.getLogger(__name__)
 
@@ -54,6 +55,12 @@ def validate_staff_form(form, cleaned_data):
     ## field-level validation -----------------------------------
 
     ## basics fields --------------------------------------------
+
+    try:
+        selected_genre = get_genre_entry(cleaned_data.get('assigned_genre'))
+        cleaned_data['assigned_genre'] = selected_genre
+    except ValueError as exc:
+        form.add_error('assigned_genre', str(exc))
 
     mode = cleaned_data.get('collection_assignment_mode') or FIXED_COLLECTION_MODE
     if mode not in {FIXED_COLLECTION_MODE, DEPARTMENT_COLLECTION_MENU_MODE}:

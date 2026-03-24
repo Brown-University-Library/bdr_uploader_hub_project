@@ -2,6 +2,18 @@
 
 ## Recent Prompt
 
+Add a staff-only configuration field named `Assigned Genre` to the `Basics` section of the staff-config form. The selected menu value should be persisted with the app configuration and later used during MODS rendering so that `<mods:genre ...>` is generated from environment-backed settings instead of the current hard-coded template value.
+
+- Review `bdr_uploader_hub_project/AGENTS.md` for coding-directives to follow.
+
+- Review `bdr_uploader_hub_project/README.md` for an overview of the project.
+
+- Review `bdr_uploader_hub_project/PLAN__implement_genre_selection.md` to understand what to do.
+
+- Implement the plan.
+
+- Prepend this prompt to the `## Recent Prompt` section of the `bdr_uploader_hub_project/PLAN__implement_genre_selection.md`.
+
 Plan improvements...
 
 - You're write that my description of the envar was incorrect -- the json represents a list of dicts. Remove references to the errant description to avoid confusion.

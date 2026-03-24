@@ -2,10 +2,10 @@ import datetime
 import logging
 
 from bs4 import BeautifulSoup
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, override_settings
 
 from bdr_uploader_hub_app.lib.mods_handler import ModsMaker
-from bdr_uploader_hub_app.models import Submission
+from bdr_uploader_hub_app.models import AppConfig, Submission
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ class ModsMakerBasicStaticFieldsTest(SimpleTestCase):
     def test_assert_standard_mods_elements(self):
         self.assertIn('<mods:typeOfResource authority="primo">text_resources</mods:typeOfResource>', self.result)
         self.assertIn(
-            '<mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300444670">scholarly works</mods:genre>',
+            '<mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300111999">publications (documents)</mods:genre>',
             self.result,
         )
         ## originInfo -----------------------------------------------
@@ -503,5 +503,96 @@ class ModsMakerFullTest(SimpleTestCase):
         self.assertEqual(access_conditions[1]['type'], 'license', 'Second access condition should have type="license"')
         self.assertEqual(access_conditions[1]['xlink:href'], 'https://creativecommons.org/publicdomain/zero/1.0/')
         self.assertEqual(access_conditions[1].text, 'Creative Commons CC0 1.0 Universal Public Domain Dedication')
+
+    @override_settings(
+        GENRE_OPTIONS=[
+            {
+                'menu_label': 'document',
+                'mods_string': 'publications (documents)',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300111999',
+            },
+            {
+                'menu_label': 'poster',
+                'mods_string': 'instructional posters',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300426530',
+            },
+            {
+                'menu_label': 'thesis',
+                'mods_string': 'theses',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300028028',
+            },
+        ]
+    )
+    def test_default_genre_is_document_when_app_config_has_no_genre(self):
+        """
+        Checks mods output falls back to the document genre when no genre is configured.
+        """
+        submission = Submission(
+            title='foo',
+            abstract='bar',
+            created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
+            app=AppConfig(temp_config_json={}),
+        )
+        result = ModsMaker(submission).prepare_mods()
+
+        self.assertIn('publications (documents)', result)
+        self.assertIn('http://vocab.getty.edu/aat/300111999', result)
+        self.assertIn(
+            '<mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300111999">publications (documents)</mods:genre>',
+            result,
+        )
+
+    @override_settings(
+        GENRE_OPTIONS=[
+            {
+                'menu_label': 'document',
+                'mods_string': 'publications (documents)',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300111999',
+            },
+            {
+                'menu_label': 'poster',
+                'mods_string': 'instructional posters',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300426530',
+            },
+            {
+                'menu_label': 'thesis',
+                'mods_string': 'theses',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300028028',
+            },
+        ]
+    )
+    def test_assigned_genre_poster_renders_expected_mods_genre(self):
+        """
+        Checks the poster genre choice renders the correct MODS genre values.
+        """
+        submission = Submission(
+            title='foo',
+            abstract='bar',
+            created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
+            app=AppConfig(
+                temp_config_json={
+                    'assigned_genre': {
+                        'menu_label': 'poster',
+                        'mods_string': 'instructional posters',
+                        'authority': 'aat',
+                        'value_uri': 'http://vocab.getty.edu/aat/300426530',
+                    }
+                }
+            ),
+        )
+        result = ModsMaker(submission).prepare_mods()
+
+        self.assertIn('instructional posters', result)
+        self.assertIn('http://vocab.getty.edu/aat/300426530', result)
+        self.assertIn(
+            '<mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300426530">instructional posters</mods:genre>',
+            result,
+        )
 
     ## end class ModsMakerFullTest()

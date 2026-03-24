@@ -259,6 +259,96 @@ class StaffFormDepartmentCollectionValidationTest(SimpleTestCase):
             self.assertIn('collection_assignment_mode', form.errors)
 
 
+class StaffFormGenreSelectionTest(SimpleTestCase):
+    """
+    Checks staff form genre-selection behavior.
+    """
+
+    @override_settings(
+        GENRE_OPTIONS=[
+            {
+                'menu_label': 'document',
+                'mods_string': 'publications (documents)',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300111999',
+            },
+            {
+                'menu_label': 'poster',
+                'mods_string': 'instructional posters',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300426530',
+            },
+            {
+                'menu_label': 'thesis',
+                'mods_string': 'theses',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300028028',
+            },
+        ],
+        ALL_LICENSE_OPTIONS=[('CC_BY', 'CC BY')],
+        ALL_VISIBILITY_OPTIONS=[('public', 'Public')],
+    )
+    def test_assigned_genre_field_choices_and_default(self):
+        """
+        Checks assigned genre field choices and default value.
+        """
+        with tempfile.TemporaryDirectory() as tempdir:
+            filepath = Path(tempdir) / 'department-map.json'
+            filepath.write_text(json.dumps([{'id': 'Biology	test:bio', 'text': 'Biology'}]), encoding='utf-8')
+
+            with override_settings(DEPARTMENT_MAP_FILEPATH=str(filepath)):
+                form = StaffForm(
+                    data={
+                        'collection_assignment_mode': 'department_collection_menu',
+                        'staff_to_notify': 'valid@example.com',
+                        'authorized_student_emails': 'student@example.com',
+                        'license_options': ['CC_BY'],
+                        'visibility_options': ['public'],
+                        'assigned_genre': 'document',
+                    }
+                )
+
+        self.assertEqual(
+            [('document', 'document'), ('poster', 'poster'), ('thesis', 'thesis')],
+            list(form.fields['assigned_genre'].choices),
+        )
+        self.assertEqual('document', form.fields['assigned_genre'].initial)
+        self.assertTrue(form.is_valid(), form.errors.as_json())
+        self.assertEqual('document', form.cleaned_data['assigned_genre']['menu_label'])
+
+    @override_settings(
+        GENRE_OPTIONS=[
+            {
+                'menu_label': 'document',
+                'mods_string': 'publications (documents)',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300111999',
+            },
+        ],
+        ALL_LICENSE_OPTIONS=[('CC_BY', 'CC BY')],
+        ALL_VISIBILITY_OPTIONS=[('public', 'Public')],
+    )
+    def test_assigned_genre_field_rejects_unknown_value(self):
+        """
+        Checks unknown assigned genre values fail validation.
+        """
+        form = StaffForm(
+            data={
+                'collection_assignment_mode': 'fixed_collection',
+                'collection_pid': 'bdr:123',
+                'collection_title': 'Test Collection',
+                'staff_to_notify': 'valid@example.com',
+                'authorized_student_emails': 'student@example.com',
+                'license_options': ['CC_BY'],
+                'visibility_options': ['public'],
+                'assigned_genre': 'invalid',
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('assigned_genre', form.errors)
+
+
 class IngesterDepartmentCollectionTest(SimpleTestCase):
     """
     Checks ingest collection pid selection behavior.
