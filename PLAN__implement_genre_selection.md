@@ -2,7 +2,6 @@
 
 ## Recent Prompt
 
-```text
 Goal: Offer the staff-configurer an additional "Basics" option:
 - Label: "Assigned Genre"
 - value: a drop-down menu defaulting to "document", with other (alphabetical) options of "poster" and "thesis"
@@ -51,7 +50,7 @@ Tasks:
 - Do not change any code, just develop and save the plan.
 
 - Add this prompt to a `## Recent Prompt` section, just below the plan's title.
-```
+
 
 ## Objective
 
