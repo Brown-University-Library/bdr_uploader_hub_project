@@ -4,6 +4,16 @@
 
 Plan improvements...
 
+- You're write that my description of the envar was incorrect -- the json represents a list of dicts. Remove references to the errant description to avoid confusion.
+
+- If pre-existing data does not include this genre info -- assume the default 'document' information.
+
+- Update the `bdr_uploader_hub_project/PLAN__implement_genre_selection.md` plan with this feedback.
+
+- Prepend this prompt to the `## Recent Prompt` section of the `bdr_uploader_hub_project/PLAN__implement_genre_selection.md`.
+
+Plan improvements...
+
 - I'm changing the `mods_base.xml` to:
 ```
 <mods:genre authority="THE-AUTHORITY" valueURI="THE-VALUE-URI">THE-GENRE-VALUE</mods:genre>
@@ -37,7 +47,7 @@ Context:
 
 - That selection does not need to appear on the student upload form. 
 
-- The options for the drop down will come from the envar `GENRE_OPTIONS_JSON` that looks like this:
+- The options for the drop down will come from the envar `GENRE_OPTIONS_JSON`, which is a list of dicts and looks like this:
 ```
 GENRE_OPTIONS_JSON='[
     {"menu_label": "document", "mods_string": "publications (documents)","authority": "aat", "value_uri": "http://vocab.getty.edu/aat/300111999"},
@@ -46,12 +56,13 @@ GENRE_OPTIONS_JSON='[
 ]'
 ```
 
-- That will be loaded into the setting `GENRE_OPTIONS` as a dict.
+- That will be loaded into the setting `GENRE_OPTIONS` and normalized for use in the app.
 
 - That data will be used for the menu drop-down for the staff-configurer.
 
 - Based on the selection, the webapp will save the selected option so that in a later stage, when the mods-document is created, the proper `authority` and `valueURI` and text-string will be used.
 
+- If pre-existing data does not include this genre info -- assume the default 'document' information.
 
 Tasks:
 
@@ -90,6 +101,7 @@ Add a staff-only configuration field named `Assigned Genre` to the `Basics` sect
 
 - `AppConfig.temp_config_json` is a `JSONField` and already stores arbitrary staff-config values.
 - Because `Submission` references `Submission.app`, MODS generation can read the selected genre from `submission.app.temp_config_json` without requiring a new database column.
+- If existing app data does not yet include genre information, the later MODS step should assume the default `document` genre information.
 
 ### Existing patterns to copy
 
@@ -103,7 +115,7 @@ Add a staff-only configuration field named `Assigned Genre` to the `Basics` sect
 
 Use the environment-backed `settings.GENRE_OPTIONS` as the single source of truth.
 
-Assumption for implementation: although the prompt says `GENRE_OPTIONS` will be loaded as a dict, the sample JSON is a list of objects. The least-friction runtime shape for later use is one of these:
+The sample JSON in `GENRE_OPTIONS_JSON` is a list of objects. Normalize it into one authoritative runtime structure so the rest of the app does not depend on settings-format quirks. The least-friction runtime shape for later use is one of these:
 
 1. A list of dicts preserving source order, transformed into form choices in code, or
 2. A dict keyed by `menu_label`, for example:
