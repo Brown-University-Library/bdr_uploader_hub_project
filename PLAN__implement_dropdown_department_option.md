@@ -2,7 +2,14 @@
 
 ## Recent Prompt
 
-Coming.
+- Review `bdr_uploader_hub_project/AGENTS.md` for coding-directives to follow.
+- Review the `bdr_uploader_hub_project/PLAN__implement_dropdown_department_option.md` plan.
+- Make these updates to the plan, addressing the "Questions to resolve..." section:
+  - The end-user-facing academic-department drop-down that is the focus of this new feature has nothing at all to do with the `Submission.department` free-text field, and its `offer_department` metadata toggle, at all. Leave the free-text department field, and its `offer_department` metadata toggle, as-is -- it has nothing to do with this new feature that's designed for the purpose of assigning the item to a collection.
+  - On the config-page, staff do not need to be able to preview the available department options.
+  - There should not be a default selected department -- the user must choose a department.
+- Also add to the plan any contextual information that would be useful if implementation occurs in a new session.
+- After updating the plan, add this prompt under the `## Recent Prompt` section, near the top.
 
 ## Current understanding
 
@@ -11,6 +18,7 @@ Coming.
 - Staff-form validation currently validates the configured collection by calling the BDR public API in `bdr_uploader_hub_app/forms/staff_form_validation.py`.
 - The student upload form is built dynamically from config in `bdr_uploader_hub_app/forms/student_form.py`.
 - Student submissions store free-text `department` on `Submission`, but ingest currently assigns collection membership from `submission.app.temp_config_json['collection_pid']` in `bdr_uploader_hub_app/lib/ingester_handler.py`.
+- The new academic-department collection dropdown is separate from the existing free-text `Submission.department` metadata field and separate from the `offer_department` configurator toggle; those existing features should remain unchanged.
 
 ## High-level implementation direction
 
@@ -96,16 +104,19 @@ Acceptance target:
 Modify `bdr_uploader_hub_app/forms/student_form.py` so student upload fields reflect the configured collection-assignment mode.
 
 Planned changes:
-- Continue building the existing free-text `department` field when `offer_department` is enabled for descriptive metadata purposes, unless product decisions collapse that into the new dropdown.
+- Continue building the existing free-text `department` field when `offer_department` is enabled for descriptive metadata purposes.
+- Do not repurpose, rename, or couple that free-text field to the new collection-assignment dropdown.
+- Do not change the meaning or behavior of the existing `offer_department` toggle as part of this feature.
 - In department-collection mode, add a required dropdown field dedicated to collection selection by department.
 - Populate that dropdown from the department-map helper.
 - Store a stable submitted value that can later resolve to a collection PID without ambiguity.
 - Use clear help text so the end user understands the dropdown controls repository assignment.
+- Ensure there is no default selected department; the field should require an explicit user choice.
 
 Important design note:
 - The existing `department` submission field is currently descriptive metadata.
-- The new dropdown should likely be a separate field, for example `department_collection_choice`, to avoid confusing metadata with ingest-target routing.
-- If product wants a single visible department field to serve both purposes, document and implement exactly how the selected value is both displayed and stored.
+- The new dropdown should be a separate field, for example `department_collection_choice`, to avoid confusing metadata with ingest-target routing.
+- The new dropdown must not populate or otherwise drive `Submission.department`; it exists only to determine collection assignment.
 
 Acceptance target:
 - In fixed mode, student form behavior is unchanged.
@@ -153,6 +164,7 @@ Update the staff and student templates to make the two modes understandable and 
 Planned changes:
 - In the staff "Basics" section, visually group collection assignment choices.
 - Show/hide or clearly annotate fields that are active for the selected mode.
+- Do not add a staff preview of department options on the config page; validation-only is sufficient there.
 - In the student form, make the department dropdown label explicit, for example "Department Collection" or similar if needed for clarity.
 - In the confirmation view, display both the human-readable department choice and the resolved collection PID when department-menu mode is active.
 
@@ -228,9 +240,9 @@ Recommended additions:
 ```
 
 Also keep human-readable department display available either in:
-- `Submission.department`
 - `Submission.temp_submission_json`
-- or both, depending on desired admin/reporting visibility.
+- or a dedicated new submission field if useful for admin/reporting visibility.
+- Do not use the existing `Submission.department` metadata field for this feature's routing state.
 
 ## Risks and compatibility considerations
 
@@ -252,12 +264,12 @@ Also keep human-readable department display available either in:
 
 ## Questions to resolve during implementation
 
-These do not block plan creation, but should be decided while coding:
-
-- Should the end-user-facing dropdown also populate the existing `Submission.department` field, or should it remain a separate routing field?
-- Should the department dropdown be shown only when collection mode is `department_collection_menu`, regardless of the separate `offer_department` metadata toggle?
-- Should staff be able to preview the available department options on the config page, or is validation-only sufficient?
-- Should there be a default selected department, or must the user always explicitly choose one?
+These design decisions are now resolved:
+- The end-user-facing academic-department dropdown is completely separate from the existing `Submission.department` free-text metadata field.
+- The existing free-text department field and its `offer_department` metadata toggle remain unchanged and are not part of this feature.
+- The collection-assignment dropdown is shown only when `collection_assignment_mode` is `department_collection_menu`.
+- Staff do not need a preview of available department options on the config page; validation-only is sufficient.
+- There is no default selected department; the end user must explicitly choose one.
 
 ## Definition of done
 
@@ -268,3 +280,23 @@ The feature is complete when:
 - Each submission carries the correct collection target into ingest.
 - Existing fixed-collection apps continue to work unchanged.
 - Focused tests cover the new behavior and compatibility path.
+
+## Implementation handoff context for a future session
+
+- Staff-config persistence currently happens in `views.config_slug()`, which saves `form.cleaned_data` directly into `AppConfig.temp_config_json`.
+- Student form generation currently happens in `forms.student_form.make_student_form_class(config_data)`.
+- Student submission persistence currently happens in `views.student_confirm()`, which copies values from session-backed `student_form_data` into `Submission.objects.create(...)`.
+- Collection membership for ingest is currently derived in `lib.ingester_handler.Ingester.prepare_rels()` from `submission.app.temp_config_json['collection_pid']`.
+- Because the department-routing feature changes collection assignment from app-level to submission-level in one mode, implementation will likely require coordinated edits across:
+  - `bdr_uploader_hub_app/forms/staff_form.py`
+  - `bdr_uploader_hub_app/forms/staff_form_validation.py`
+  - `bdr_uploader_hub_app/forms/student_form.py`
+  - `bdr_uploader_hub_app/views.py`
+  - `bdr_uploader_hub_app/lib/ingester_handler.py`
+  - a new helper module under `bdr_uploader_hub_app/lib/`
+  - tests in `bdr_uploader_hub_app/tests/`
+- Because `Submission` currently has no field for a resolved per-submission collection PID, implementation will likely require a model change plus a migration.
+- Backward compatibility matters: existing apps without `collection_assignment_mode` should be treated as `fixed_collection`.
+- The department-map file format should be treated as authoritative input, with the value after the tab character in each `results[*].id` used as the collection PID.
+- The student-facing department-routing dropdown should have no preselected default; the user must actively choose a value.
+- When implementation begins, run tests with `uv run ./run_tests.py` after updating or adding focused coverage.
