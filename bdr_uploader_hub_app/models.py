@@ -80,6 +80,7 @@ class Submission(models.Model):
     ## departments/programs ---------------------
     department = models.CharField(max_length=255, blank=True, null=True)
     research_program = models.CharField(max_length=255, blank=True, null=True)
+    target_collection_pid = models.CharField(max_length=255, blank=True, null=True)
     ## access and visibility --------------------
     license_options = models.CharField(max_length=100, blank=True, null=True)
     visibility_options = models.CharField(max_length=100, blank=True, null=True)

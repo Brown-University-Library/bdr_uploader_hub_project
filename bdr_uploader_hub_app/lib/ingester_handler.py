@@ -76,9 +76,8 @@ class Ingester:
                 self.mods: str = ModsMaker(submission).prepare_mods()
                 self.rights: dict = self.prepare_rights(submission.student_eppn, submission.visibility_options)
                 self.ir: dict = self.prepare_ir(submission.student_eppn, submission.student_email)
-                # self.rels: dict = self.prepare_rels(submission.app.temp_config_json)  # temp_config_json loads as a dict
                 temp_config_data: dict = submission.app.temp_config_json  # loads as a dict
-                self.rels: dict = self.prepare_rels(temp_config_data)  # temp_config_json loads as a dict
+                self.rels: dict = self.prepare_rels(submission, temp_config_data)
                 self.file_data: dict = self.prepare_file(
                     submission.checksum_type,
                     submission.checksum,
@@ -180,13 +179,16 @@ class Ingester:
         log.debug(f'ir_params: {pprint.pformat(ir_params)}')
         return ir_params
 
-    def prepare_rels(self, app_config_dict_from_json: dict) -> dict:
+    def prepare_rels(self, submission: Submission, app_config_dict_from_json: dict) -> dict:
         """
         Prepares the RELS-EXT data for ingestion.
         All the api call needs is a simple json dict with the collection_pid.
         """
         log.debug('prepare_rels called')
-        collection_pid: str = app_config_dict_from_json['collection_pid']
+        collection_pid = submission.target_collection_pid or app_config_dict_from_json.get('collection_pid')
+        if not collection_pid:
+            error_message = 'No collection pid is available for ingest.'
+            raise ValueError(error_message)
         rels_ext = {'isMemberOfCollection': collection_pid}
         log.debug(f'rels_ext: {rels_ext}')
         return rels_ext

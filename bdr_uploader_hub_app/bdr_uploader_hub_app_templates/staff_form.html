@@ -94,6 +94,10 @@
         padding-bottom: 0rem;
         margin-bottom: 3rem;
     }
+
+    .hidden-collection-field {
+        display: none;
+    }
 </style>     
 
 {% endblock header_other %}
@@ -142,6 +146,16 @@
 
             <div class="form-group">
                 <div class="label-container">
+                    {{ form.collection_assignment_mode.label_tag }}
+                    {% if form.collection_assignment_mode.help_text %}
+                        <p id="id_collection_assignment_mode_helptext" class="help">{{ form.collection_assignment_mode.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.collection_assignment_mode }}
+            </div>
+
+            <div class="form-group" id="collection_pid_group">
+                <div class="label-container">
                     {{ form.collection_pid.label_tag }}
                     {% if form.collection_pid.help_text %}
                         <p id="id_collection_pid_helptext" class="help">{{ form.collection_pid.help_text|safe }}</p>
@@ -150,7 +164,7 @@
                 {{ form.collection_pid }}
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="collection_title_group">
                 <div class="label-container">
                 {{ form.collection_title.label_tag }} 
                     {% if form.collection_title.help_text %}
@@ -398,6 +412,30 @@
         
     </form>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modeField = document.getElementById('id_collection_assignment_mode');
+        const collectionPidGroup = document.getElementById('collection_pid_group');
+        const collectionTitleGroup = document.getElementById('collection_title_group');
+
+        function updateCollectionFieldVisibility() {
+            const shouldHideFixedCollectionFields = modeField && modeField.value === 'department_collection_menu';
+
+            if (collectionPidGroup) {
+                collectionPidGroup.classList.toggle('hidden-collection-field', shouldHideFixedCollectionFields);
+            }
+            if (collectionTitleGroup) {
+                collectionTitleGroup.classList.toggle('hidden-collection-field', shouldHideFixedCollectionFields);
+            }
+        }
+
+        if (modeField) {
+            updateCollectionFieldVisibility();
+            modeField.addEventListener('change', updateCollectionFieldVisibility);
+        }
+    });
+</script>
 {% endblock main_content %}
 <!-- /body -->
 

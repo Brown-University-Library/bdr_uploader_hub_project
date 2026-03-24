@@ -4,6 +4,12 @@ import pprint
 from django import forms
 from django.conf import settings
 
+from bdr_uploader_hub_app.lib.department_collection_helper import (
+    DEPARTMENT_COLLECTION_MENU_MODE,
+    build_department_collection_choices,
+    get_collection_assignment_mode,
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -83,6 +89,16 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             label='Department(s)',
             required=config_data.get('department_required', False),
             help_text=help_text,
+        )
+
+    mode = get_collection_assignment_mode(config_data)
+    if mode == DEPARTMENT_COLLECTION_MENU_MODE:
+        department_collection_choices = build_department_collection_choices()
+        fields['department_collection_choice'] = forms.ChoiceField(
+            label='Thesis Collection',
+            required=True,
+            choices=department_collection_choices,
+            help_text='(required)',
         )
 
     if config_data.get('offer_research_program'):

@@ -178,6 +178,18 @@
                 {{ form.main_file }}
             </div>
 
+            {% if form.department_collection_choice %}
+            <div class="form-group" id="department_collection_choice_group">
+                <div class="label-container">
+                    {{ form.department_collection_choice.label_tag }}
+                    {% if form.department_collection_choice.help_text %}
+                        <p id="id_department_collection_choice_helptext" class="help">{{ form.department_collection_choice.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.department_collection_choice }}
+            </div>
+            {% endif %}
+
         </div>  <!-- end of Basic Information form section -->
 
 
@@ -236,7 +248,7 @@
         {% endif %} {# end of collaborators section -- the if/endif keeps the header and <hr> from displaying if there's no data #}
         
 
-        {% if form.department or form.research_program %}
+        {% if form.department or form.department_collection_choice or form.research_program %}
         <!-- Department and Program Information Section ---------------------------------------- -->
         <div class="form-section">
             <h3>Department and Program Info</h3>

@@ -91,6 +91,7 @@ class StaffFormDirectTests(TestCase):
         else:  # running locally or on server
             log.debug('running locally or on server, so running test')
             data = {
+                'collection_assignment_mode': 'fixed_collection',
                 'collection_pid': project_settings.TEST_COLLECTION_PID_FOR_FORM_VALIDATION,
                 'collection_title': project_settings.TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION,
                 'staff_to_notify': 'valid@example.com',
@@ -118,6 +119,7 @@ class StaffFormDirectTests(TestCase):
 
     def test_invalid_staff_email(self):
         data = {
+            'collection_assignment_mode': 'fixed_collection',
             'collection_pid': '1234',
             'collection_title': 'My Collection',
             'staff_to_notify': 'invalid-email',
@@ -137,6 +139,7 @@ class StaffFormDirectTests(TestCase):
 
     def test_license_dependency_error(self):
         data = {
+            'collection_assignment_mode': 'fixed_collection',
             'collection_pid': '1234',
             'collection_title': 'My Collection',
             'staff_to_notify': 'valid@example.com',
@@ -156,6 +159,7 @@ class StaffFormDirectTests(TestCase):
 
     def test_missing_student_contacts(self):
         data = {
+            'collection_assignment_mode': 'fixed_collection',
             'collection_pid': '1234',
             'collection_title': 'My Collection',
             'staff_to_notify': 'valid@example.com',

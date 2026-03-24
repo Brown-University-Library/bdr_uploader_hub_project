@@ -4,14 +4,21 @@ from django import forms
 from django.conf import settings
 
 from bdr_uploader_hub_app.forms.staff_form_validation import validate_staff_form
+from bdr_uploader_hub_app.lib.department_collection_helper import COLLECTION_ASSIGNMENT_MODE_CHOICES, FIXED_COLLECTION_MODE
 
 log = logging.getLogger(__name__)
 
 
 class StaffForm(forms.Form):
     ## Basics section -----------------------------------------------
-    collection_pid = forms.CharField(required=True, label='Collection PID')
-    collection_title = forms.CharField(required=True, label='Collection Title', help_text='PID sanity-check')
+    collection_assignment_mode = forms.ChoiceField(
+        required=True,
+        choices=COLLECTION_ASSIGNMENT_MODE_CHOICES,
+        initial=FIXED_COLLECTION_MODE,
+        label='Collection Assignment Mode',
+    )
+    collection_pid = forms.CharField(required=False, label='Collection PID')
+    collection_title = forms.CharField(required=False, label='Collection Title', help_text='PID sanity-check')
     staff_to_notify = forms.CharField(
         required=True,
         label='Staff to notify on ingest',
@@ -112,6 +119,13 @@ class StaffForm(forms.Form):
     )
 
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['license_options'].choices = settings.ALL_LICENSE_OPTIONS
+        self.fields['license_default'].choices = [('ERR', 'Unselected')] + settings.ALL_LICENSE_OPTIONS
+        self.fields['visibility_options'].choices = settings.ALL_VISIBILITY_OPTIONS
+        self.fields['visibility_default'].choices = [('ERR', 'Unselected')] + settings.ALL_VISIBILITY_OPTIONS
 
     def clean(self):
         ## delegate all validation to bdr_uploader_hub_app/forms/staff_form_validation.py

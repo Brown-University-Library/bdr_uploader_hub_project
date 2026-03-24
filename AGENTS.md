@@ -63,6 +63,7 @@ If other instruction files exist (Copilot, IDE rules, contributor docs) and conf
     """
     ```
   - Avoid: `"""Parse ..."""`
+- The last line of non-test function-docstrings should be: `Called by: the_caller_function()` (or, if in another class/module, `Called by: module.Class.the_caller_function()`)
 - Start test-function docstring-text with "Checks..."
 - For header-comments, in functions, start the comment with two hashes (e.g., `## does this`).
 
