@@ -212,7 +212,13 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 ## django APP settings ----------------------------------------------
 
-TEST_SHIB_META_DCT: dict = {}
+TEST_SHIB_META_DCT: dict = {
+    'Shibboleth-eppn': 'staffperson@domain.edu',
+    'Shibboleth-givenName': 'StaffFirst',
+    'Shibboleth-mail': 'staff_email@domain.edu',
+    'Shibboleth-sn': 'StaffLast',
+    'Shibboleth-isMemberOf': 'aa:bb:cc;dd:ee:ff;the:group;gg:hh',
+}
 
 SHIB_SP_LOGIN_URL: str = 'http://localhost:8000/shib_login/'
 SHIB_IDP_LOGOUT_URL: str = 'http://localhost:8000/shib_logout/'
