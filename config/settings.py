@@ -240,7 +240,11 @@ GENRE_OPTIONS: list[dict] = [dict(item) for item in genre_options_list]
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = os.environ['BDR_PUBLIC_API_COLLECTION_ROOT_URL']
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION']
 TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION']
-DEPARTMENT_MAP_FILEPATH: str = os.environ.get('DEPARTMENT_MAP_FILEPATH', '')
+department_map_filepath: str = os.environ.get('DEPARTMENT_MAP_FILEPATH', '').strip()
+if department_map_filepath and pathlib.Path(department_map_filepath).exists():
+    DEPARTMENT_MAP_FILEPATH: str = department_map_filepath
+else:
+    DEPARTMENT_MAP_FILEPATH: str = str(BASE_DIR / 'bdr_uploader_hub_app/tests/sample_department_map.json')
 
 ## used for rightsMetadata xml file
 BDR_MANAGER_GROUP: str = os.environ['BDR_MANAGER_GROUP']
