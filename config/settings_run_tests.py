@@ -229,6 +229,16 @@ ALL_LICENSE_OPTIONS: list[tuple[str, str]] = []
 ## creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]
 ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = []
 
+## creates, eg: [{'menu_label': 'document', 'mods_string': 'publications (documents)', ...}, ...]
+GENRE_OPTIONS: list[dict] = [
+    {
+        'menu_label': 'document',
+        'mods_string': 'publications (documents)',
+        'authority': 'aat',
+        'value_uri': 'http://vocab.getty.edu/aat/300111999',
+    },
+]
+
 ## used for pid<-->collection-name validation
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = 'http://localhost:8000/api/collections/'
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = 'test:123'
