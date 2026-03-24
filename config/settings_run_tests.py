@@ -125,7 +125,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/tmp/'  # needed for collectstatic command
+STATIC_ROOT = '/tmp/static/'  # needed for collectstatic command
 
 # Email
 SERVER_EMAIL = 'example@domain.edu'
@@ -133,7 +133,7 @@ EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
 
 ## user uploaded files ----------------------------------------------
-MEDIA_ROOT = '/tmp/'
+MEDIA_ROOT = '/tmp/media/'
 BDR_API_FILE_PATH_ROOT = '/tmp/'
 """
 The two settings below prevent django from auto-running chmod on uploaded files

@@ -120,6 +120,13 @@ class StaffForm(forms.Form):
 
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['license_options'].choices = settings.ALL_LICENSE_OPTIONS
+        self.fields['license_default'].choices = [('ERR', 'Unselected')] + settings.ALL_LICENSE_OPTIONS
+        self.fields['visibility_options'].choices = settings.ALL_VISIBILITY_OPTIONS
+        self.fields['visibility_default'].choices = [('ERR', 'Unselected')] + settings.ALL_VISIBILITY_OPTIONS
+
     def clean(self):
         ## delegate all validation to bdr_uploader_hub_app/forms/staff_form_validation.py
         log.debug('delegating validation to staff_form_validation')
