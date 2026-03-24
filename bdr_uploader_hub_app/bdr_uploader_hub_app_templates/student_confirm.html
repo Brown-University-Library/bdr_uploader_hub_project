@@ -64,12 +64,10 @@
             {% if key == 'staged_file_path' or key == 'checksum_type' or key == 'checksum' or key == 'department_collection_choice' %}
                 {% comment %} Not displaying this data, but it'll be saved to the db. {% endcomment %}
             {% elif key == 'department_collection_label' %}
-                <div class="form-group">
-                <strong>Department Collection:</strong> <span class="form-control-static">{{ value }}</span>
-                </div>
+                {% comment %} Displayed with the target collection pid line below. {% endcomment %}
             {% elif key == 'target_collection_pid' %}
                 <div class="form-group">
-                <strong>Target Collection PID:</strong> <span class="form-control-static">{{ value }}</span>
+                <strong>Target Collection PID:</strong> <span class="form-control-static">{{ value }}{% if student_data.department_collection_label %} ({{ student_data.department_collection_label }}){% endif %}</span>
                 </div>
             {% else %}
                 <div class="form-group">

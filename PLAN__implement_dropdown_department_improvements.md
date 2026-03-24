@@ -2,28 +2,12 @@
 
 ## Recent Prompt
 
-Goal: additional improvements are required...
-
-- In the configurator "basics" section, if the staff-person selects "Department collection menu" from the drop-down-menu, the "Collection PID" and "Collection Title" labels-and-fields should disappear.
-
-- When the staff-person has selected the "Department collection menu" from the drop-down-menu, on the student-upload-form, that departmental-drop-down should only appear in the top "Basic Information" section, after the "Upload File" field.
-	- It's label should read "Thesis Collection", and it's help-text should just read "(required)"
-
-- When the staff-person has selected the "Department collection menu" from the drop-down-menu -- on the "Review Your Submission..." confirmation page that comes up for the student-user after clicking "Submit", the "Target Collection PID" can show the pid -- but it should be followed by "(Physics Theses)" (or whatever selected department is).
-
-Tasks:
-
 - Review `bdr_uploader_hub_project/AGENTS.md` for coding-directives to follow.
-
-- Review `bdr_uploader_hub_project/PLAN__implement_initial_dropdown_department_option.md` for a sense the plan that was just implemented.
-
-- Make a plan to implement the objectives in the "Goal" section above, and save the plan to `bdr_uploader_hub_project/PLAN__implement_dropdown_department_improvements.md`.
-
-- Add any contextual-info that would be useful if the plan is implemented in a new session
-
-- Don't yet update any code -- just create and save the plan.
-
-- Replace the `## Recent Prompt` content in the `bdr_uploader_hub_project/PLAN__implement_dropdown_department_option.md` plan with this prompt.
+- Review `bdr_uploader_hub_project/README.md` for an overview of the project.
+- Review `bdr_uploader_hub_project/PLAN__implement_initial_dropdown_department_option.md` for a sense of work that has been successfully completed.
+- Review `bdr_uploader_hub_project/PLAN__implement_dropdown_department_improvements.md` to understand what now needs to be done.
+- Implement the `bdr_uploader_hub_project/PLAN__implement_dropdown_department_improvements.md` plan.
+- Replace the `## Recent Prompt` content in the `bdr_uploader_hub_project/PLAN__implement_dropdown_department_improvements.md` plan with this prompt.
 
 ## Current understanding
 

@@ -95,10 +95,10 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
     if mode == DEPARTMENT_COLLECTION_MENU_MODE:
         department_collection_choices = build_department_collection_choices()
         fields['department_collection_choice'] = forms.ChoiceField(
-            label='Department Collection',
+            label='Thesis Collection',
             required=True,
             choices=department_collection_choices,
-            help_text='(required) choose the academic department collection for repository assignment',
+            help_text='(required)',
         )
 
     if config_data.get('offer_research_program'):
