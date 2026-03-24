@@ -325,6 +325,45 @@ class StaffFormGenreSelectionTest(SimpleTestCase):
                 'authority': 'aat',
                 'value_uri': 'http://vocab.getty.edu/aat/300111999',
             },
+            {
+                'menu_label': 'thesis',
+                'mods_string': 'theses',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300028028',
+            },
+        ],
+        ALL_LICENSE_OPTIONS=[('CC_BY', 'CC BY')],
+        ALL_VISIBILITY_OPTIONS=[('public', 'Public')],
+    )
+    def test_assigned_genre_initial_dict_rehydrates_saved_value(self):
+        """
+        Checks saved genre dict initial data renders the stored menu label.
+        """
+        form = StaffForm(
+            initial={
+                'assigned_genre': {
+                    'menu_label': 'thesis',
+                    'mods_string': 'theses',
+                    'authority': 'aat',
+                    'value_uri': 'http://vocab.getty.edu/aat/300028028',
+                }
+            }
+        )
+
+        self.assertEqual('thesis', form.initial['assigned_genre'])
+        self.assertEqual('thesis', form['assigned_genre'].value())
+        rendered = form.as_p()
+        self.assertIn('value="thesis"', rendered)
+        self.assertIn('selected', rendered)
+
+    @override_settings(
+        GENRE_OPTIONS=[
+            {
+                'menu_label': 'document',
+                'mods_string': 'publications (documents)',
+                'authority': 'aat',
+                'value_uri': 'http://vocab.getty.edu/aat/300111999',
+            },
         ],
         ALL_LICENSE_OPTIONS=[('CC_BY', 'CC BY')],
         ALL_VISIBILITY_OPTIONS=[('public', 'Public')],

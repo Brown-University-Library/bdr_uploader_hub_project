@@ -136,6 +136,8 @@ class StaffForm(forms.Form):
             )
         if not assigned_genre_initial:
             assigned_genre_initial = get_default_genre_entry().get('menu_label', 'document')
+        if isinstance(self.initial, dict):
+            self.initial['assigned_genre'] = assigned_genre_initial
         self.fields['assigned_genre'].initial = assigned_genre_initial
 
     def clean(self):
