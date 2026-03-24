@@ -2,6 +2,20 @@
 
 ## Recent Prompt
 
+Plan improvements...
+
+- I'm changing the `mods_base.xml` to:
+```
+<mods:genre authority="THE-AUTHORITY" valueURI="THE-VALUE-URI">THE-GENRE-VALUE</mods:genre>
+```
+...do indicate these values will be replaced, and to remove the incorrect values.
+
+- Regarding the `## Recommended Stored Value ` section of the plan, make this change: Save the _entire_ genre-selection dict-entry into `AppConfig.temp_config_json`.
+
+- Make these changes to necessary sections of the `bdr_uploader_hub_project/PLAN__implement_genre_selection.md` plan.
+
+- Prepend this prompt to the `## Recent Prompt` section.
+
 Goal: Offer the staff-configurer an additional "Basics" option:
 - Label: "Assigned Genre"
 - value: a drop-down menu defaulting to "document", with other (alphabetical) options of "poster" and "thesis"
@@ -68,9 +82,9 @@ Add a staff-only configuration field named `Assigned Genre` to the `Basics` sect
 6. During ingest, `bdr_uploader_hub_app/lib/ingester_handler.py` calls `ModsMaker(submission).prepare_mods()`.
 7. `bdr_uploader_hub_app/lib/mods_handler.py` builds a template context and renders `mods_base.xml`.
 8. `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/mods_base.xml` currently hard-codes:
-   - `authority="aat"`
-   - `valueURI="http://vocab.getty.edu/aat/300444670"`
-   - inner text `scholarly works`
+    - placeholder `authority="THE-AUTHORITY"` that will be replaced by the selected genre data
+    - placeholder `valueURI="THE-VALUE-URI"` that will be replaced by the selected genre data
+    - placeholder inner text `THE-GENRE-VALUE` that will be replaced by the selected genre data
 
 ### Persistence model already available
 
@@ -110,18 +124,25 @@ For the actual implementation, choose one authoritative structure and normalize 
 
 ## Recommended Stored Value
 
-Persist only the selected menu key in `AppConfig.temp_config_json`, for example:
+Persist the entire selected genre-entry dict in `AppConfig.temp_config_json`, for example:
 
 ```python
-{"assigned_genre": "document"}
+{
+    "assigned_genre": {
+        "menu_label": "document",
+        "mods_string": "publications (documents)",
+        "authority": "aat",
+        "value_uri": "http://vocab.getty.edu/aat/300111999",
+    }
+}
 ```
 
 Reasoning:
 
-- It keeps saved config small and stable.
-- It avoids copying environment-derived metadata into the database.
-- It allows future corrections to `mods_string`, `authority`, or `value_uri` via settings changes.
-- MODS generation can resolve the selected key to full metadata at render time.
+- It preserves the exact genre metadata chosen at configuration time.
+- It keeps the later MODS step independent of any changes to the environment variable.
+- It avoids needing a second lookup if the later ingest path already has the stored config.
+- It still allows the plan to treat `settings.GENRE_OPTIONS` as the source for the available menu entries.
 
 ## Implementation Plan
 
@@ -134,15 +155,15 @@ Responsibilities:
 - Normalize `settings.GENRE_OPTIONS` into a predictable internal structure.
 - Produce sorted staff-form choices by `menu_label`.
 - Ensure `document`, `poster`, and `thesis` resolve correctly.
-- Provide a function to fetch a genre record from a saved selected key.
-- Provide a function that returns the default selected key (`document`).
+- Provide a function to fetch a genre record from the stored genre dict-entry.
+- Provide a function that returns the default genre dict-entry (`document`).
 - Raise a clear `ValueError` when settings are malformed or a saved key no longer exists.
 
 Suggested helper functions:
 
 - `build_genre_choices() -> list[tuple[str, str]]`
 - `get_default_genre_key() -> str`
-- `get_genre_config(selected_key: str | None) -> dict`
+- `get_genre_config(stored_genre_entry: dict | None) -> dict`
 
 Notes:
 
@@ -201,8 +222,8 @@ Update `bdr_uploader_hub_app/lib/mods_handler.py`.
 
 Add logic in `ModsMaker.prepare_mods()` to:
 
-- read the selected genre key from `self.submission.app.temp_config_json`
-- resolve that key through the genre helper to obtain:
+- read the stored genre-entry from `self.submission.app.temp_config_json`
+- resolve that stored entry through the genre helper to obtain:
   - `authority`
   - `value_uri`
   - `mods_string`
@@ -217,11 +238,11 @@ Suggested context keys:
 Fallback behavior recommendation:
 
 - If config is absent for older apps, default to `document`.
-- If the saved key is invalid, either:
+- If the stored genre-entry is invalid, either:
   - fail loudly with a clear exception during MODS preparation, or
   - log and fall back to `document`
 
-Preferred approach: default missing-to-`document`, but treat explicitly invalid saved keys as an error so bad configuration is not silently ingested.
+Preferred approach: default missing-to-`document`, but treat explicitly invalid stored genre-entries as an error so bad configuration is not silently ingested.
 
 ### 6. Replace the hard-coded MODS genre element
 
@@ -375,6 +396,6 @@ After implementation:
 
 - Staff configuring an app see an `Assigned Genre` dropdown in `Basics`.
 - The dropdown defaults to `document` and offers `poster` and `thesis` alphabetically.
-- The selected key is saved in `AppConfig.temp_config_json`.
+- The full selected genre dict-entry is saved in `AppConfig.temp_config_json`.
 - Students do not see or edit the field.
-- MODS generation uses the saved key plus `settings.GENRE_OPTIONS` to render the correct `mods:genre` element with the correct `authority`, `valueURI`, and text.
+- MODS generation uses the saved genre-entry plus `settings.GENRE_OPTIONS` to render the correct `mods:genre` element with the correct `authority`, `valueURI`, and text.
