@@ -2,6 +2,12 @@
 
 ## Recent Prompt
 
+- Review `bdr_uploader_hub_project/AGENTS.md` to understand coding-directives to follow.
+- Review `bdr_uploader_hub_project/FIX__lack_of_save.md` to understand the problem and proposed solution.
+- Implement the solution.
+- Ensure tests pass.
+- Prepend this prompt to the `## Recent Prompt` section of the `bdr_uploader_hub_project/FIX__lack_of_save.md`, just below the title.
+
 - Review `bdr_uploader_hub_project/README.md` for an overview of the project.
 - Review `bdr_uploader_hub_project/PLAN__implement_genre_selection.md` to understand the work that was just implemented.
 - I just logged into the webapp as a staffperson.

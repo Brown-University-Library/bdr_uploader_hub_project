@@ -25,7 +25,7 @@ class StaffForm(forms.Form):
         label='Staff to notify on ingest',
         help_text='email1 | email2 | ...',
     )
-    assigned_genre = forms.ChoiceField(required=False, label='Assigned Genre', choices=[])
+    assigned_genre = forms.ChoiceField(required=True, label='Assigned Genre', choices=[])
 
     authorized_student_groups = forms.CharField(
         required=False,

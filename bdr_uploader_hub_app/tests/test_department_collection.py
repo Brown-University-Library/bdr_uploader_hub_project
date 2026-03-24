@@ -227,6 +227,7 @@ class StaffFormDepartmentCollectionValidationTest(SimpleTestCase):
                         'collection_assignment_mode': 'department_collection_menu',
                         'staff_to_notify': 'valid@example.com',
                         'authorized_student_emails': 'student@example.com',
+                        'assigned_genre': 'document',
                         'license_options': ['CC_BY'],
                         'visibility_options': ['public'],
                     }
