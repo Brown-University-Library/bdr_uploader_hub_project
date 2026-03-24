@@ -96,6 +96,7 @@ class StaffFormDirectTests(TestCase):
                 'collection_title': project_settings.TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION,
                 'staff_to_notify': 'valid@example.com',
                 'authorized_student_emails': 'student@example.com',
+                'assigned_genre': 'document',
                 ## license fields
                 'offer_license_options': True,
                 'license_options': ['CC_BY', 'CC_BY-SA', 'CC_BY-NC-SA'],

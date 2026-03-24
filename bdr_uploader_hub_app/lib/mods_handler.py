@@ -4,6 +4,7 @@ from django.template.loader import get_template
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 
+from bdr_uploader_hub_app.lib.genre_helper import get_genre_entry
 from bdr_uploader_hub_app.models import Submission
 
 log = logging.getLogger(__name__)
@@ -83,6 +84,13 @@ class ModsMaker:
         selected_license: str = self.submission.license_options or ''
         log.debug(f'selected_license: {selected_license}')
 
+        ## genre -----------------------------------------------------
+        temp_config_data: dict = self.submission.app.temp_config_json if self.submission.app else {}
+        genre_entry: dict = get_genre_entry(temp_config_data.get('assigned_genre'))
+        genre_authority: str = genre_entry.get('authority', '')
+        genre_value_uri: str = genre_entry.get('value_uri', '')
+        genre_text: str = genre_entry.get('mods_string', '')
+
         ## assembling data -------------------------------------------
         context = {
             'title': title,
@@ -98,6 +106,9 @@ class ModsMaker:
             'faculty_mentors': faculty_mentors,
             'team_members': team_members,
             'selected_license': selected_license,
+            'genre_authority': genre_authority,
+            'genre_value_uri': genre_value_uri,
+            'genre_text': genre_text,
         }
         ## render the template ---------------------------------------
         template = get_template('mods_base.xml')

@@ -5,6 +5,7 @@ from django.conf import settings
 
 from bdr_uploader_hub_app.forms.staff_form_validation import validate_staff_form
 from bdr_uploader_hub_app.lib.department_collection_helper import COLLECTION_ASSIGNMENT_MODE_CHOICES, FIXED_COLLECTION_MODE
+from bdr_uploader_hub_app.lib.genre_helper import build_genre_choices, get_default_genre_entry
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class StaffForm(forms.Form):
         label='Staff to notify on ingest',
         help_text='email1 | email2 | ...',
     )
+    assigned_genre = forms.ChoiceField(required=True, label='Assigned Genre', choices=[])
 
     authorized_student_groups = forms.CharField(
         required=False,
@@ -126,6 +128,17 @@ class StaffForm(forms.Form):
         self.fields['license_default'].choices = [('ERR', 'Unselected')] + settings.ALL_LICENSE_OPTIONS
         self.fields['visibility_options'].choices = settings.ALL_VISIBILITY_OPTIONS
         self.fields['visibility_default'].choices = [('ERR', 'Unselected')] + settings.ALL_VISIBILITY_OPTIONS
+        self.fields['assigned_genre'].choices = build_genre_choices()
+        assigned_genre_initial = self.initial.get('assigned_genre') if isinstance(self.initial, dict) else None
+        if isinstance(assigned_genre_initial, dict):
+            assigned_genre_initial = assigned_genre_initial.get(
+                'menu_label', get_default_genre_entry().get('menu_label', 'document')
+            )
+        if not assigned_genre_initial:
+            assigned_genre_initial = get_default_genre_entry().get('menu_label', 'document')
+        if isinstance(self.initial, dict):
+            self.initial['assigned_genre'] = assigned_genre_initial
+        self.fields['assigned_genre'].initial = assigned_genre_initial
 
     def clean(self):
         ## delegate all validation to bdr_uploader_hub_app/forms/staff_form_validation.py

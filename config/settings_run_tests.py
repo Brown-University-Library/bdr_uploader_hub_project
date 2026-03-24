@@ -212,7 +212,13 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 ## django APP settings ----------------------------------------------
 
-TEST_SHIB_META_DCT: dict = {}
+TEST_SHIB_META_DCT: dict = {
+    'Shibboleth-eppn': 'staffperson@domain.edu',
+    'Shibboleth-givenName': 'StaffFirst',
+    'Shibboleth-mail': 'staff_email@domain.edu',
+    'Shibboleth-sn': 'StaffLast',
+    'Shibboleth-isMemberOf': 'aa:bb:cc;dd:ee:ff;the:group;gg:hh',
+}
 
 SHIB_SP_LOGIN_URL: str = 'http://localhost:8000/shib_login/'
 SHIB_IDP_LOGOUT_URL: str = 'http://localhost:8000/shib_logout/'
@@ -223,11 +229,21 @@ ALL_LICENSE_OPTIONS: list[tuple[str, str]] = []
 ## creates, eg: [('public', 'Public'), ('private', 'Private'), etc.]
 ALL_VISIBILITY_OPTIONS: list[tuple[str, str]] = []
 
+## creates, eg: [{'menu_label': 'document', 'mods_string': 'publications (documents)', ...}, ...]
+GENRE_OPTIONS: list[dict] = [
+    {
+        'menu_label': 'document',
+        'mods_string': 'publications (documents)',
+        'authority': 'aat',
+        'value_uri': 'http://vocab.getty.edu/aat/300111999',
+    },
+]
+
 ## used for pid<-->collection-name validation
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = 'http://localhost:8000/api/collections/'
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = 'test:123'
 TEST_COLLECTION_TITLE_FOR_FORM_VALIDATION: str = 'Test Collection'
-DEPARTMENT_MAP_FILEPATH: str = str(BASE_DIR.parent / 'department_map.json')
+DEPARTMENT_MAP_FILEPATH: str = str(BASE_DIR / 'bdr_uploader_hub_app/tests/sample_department_map.json')
 
 ## used for rightsMetadata xml file
 BDR_MANAGER_GROUP: str = 'manager_group'

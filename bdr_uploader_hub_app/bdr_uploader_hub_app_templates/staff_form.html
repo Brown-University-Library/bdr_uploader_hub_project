@@ -183,6 +183,16 @@
                 </div>
                 {{ form.staff_to_notify }}
             </div>
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.assigned_genre.label_tag }}
+                    {% if form.assigned_genre.help_text %}
+                        <p id="id_assigned_genre_helptext" class="help">{{ form.assigned_genre.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.assigned_genre }}
+            </div>
             
             <div class="form-group">
                 <div class="label-container">

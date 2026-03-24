@@ -1,5 +1,7 @@
 # Plan: implement dropdown department option
 
+(This has been implemented.)
+
 ## Recent Prompt
 
 - Review `bdr_uploader_hub_project/AGENTS.md` for coding-directives to follow.
