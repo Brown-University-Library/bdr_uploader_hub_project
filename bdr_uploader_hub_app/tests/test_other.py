@@ -3,6 +3,7 @@ import os
 import pprint
 
 from django.conf import settings as project_settings
+from django.template.loader import render_to_string
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
@@ -217,3 +218,27 @@ class IngestTest(SimpleTestCase):
         pass
 
     # end class IngestTest()
+
+
+class ForbiddenTemplateTest(SimpleTestCase):
+    """
+    Checks forbidden.html template rendering.
+    """
+
+    def test_forbidden_template_renders_message(self):
+        """
+        Checks that forbidden.html renders the provided message.
+        """
+        msg = 'You do not have permissions to perform this action.'
+        html = render_to_string('forbidden.html', {'message': msg, 'username': 'TestUser'})
+        self.assertIn(msg, html)
+
+    def test_forbidden_template_has_alert_role(self):
+        """
+        Checks that forbidden.html includes role="alert" on the message element for screen-reader accessibility.
+        """
+        msg = 'Access denied.'
+        html = render_to_string('forbidden.html', {'message': msg, 'username': 'TestUser'})
+        self.assertIn('role="alert"', html)
+
+    # end class ForbiddenTemplateTest()
