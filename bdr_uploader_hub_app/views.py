@@ -415,19 +415,22 @@ def upload(request) -> HttpResponse:
 
 def get_student_upload_back_link_info(user) -> tuple[str, str]:
     """
-    Returns the upload-form back-link URL and label for the current user.
+    Returns the upload-form back-link URL and label for upload_slug() handling.
 
     Called by: upload_slug()
     """
-    back_url: str = ''
-    back_url_text: str = ''
+    back_link_info: tuple[str, str]
     if user.is_staff:
-        back_url = reverse('staff_config_new_url')
-        back_url_text = 'back to staff config page'
+        back_link_info = (
+            reverse('staff_config_new_url'),
+            'back to staff config page',
+        )
     else:
-        back_url = reverse('student_upload_url')
-        back_url_text = 'back to student-landing page'
-    return (back_url, back_url_text)
+        back_link_info = (
+            reverse('student_upload_url'),
+            'back to student-landing page',
+        )
+    return back_link_info
 
 
 @login_required
