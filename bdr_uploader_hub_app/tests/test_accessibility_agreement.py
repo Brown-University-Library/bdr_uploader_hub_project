@@ -21,6 +21,7 @@ class AccessibilityAgreementTest(TestCase):
 
         self.assertIn('accessibility_agreement', form_class.base_fields)
         self.assertTrue(form_class.base_fields['accessibility_agreement'].required)
+        self.assertEqual('(required)', form_class.base_fields['accessibility_agreement'].help_text)
         self.assertEqual(
             ['title', 'abstract', 'accessibility_agreement', 'main_file'],
             list(form_class.base_fields.keys())[:4],
@@ -54,9 +55,11 @@ class AccessibilityAgreementTest(TestCase):
         rendered = template.render(context)
 
         abstract_position = rendered.find('id="abstract_group"')
+        agreement_text_position = rendered.find('id="accessibility_agreement_text"')
         agreement_position = rendered.find('id="accessibility_agreement_group"')
         main_file_position = rendered.find('id="main_file_group"')
-        self.assertLess(abstract_position, agreement_position)
+        self.assertLess(abstract_position, agreement_text_position)
+        self.assertLess(agreement_text_position, agreement_position)
         self.assertLess(agreement_position, main_file_position)
         self.assertIn(
             "By using this uploader, you are agreeing that your content meets Brown's Digital Accessibility policy standards.",
@@ -66,6 +69,8 @@ class AccessibilityAgreementTest(TestCase):
             '<a href="https://digital-accessibility.brown.edu/" target="_blank" rel="noopener noreferrer">Brown\'s Digital Accessibility website</a>',
             rendered,
         )
+        self.assertIn('class="accessibility-agreement-text"', rendered)
+        self.assertIn('<label for="id_accessibility_agreement">Accessibility agreement</label>', rendered)
 
     def test_upload_slug_rejects_valid_submission_when_accessibility_agreement_is_unchecked(self):
         """

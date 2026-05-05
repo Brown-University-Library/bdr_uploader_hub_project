@@ -37,6 +37,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
     fields['accessibility_agreement'] = forms.BooleanField(
         label='Accessibility agreement',
         required=True,
+        help_text='(required)',
         error_messages={'required': 'You must agree before submitting.'},
     )
     fields['main_file'] = forms.FileField(label='Upload File', required=True, help_text='(required)')
