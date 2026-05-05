@@ -445,7 +445,7 @@ def build_student_upload_form_context(
     back_url_text: str,
 ) -> dict[str, object]:
     """
-    Builds the template context for the student upload form.
+    Build the template context for the student upload form.
     Called by: upload_slug()
     """
     context: dict[str, object] = {
