@@ -553,7 +553,7 @@ def student_confirm(request, slug):
             ## confirmed, so create Submission record
             app_config = get_object_or_404(AppConfig, slug=slug)
             submission_student_data = student_data.copy()
-            # create a copy and remove the agreement field (submission-time gate, not stored metadata)
+            ## create a copy and remove the agreement field (submission-time gate, not stored metadata)
             submission_student_data.pop('accessibility_agreement', None)
             submission = Submission.objects.create(
                 ## basics -------------------------------------------
