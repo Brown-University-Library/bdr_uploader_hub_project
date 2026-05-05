@@ -433,8 +433,8 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         back_url: str = reverse('staff_config_new_url')
         back_url_text: str = 'back to staff config page'
     else:
-        back_url = reverse('student_upload_url')
-        back_url_text = 'back to student-landing page'
+        back_url: str = reverse('student_upload_url')
+        back_url_text: str = 'back to student-landing page'
 
     ## build form based on staff-config data ------------------------
     StudentUploadForm: django_forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
@@ -541,7 +541,7 @@ def student_confirm(request, slug):
             ## confirmed, so create Submission record
             app_config = get_object_or_404(AppConfig, slug=slug)
             submission_student_data = student_data.copy()
-            ## the agreement is a submission-time gate, not stored submission metadata
+            ## create a copy and remove the agreement field (submission-time gate, not stored metadata)
             submission_student_data.pop('accessibility_agreement', None)
             submission = Submission.objects.create(
                 ## basics -------------------------------------------
