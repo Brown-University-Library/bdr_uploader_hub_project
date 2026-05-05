@@ -88,6 +88,31 @@
         max-width: 500px;
         margin: 0; 
     }
+
+    .accessibility-agreement-group {
+        margin-bottom: 2rem;
+    }
+
+    .accessibility-agreement-content {
+        max-width: 500px;
+        margin-left: auto;
+    }
+
+    .accessibility-agreement-content p {
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+
+    .accessibility-agreement-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .accessibility-agreement-checkbox label {
+        margin-right: 0;
+        text-align: left;
+    }
     
 </style>
 {% endblock header_other %}
@@ -167,6 +192,15 @@
                 {% endif %}
                 </div>
                 {{ form.abstract }}
+            </div>
+            <div class="accessibility-agreement-group" id="accessibility_agreement_group">
+                <div class="accessibility-agreement-content">
+                    <p>By using this uploader, you are agreeing that your content meets Brown's Digital Accessibility policy standards. More information can be found on <a href="https://digital-accessibility.brown.edu/" target="_blank" rel="noopener noreferrer">Brown's Digital Accessibility website</a>. For assistance please contact accessibility@brown.libanswers.com.</p>
+                    <div class="accessibility-agreement-checkbox">
+                        {{ form.accessibility_agreement }}
+                        {{ form.accessibility_agreement.label_tag }}
+                    </div>
+                </div>
             </div>
             <div class="form-group" id="main_file_group">
                 <div class="label-container">
