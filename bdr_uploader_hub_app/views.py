@@ -413,6 +413,23 @@ def upload(request) -> HttpResponse:
     ## end def upload()
 
 
+def get_student_upload_back_link_info(user) -> tuple[str, str]:
+    """
+    Returns the upload-form back-link URL and label for the current user.
+
+    Called by: upload_slug()
+    """
+    back_url: str = ''
+    back_url_text: str = ''
+    if user.is_staff:
+        back_url = reverse('staff_config_new_url')
+        back_url_text = 'back to staff config page'
+    else:
+        back_url = reverse('student_upload_url')
+        back_url_text = 'back to student-landing page'
+    return (back_url, back_url_text)
+
+
 @login_required
 def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     """
@@ -429,12 +446,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
     depositor_email: str = request.user.email
     deposit_iso_date: str = datetime.datetime.now().isoformat()
-    if request.user.is_staff:
-        back_url: str = reverse('staff_config_new_url')
-        back_url_text: str = 'back to staff config page'
-    else:
-        back_url: str = reverse('student_upload_url')
-        back_url_text: str = 'back to student-landing page'
+    (back_url, back_url_text) = get_student_upload_back_link_info(request.user)
 
     ## build form based on staff-config data ------------------------
     StudentUploadForm: django_forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
@@ -541,7 +553,7 @@ def student_confirm(request, slug):
             ## confirmed, so create Submission record
             app_config = get_object_or_404(AppConfig, slug=slug)
             submission_student_data = student_data.copy()
-            ## create a copy and remove the agreement field (submission-time gate, not stored metadata)
+            # create a copy and remove the agreement field (submission-time gate, not stored metadata)
             submission_student_data.pop('accessibility_agreement', None)
             submission = Submission.objects.create(
                 ## basics -------------------------------------------
