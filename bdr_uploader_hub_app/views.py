@@ -433,6 +433,36 @@ def get_student_upload_back_link_info(user) -> tuple[str, str]:
     return back_link_info
 
 
+def build_student_upload_form_context(
+    form: django_forms.forms.Form,
+    request: HttpRequest,
+    slug: str,
+    app_name: str,
+    depositor_fullname: str,
+    depositor_email: str,
+    deposit_iso_date: str,
+    back_url: str,
+    back_url_text: str,
+) -> dict[str, object]:
+    """
+    Builds the template context for the student upload form.
+
+    Called by: upload_slug()
+    """
+    context: dict[str, object] = {
+        'form': form,
+        'slug': slug,
+        'username': request.user.first_name,
+        'depositor_fullname': depositor_fullname,
+        'depositor_email': depositor_email,
+        'deposit_iso_date': deposit_iso_date,
+        'app_name': app_name,
+        'back_url': back_url,
+        'back_url_text': back_url_text,
+    }
+    return context
+
+
 @login_required
 def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     """
@@ -480,20 +510,21 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
             request.session['student_form_data'] = cleaned_data
             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
         else:
+            context: dict[str, object] = build_student_upload_form_context(
+                form,
+                request,
+                slug,
+                app_config.name,
+                depositor_fullname,
+                depositor_email,
+                deposit_iso_date,
+                back_url,
+                back_url_text,
+            )
             resp = render(
                 request,
                 'student_form.html',
-                {
-                    'form': form,
-                    'slug': slug,
-                    'username': request.user.first_name,
-                    'depositor_fullname': depositor_fullname,
-                    'depositor_email': depositor_email,
-                    'deposit_iso_date': deposit_iso_date,
-                    'app_name': app_config.name,
-                    'back_url': back_url,
-                    'back_url_text': back_url_text,
-                },
+                context,
             )
 
     else:  # GET
@@ -510,20 +541,21 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         log.debug(f'visibility options choices: {pprint.pformat(form.fields["visibility_options"].choices)}')
         request.session['student_form_data'] = {}  # clear the session data
         ## render the form
+        context: dict[str, object] = build_student_upload_form_context(
+            form,
+            request,
+            slug,
+            app_config.name,
+            depositor_fullname,
+            depositor_email,
+            deposit_iso_date,
+            back_url,
+            back_url_text,
+        )
         resp: HttpResponse = render(
             request,
             'student_form.html',
-            {
-                'form': form,
-                'slug': slug,
-                'username': request.user.first_name,
-                'depositor_fullname': depositor_fullname,
-                'depositor_email': depositor_email,
-                'deposit_iso_date': deposit_iso_date,
-                'app_name': app_config.name,
-                'back_url': back_url,
-                'back_url_text': back_url_text,
-            },
+            context,
         )
     return resp
 

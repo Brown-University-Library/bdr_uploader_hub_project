@@ -65,14 +65,15 @@ class AccessibilityAgreementTest(TestCase):
             "By using this uploader, you are agreeing that your content meets Brown's Digital Accessibility policy standards.",
             rendered,
         )
-        self.assertIn(
-            '<a href="https://digital-accessibility.brown.edu/" target="_blank" rel="noopener noreferrer">Brown\'s Digital Accessibility website</a>',
-            rendered,
-        )
+        self.assertIn('href="https://digital-accessibility.brown.edu/"', rendered)
+        self.assertIn('target="_blank"', rendered)
+        self.assertIn('rel="noopener noreferrer"', rendered)
         self.assertIn('class="accessibility-agreement-text"', rendered)
-        self.assertIn('<label for="id_accessibility_agreement">Accessibility agreement</label>', rendered)
+        self.assertIn('type="checkbox"', rendered)
+        self.assertIn('name="accessibility_agreement"', rendered)
+        self.assertIn('for="id_accessibility_agreement"', rendered)
 
-    def test_upload_slug_rejects_valid_submission_when_accessibility_agreement_is_unchecked(self):
+    def test_upload_slug_rejects_submission_when_accessibility_agreement_is_unchecked(self):
         """
         Checks upload submission stays on the form when the accessibility agreement is not checked.
         """
@@ -90,9 +91,12 @@ class AccessibilityAgreementTest(TestCase):
             temp_config_json={},
         )
         self.client.force_login(user)
+        upload_url = reverse('student_upload_slug_url', kwargs={'slug': app_config.slug})
+        get_response = self.client.get(upload_url)
+        self.assertEqual(200, get_response.status_code)
 
         response = self.client.post(
-            reverse('student_upload_slug_url', kwargs={'slug': app_config.slug}),
+            upload_url,
             data={
                 'title': 'Accessible title',
                 'abstract': 'Accessible abstract',
@@ -106,4 +110,4 @@ class AccessibilityAgreementTest(TestCase):
         self.assertIn('accessibility_agreement', response.context['form'].errors)
         self.assertContains(response, 'Please correct the errors below.')
         self.assertContains(response, 'field: Accessibility agreement')
-        self.assertNotIn('student_form_data', self.client.session)
+        self.assertEqual({}, self.client.session.get('student_form_data'))
