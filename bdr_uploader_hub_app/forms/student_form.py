@@ -34,6 +34,12 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         help_text='(required)',
         widget=forms.Textarea,
     )
+    fields['accessibility_agreement'] = forms.BooleanField(
+        label='Accessibility agreement',
+        required=True,
+        help_text='(required)',
+        error_messages={'required': 'You must agree before submitting.'},
+    )
     fields['main_file'] = forms.FileField(label='Upload File', required=True, help_text='(required)')
     ## Collaborators section ----------------------------------------
     rq_AR = config_data.get('advisors_and_readers_required', False)

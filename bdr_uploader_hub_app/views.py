@@ -413,6 +413,55 @@ def upload(request) -> HttpResponse:
     ## end def upload()
 
 
+def get_student_upload_back_link_info(user) -> tuple[str, str]:
+    """
+    Returns the upload-form back-link URL and label for upload_slug() handling.
+
+    Called by: upload_slug()
+    """
+    back_link_info: tuple[str, str]
+    if user.is_staff:
+        back_link_info = (
+            reverse('staff_config_new_url'),
+            'back to staff config page',
+        )
+    else:
+        back_link_info = (
+            reverse('student_upload_url'),
+            'back to student-landing page',
+        )
+    return back_link_info
+
+
+def build_student_upload_form_context(
+    form: django_forms.forms.Form,
+    request: HttpRequest,
+    slug: str,
+    app_name: str,
+    depositor_fullname: str,
+    depositor_email: str,
+    deposit_iso_date: str,
+    back_url: str,
+    back_url_text: str,
+) -> dict[str, object]:
+    """
+    Build the template context for the student upload form.
+    Called by: upload_slug()
+    """
+    context: dict[str, object] = {
+        'form': form,
+        'slug': slug,
+        'username': request.user.first_name,
+        'depositor_fullname': depositor_fullname,
+        'depositor_email': depositor_email,
+        'deposit_iso_date': deposit_iso_date,
+        'app_name': app_name,
+        'back_url': back_url,
+        'back_url_text': back_url_text,
+    }
+    return context
+
+
 @login_required
 def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     """
@@ -429,6 +478,7 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
     depositor_fullname: str = f'{request.user.first_name} {request.user.last_name}'
     depositor_email: str = request.user.email
     deposit_iso_date: str = datetime.datetime.now().isoformat()
+    (back_url, back_url_text) = get_student_upload_back_link_info(request.user)
 
     ## build form based on staff-config data ------------------------
     StudentUploadForm: django_forms.forms.DeclarativeFieldsMetaclass = make_student_form_class(config_data)
@@ -458,6 +508,23 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
             cleaned_data = add_department_collection_submission_data(config_data, cleaned_data)
             request.session['student_form_data'] = cleaned_data
             resp = redirect(reverse('student_confirm_url', kwargs={'slug': slug}))
+        else:
+            context: dict[str, object] = build_student_upload_form_context(
+                form,
+                request,
+                slug,
+                app_config.name,
+                depositor_fullname,
+                depositor_email,
+                deposit_iso_date,
+                back_url,
+                back_url_text,
+            )
+            resp = render(
+                request,
+                'student_form.html',
+                context,
+            )
 
     else:  # GET
         ## see if there's form session data to pre-populate the form
@@ -472,28 +539,22 @@ def upload_slug(request, slug) -> HttpResponse | HttpResponseRedirect:
         log.debug(f'license options choices: {pprint.pformat(form.fields["license_options"].choices)}')
         log.debug(f'visibility options choices: {pprint.pformat(form.fields["visibility_options"].choices)}')
         request.session['student_form_data'] = {}  # clear the session data
-        ## prepare 'back' link
-        if request.user.is_staff:
-            back_url: str = reverse('staff_config_new_url')
-            back_url_text: str = 'back to staff config page'
-        else:
-            back_url: str = reverse('student_upload_url')
-            back_url_text: str = 'back to student-landing page'
         ## render the form
+        context: dict[str, object] = build_student_upload_form_context(
+            form,
+            request,
+            slug,
+            app_config.name,
+            depositor_fullname,
+            depositor_email,
+            deposit_iso_date,
+            back_url,
+            back_url_text,
+        )
         resp: HttpResponse = render(
             request,
             'student_form.html',
-            {
-                'form': form,
-                'slug': slug,
-                'username': request.user.first_name,
-                'depositor_fullname': depositor_fullname,
-                'depositor_email': depositor_email,
-                'deposit_iso_date': deposit_iso_date,
-                'app_name': app_config.name,
-                'back_url': back_url,
-                'back_url_text': back_url_text,
-            },
+            context,
         )
     return resp
 
@@ -525,6 +586,9 @@ def student_confirm(request, slug):
         if 'confirm' in request.POST:
             ## confirmed, so create Submission record
             app_config = get_object_or_404(AppConfig, slug=slug)
+            submission_student_data = student_data.copy()
+            ## create a copy and remove the agreement field (submission-time gate, not stored metadata)
+            submission_student_data.pop('accessibility_agreement', None)
             submission = Submission.objects.create(
                 ## basics -------------------------------------------
                 app=app_config,
@@ -556,7 +620,7 @@ def student_confirm(request, slug):
                 checksum_type=student_data.get('checksum_type'),
                 checksum=student_data.get('checksum'),
                 ## form-data ----------------------------------------
-                temp_submission_json=student_data,
+                temp_submission_json=submission_student_data,
                 ## status -------------------------------------------
                 status='ready_to_ingest',  # initial status
             )

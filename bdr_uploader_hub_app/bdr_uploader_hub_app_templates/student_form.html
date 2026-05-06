@@ -88,6 +88,20 @@
         max-width: 500px;
         margin: 0; 
     }
+
+    .accessibility-agreement-text {
+        margin: 1rem 0 1.5rem 0;
+        padding: 1rem 1.25rem;
+        background-color: #eeeeee;
+        border-left: 3px solid #888;
+        border-radius: 2px;
+        font-size: 0.95em;
+        line-height: 1.5;
+    }
+
+    .accessibility-agreement-text p {
+        margin: 0;
+    }
     
 </style>
 {% endblock header_other %}
@@ -167,6 +181,22 @@
                 {% endif %}
                 </div>
                 {{ form.abstract }}
+            </div>
+            <div class="accessibility-agreement-text" id="accessibility_agreement_text">
+                <p>
+                    By using this uploader, you are agreeing that your content meets Brown's Digital Accessibility policy standards.
+                    More information can be found on <a href="https://digital-accessibility.brown.edu/" target="_blank" rel="noopener noreferrer">Brown's Digital Accessibility website</a>.
+                    For assistance please contact <a href="mailto:accessibility@brown.libanswers.com" aria-label="Email accessibility@brown.libanswers.com">accessibility@brown.libanswers.com</a>.
+                </p>
+            </div>
+            <div class="form-group" id="accessibility_agreement_group">
+                <div class="label-container">
+                    <label for="id_accessibility_agreement">Accessibility agreement</label>
+                    {% if form.accessibility_agreement.help_text %}
+                        <p id="id_accessibility_agreement_helptext" class="help">{{ form.accessibility_agreement.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.accessibility_agreement }}
             </div>
             <div class="form-group" id="main_file_group">
                 <div class="label-container">
