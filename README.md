@@ -10,8 +10,9 @@ Copy `example.env` to `../.env`, and change values as
 needed. Note that in the example, most instance files
 live in `uploader_hub_files/`
 
-Create a directory called `DBs` in the configured
-location (`uploader_hub_files/` by default.
+Create the directories `DBs` and `logs` in the
+configured location (`uploader_hub_files/` by
+default.)
 
 ```sh
 uv run manage.py makemigrations bdr_student_uploader_hub_app
@@ -21,22 +22,35 @@ Based on the example config, this should create a
 sqlite file in the DBs directory and set up all
 required tables.
 
+Run the app with
+```sh
+uv run manage.py runserver
+```
+
 Then bring up the app and click "log in as staff" to
 trigger the creation of the `admin` profile in
 the DB.
 
-Create a superuser and log into the django admin site.
-Once there, create a new permissions group with all
-permissions from the `submissions` app. Then edit the
-`staffperson` profile. Grant staff status and add the
-profile to the `submissions_editor` group.
-(Alternatively, just grant staff status and all
-permissions from the `submissions` app).
+When running on localhost, the app uses
+`TEST_SHIB_META_DCT_JSON` to spoof a shibboleth
+account for your sessions. This account needs to be
+granted staff access through the admin.
+
+Create a superuser for yourself
+```sh
+uv run manage.py createsuperuser
+```
+and log into `/admin`
+
+Go to User profiles, and check "Can create app" for
+the shib-spoofed profile.
 
 At this point, you should be able to log in as staff
 and create new apps, edit existing apps and see
-student submissions in the admin portal. You should
-also be able to log in as a student and upload media.
+student submissions in the admin portal. If your new
+apps grant access to one of the configured groups, or
+to `foo@bar.baz`, you'll also be able to log in as a
+student and see those apps.
 
 ## Technical note
 
