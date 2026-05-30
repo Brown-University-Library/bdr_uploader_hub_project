@@ -383,7 +383,7 @@ def upload(request) -> HttpResponse:
             for user_group in user_groups:
                 if user_group in authorized_app_student_groups:
                     permitted_apps.append(app_config)
-                    continue
+                    break
     log.debug(f'permitted apps: {permitted_apps}')
 
     # Handle based on permitted apps
