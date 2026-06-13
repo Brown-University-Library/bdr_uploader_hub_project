@@ -1,10 +1,9 @@
-head, body, form, label, input, button, table, th, td {
+body, form, label, input, button, table, th, td {
     font-family: Verdana, sans-serif; /* Verdana font */
 }
 
 html {
     background-color: white;
-    padding-top: .1em;  /* keeps maroon of header from bleeding into the browser interface */
 }
 
 body {
@@ -18,72 +17,55 @@ body {
 
 /* --- header CSS start --- */
 
-header {
-    background-color: maroon;
-    color: white;
-    /* padding: .25rem 1rem; */
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-    padding-left: 1rem;
-    padding-right: 1.5rem;
-    text-align: left; /* Keep this so h1 is still aligned left in the flex container */
+.bdr-app-header {
+    background-color: #fff;
+    border-bottom: 1px solid #d8d8d8;
+    color: #333;
+    padding: 1rem 1.5rem;
+    text-align: left;
 }
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
+.bdr-app-header__inner {
     align-items: baseline;
-}
-
-.header-content h1 {
-    margin: 0; /* Ensure no extra margin that might misalign baseline */
-    font-size: 1.75rem; /* Adjust as needed for your main title size */
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    justify-content: space-between;
+    margin: 0 auto;
+    max-width: 72rem;
 }
 
-.header-content h1 .logo-link {
+.bdr-app-title {
+    color: #333;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.bdr-auth-links {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: flex-end;
 }
 
-.welcome-text {
-    color: white;
-    font-size: 1rem; /* Smaller than the h1 text */
-    margin: 0; /* Ensure alignment is nice and neat */
+.bdr-welcome-text {
+    color: #333;
+    font-size: 1rem;
+    margin: 0;
+    text-align: right;
 }
 
-header.span.href {
-    color: white;
+.bdr-auth-link,
+.bdr-auth-link:link,
+.bdr-auth-link:visited {
+    color: #0055a6;
     text-decoration: none;
 }
 
-
-/* unvisited link */
-a.login_logout:link {
-    color: white;
-}
-  
-/* visited link */
-a.login_logout:visited {
-    color: white;
-}
-
-/* mouse over link */
-a.login_logout.login_logout:hover {
-    color: orange;
-}
-
-/* selected link */
-a.login_logout:active {
-    color: white;
-}  
-
-/* add a little extra space between the two login links */
-a.staff-login {
-    margin-left: 10px; 
-    /* padding-left: 100px; */
+.bdr-auth-link:hover,
+.bdr-auth-link:active {
+    color: #8c1d40;
+    text-decoration: underline;
 }
 
 /* --- header CSS end --- */
@@ -108,4 +90,19 @@ main {
     color: #666;
     margin-top: 2rem;
     font-style: italic;
+}
+
+@media (max-width: 40rem) {
+    .bdr-app-header__inner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bdr-auth-links {
+        justify-content: flex-start;
+    }
+
+    .bdr-welcome-text {
+        text-align: left;
+    }
 }

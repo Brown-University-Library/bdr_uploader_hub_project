@@ -212,6 +212,9 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 ## django APP settings ----------------------------------------------
 
+## Pattern header configuration
+PATTERN_HEADER_URL: str = ''
+
 TEST_SHIB_META_DCT: dict = {
     'Shibboleth-eppn': 'staffperson@domain.edu',
     'Shibboleth-givenName': 'StaffFirst',

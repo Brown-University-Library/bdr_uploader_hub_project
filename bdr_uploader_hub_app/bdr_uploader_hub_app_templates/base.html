@@ -11,8 +11,8 @@
     {% block title %}
     <title>Configurator</title>
     {% endblock title %}
+    {% include "includes/pattern_header/head.html" %}
     <link rel="stylesheet" href="{% static 'bdr_student_uploader_hub_app/css/common.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/htmx.org"></script>
     {% block header_other %}
     {% endblock header_other %}
@@ -20,19 +20,21 @@
 
 <body>
 
-    <header>
-        <div class="header-content">
-            <h1><a href="https://library.brown.edu" class="logo-link" aria-label="Brown University Library" target="_blank" rel="noopener noreferrer">
-                <i class="fas fa-book-open" style="margin-right: 18px; font-size: 1.2em; vertical-align: middle; color: white;"></i>
-            </a> BDR Uploader Hub</h1>
+    {% include "includes/pattern_header/body.html" %}
+
+    <header class="bdr-app-header" aria-label="BDR Uploader Hub">
+        <div class="bdr-app-header__inner">
+            <h1 class="bdr-app-title">BDR Uploader Hub</h1>
             {% if username %}
-            <span class="welcome-text">Welcome {{ username }} / <a class="login_logout" href="{% url 'logout_url' %}">Logout</a></span>
+                <span class="bdr-welcome-text">
+                    Welcome {{ username }} /
+                    <a class="bdr-auth-link" href="{% url 'logout_url' %}">Logout</a>
+                </span>
             {% else %}
-            <span class="welcome-text">
-                <a class="login_logout" href="{% url 'pre_login_url' %}?type=student">Student Login</a> 
-                <a class="login_logout staff-login" href="{% url 'pre_login_url' %}?type=staff">Staff Login</a>
-            </span>
-            <!-- <span class="welcome-text"><a class="login_logout" href="{% url 'pre_login_url' %}">Staff Login</a></span> -->
+                <nav class="bdr-auth-links" aria-label="BDR Uploader Hub login links">
+                    <a class="bdr-auth-link" href="{% url 'pre_login_url' %}?type=student">Student Login</a>
+                    <a class="bdr-auth-link bdr-auth-link--staff" href="{% url 'pre_login_url' %}?type=staff">Staff Login</a>
+                </nav>
             {% endif %}
         </div>
     </header>

@@ -66,6 +66,8 @@ CACHES_JSON='
 
 README_URL="https://github.com/birkin/django_template_42_project/blob/main/README.md"
 
+PATTERN_HEADER_URL=""
+
 ## for localhost shib-testing
 TEST_META_DCT_JSON='{
   "shib-eppn-key": "eppn@domain.edu",
