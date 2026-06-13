@@ -159,7 +159,8 @@ In `<head>`:
 
 - Keep the local `common.css` include.
 - Include `includes/pattern_header/head.html`.
-- Keep Font Awesome only if the local app title still needs it. Prefer removing the icon from the title area if the new pattern-header provides the Brown Library brand signal, because this reduces visual duplication and avoids retaining icon-specific inline styles.
+- Remove the Font Awesome stylesheet include if no other template depends on it.
+- Remove the Font Awesome book icon from the local app title; the pattern-header should carry the Brown Library brand signal.
 - Keep HTMX as-is unless unrelated cleanup is explicitly requested.
 
 In `<body>`:
@@ -280,7 +281,7 @@ Then manually inspect the rendered app in a browser:
 - **Missing include files break every template extending `base.html`.** Mitigate by committing generated includes, or at minimum valid placeholder includes, with the management command available for manual refresh.
 - **Dynamic links accidentally get embedded into upstream-managed HTML.** Mitigate by keeping staff/student/login/logout markup in `base.html` below the pattern-header include.
 - **Network fetch unavailable during implementation.** Mitigate by testing command parsing with local strings and using `--dry-run` when possible; document the manual command for later execution.
-- **Font Awesome becomes redundant.** Prefer removing the title icon unless a product decision says to keep it, because the pattern-header should carry the Brown Library brand.
+- **Font Awesome becomes redundant.** Remove the title icon and stylesheet include unless a later code search shows another template still depends on Font Awesome.
 
 ## Expected File Changes
 
@@ -341,3 +342,11 @@ Tasks:
 - At the bottom of the plan, include this prompt.
 
 - In the plan, use only relative urls, not full-path urls.
+
+### Follow-Up Prompt
+
+- I've reviewed the plan.
+- There is no need to keep the font-awesome icon.
+- Update the plan accordingly, and append this feedback to the prompt-section with a "follow-up prompt" type sub-heading.
+
+---
