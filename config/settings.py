@@ -141,7 +141,7 @@ EMAIL_PORT = int(os.environ['EMAIL_PORT'])
 
 ## user uploaded files ----------------------------------------------
 MEDIA_ROOT = os.environ['MEDIA_ROOT']
-BDR_API_FILE_PATH_ROOT = os.environ['POST_FILES_STAGING_PATH_ROOT']
+BDR_API_FILE_PATH_ROOT = os.environ['BDR_API_FILE_PATH_ROOT']
 """
 The two settings below prevent django from auto-running chmod on uploaded files
     (which can cause permission issues when using a shared volume)
@@ -215,6 +215,9 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 
 ## django APP settings ----------------------------------------------
+
+## Pattern header configuration
+PATTERN_HEADER_URL: str = os.environ.get('PATTERN_HEADER_URL', '')
 
 TEST_SHIB_META_DCT: dict = json.loads(os.environ['TEST_SHIB_META_DCT_JSON'])
 
