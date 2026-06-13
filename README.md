@@ -51,7 +51,7 @@ To enable that:
 
 ### Updating pattern-header
 
-The Brown Library pattern-header HTML is stored locally in template include files, but is updated manually from the central pattern-library URL configured as `PATTERN_HEADER_URL` in `../.env`.
+The Brown Library pattern-header HTML and CSS are stored locally in template and static files, but are updated manually from the central pattern-library URL configured as `PATTERN_HEADER_URL` in `../.env`.
 
 To check that the configured URL can be fetched without changing files:
 
@@ -67,7 +67,8 @@ uv run ./manage.py update_pattern_header
 
 The command:
 - saves a full upstream snapshot to `bdr_uploader_hub_app/lib/pattern_header_upstream.html`
-- extracts the stylesheet link into `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/head.html`
+- downloads the pattern-header CSS to `bdr_uploader_hub_app/static/bdr_student_uploader_hub_app/css/bul_patterns.css`
+- rewrites the stylesheet link in `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/head.html` to use the local static CSS file
 - saves the body/header markup to `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/body.html`.
 
 This is intentionally not automatic. Run it when the central pattern-header changes, then review the rendered pages for CSS conflicts before committing the refreshed files.

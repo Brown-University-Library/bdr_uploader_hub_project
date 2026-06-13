@@ -1,6 +1,5 @@
 from unittest.mock import Mock, patch
 
-from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 from django.test import SimpleTestCase as TestCase
 
@@ -14,7 +13,7 @@ class PatternHeaderSplitTest(TestCase):
 
     def test_split_pattern_header_extracts_link_tag(self) -> None:
         """
-        Checks split_pattern_header() extracts the bul_patterns.css link tag.
+        Checks split_pattern_header() extracts and rewrites the bul_patterns.css link tag.
         """
         link_tag = '<link rel="stylesheet" href="https://example.edu/common/css/bul_patterns.css" />'
         content = '\n'.join(
@@ -29,14 +28,9 @@ class PatternHeaderSplitTest(TestCase):
 
         head_content, body_content = update_pattern_header.split_pattern_header(content)
 
-        head_soup = BeautifulSoup(head_content, 'html.parser')
-        parsed_link = head_soup.find('link')
-        self.assertIsNotNone(parsed_link)
-        self.assertEqual(
-            parsed_link.get('href'),
-            'https://example.edu/common/css/bul_patterns.css',
-        )
-        self.assertEqual(parsed_link.get('rel'), ['stylesheet'])
+        self.assertIn('{% load static %}', head_content)
+        self.assertIn("{% static 'bdr_student_uploader_hub_app/css/bul_patterns.css' %}", head_content)
+        self.assertNotIn('https://example.edu/common/css/bul_patterns.css', head_content)
         self.assertNotIn('bul_patterns.css', body_content)
         self.assertIn('header content', body_content)
 
@@ -56,7 +50,8 @@ class PatternHeaderSplitTest(TestCase):
 
         head_content, body_content = update_pattern_header.split_pattern_header(content)
 
-        self.assertIn(link_tag, head_content)
+        self.assertIn("{% static 'bdr_student_uploader_hub_app/css/bul_patterns.css' %}", head_content)
+        self.assertNotIn(link_tag, head_content)
         self.assertIn('{% url "info_url" %}', body_content)
 
     def test_split_pattern_header_extracts_link_tag_with_query(self) -> None:
@@ -76,15 +71,21 @@ class PatternHeaderSplitTest(TestCase):
 
         head_content, body_content = update_pattern_header.split_pattern_header(content)
 
-        head_soup = BeautifulSoup(head_content, 'html.parser')
-        parsed_link = head_soup.find('link')
-        self.assertIsNotNone(parsed_link)
-        self.assertEqual(
-            parsed_link.get('href'),
-            'https://static.example.edu/common/css/bul_patterns.css?v=3',
-        )
-        self.assertEqual(parsed_link.get('rel'), ['stylesheet'])
+        self.assertIn("{% static 'bdr_student_uploader_hub_app/css/bul_patterns.css' %}", head_content)
+        self.assertNotIn('https://static.example.edu/common/css/bul_patterns.css?v=3', head_content)
         self.assertNotIn('bul_patterns.css', body_content)
+
+    def test_extract_pattern_css_link_returns_link_and_url(self) -> None:
+        """
+        Checks extract_pattern_css_link() returns the upstream CSS link tag and URL.
+        """
+        link_tag = '<link rel="stylesheet" href="https://example.edu/common/css/bul_patterns.css?v=3" />'
+        content = f'{link_tag}\n<div>header</div>'
+
+        parsed_link_tag, css_url = update_pattern_header.extract_pattern_css_link(content)
+
+        self.assertEqual(link_tag, parsed_link_tag)
+        self.assertEqual('https://example.edu/common/css/bul_patterns.css?v=3', css_url)
 
 
 class PatternHeaderFetchTest(TestCase):
@@ -114,17 +115,26 @@ class PatternHeaderFetchTest(TestCase):
     @patch('bdr_uploader_hub_app.management.commands.update_pattern_header.httpx.get')
     def test_fetch_pattern_header_passes_verify_ssl_to_httpx(self, mock_get: Mock) -> None:
         """
-        Checks fetch_pattern_header() passes the SSL verification setting to httpx.
+        Checks fetch_url() passes the SSL verification setting to httpx.
         """
         mock_response = Mock()
         mock_response.text = 'pattern header'
         mock_get.return_value = mock_response
 
-        content = update_pattern_header.fetch_pattern_header('https://example.edu/header.html', verify_ssl=False)
+        content = update_pattern_header.fetch_url('https://example.edu/header.html', verify_ssl=False)
 
         self.assertEqual(content, 'pattern header')
         mock_get.assert_called_once_with('https://example.edu/header.html', timeout=30.0, verify=False)
         mock_response.raise_for_status.assert_called_once_with()
+
+    def test_build_pattern_css_head_content_uses_local_static_path(self) -> None:
+        """
+        Checks build_pattern_css_head_content() uses the local static CSS path.
+        """
+        head_content = update_pattern_header.build_pattern_css_head_content()
+
+        self.assertIn('{% load static %}', head_content)
+        self.assertIn("{% static 'bdr_student_uploader_hub_app/css/bul_patterns.css' %}", head_content)
 
 
 class PatternHeaderTemplateTest(TestCase):
