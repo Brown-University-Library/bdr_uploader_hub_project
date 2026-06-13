@@ -71,6 +71,8 @@ The command:
 - rewrites the stylesheet link in `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/head.html` to use the local static CSS file
 - saves the body/header markup to `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/body.html`.
 
-This is intentionally not automatic. Run it when the central pattern-header changes, then review the rendered pages for CSS conflicts before committing the refreshed files.
+The split between `head.html` and `body.html` is still needed even though `head.html` no longer keeps the upstream external CSS link. The upstream pattern-header arrives as one HTML blob containing both the external CSS link and the body/header markup. The update command extracts that CSS URL so it can download the stylesheet locally, removes the external link from the body markup, generates a local static CSS link for `head.html`, and keeps `body.html` limited to markup that belongs inside the page body.
+
+This management-command is intentionally not automatic. Run it when the central pattern-header changes, then review the rendered pages for CSS conflicts before committing the refreshed files.
 
 ---
