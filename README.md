@@ -1,6 +1,9 @@
 # BDR Uploader Hub
 
-This webapp allows Library staff to easily configure, and create, a new BDR (Brown Digital Repository) upload webapp for users to upload works to the BDR.
+This webapp:
+- Allows users to stage their uploads.
+- Allows Library staff to easily configure, and create, a new BDR (Brown Digital Repository) upload webapp for users to upload works for ingest into the BDR. It also allows staff to ingest users' staged items.
+
 
 ## Running locally
 
@@ -33,7 +36,8 @@ Go to User profiles, and check "Can create app" for the shib-spoofed profile.
 
 At this point, you should be able to log in as staff and create new apps, edit existing apps and see student submissions in the admin portal. If your new apps grant access to one of the configured groups, or to `foo@bar.baz`, you'll also be able to log in as a student and see those apps.
 
-## Technical note
+
+## Technical notes
 
 ### UserProfiles
 
@@ -61,7 +65,10 @@ To refresh the local pattern-header files:
 uv run ./manage.py update_pattern_header
 ```
 
-The command saves a full upstream snapshot to `bdr_uploader_hub_app/lib/pattern_header_upstream.html`, extracts the stylesheet link into `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/head.html`, and saves the body/header markup to `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/body.html`.
+The command:
+- saves a full upstream snapshot to `bdr_uploader_hub_app/lib/pattern_header_upstream.html`
+- extracts the stylesheet link into `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/head.html`
+- saves the body/header markup to `bdr_uploader_hub_app/bdr_uploader_hub_app_templates/includes/pattern_header/body.html`.
 
 This is intentionally not automatic. Run it when the central pattern-header changes, then review the rendered pages for CSS conflicts before committing the refreshed files.
 

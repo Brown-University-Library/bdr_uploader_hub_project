@@ -16,6 +16,7 @@ Notes:
 - The `PATTERN_HEADER_URL` source is considered trusted.
 """
 
+import os
 import pathlib
 import re
 from argparse import ArgumentParser
@@ -25,13 +26,25 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 
-def fetch_pattern_header(url: str) -> str:
+def resolve_verify_ssl() -> bool:
+    """
+    Resolves whether SSL certificates should be verified for the pattern-header fetch.
+    NOTE: This is a temporary work-around to allow local development while our dev-server's cert is down.
+
+    Called by: Command.handle()
+    """
+    verify_ssl_raw: str = os.environ.get('PATTERN_HEADER_VERIFY_SSL', 'true')
+    verify_ssl: bool = verify_ssl_raw.lower() not in {'0', 'false', 'no'}
+    return verify_ssl
+
+
+def fetch_pattern_header(url: str, verify_ssl: bool = True) -> str:
     """
     Fetches pattern header HTML from the given URL.
 
     Called by: Command.handle()
     """
-    response: httpx.Response = httpx.get(url, timeout=30.0)
+    response: httpx.Response = httpx.get(url, timeout=30.0, verify=verify_ssl)
     response.raise_for_status()
     return response.text
 
@@ -122,10 +135,13 @@ class Command(BaseCommand):
 
         dry_run = bool(options_dict.get('dry_run'))
         upstream_path, head_path, body_path = resolve_target_paths()
+        verify_ssl: bool = resolve_verify_ssl()
 
         self.stdout.write(f'Fetching pattern header from: {url}')
+        if not verify_ssl:
+            self.stdout.write(self.style.WARNING('SSL certificate verification is disabled for this fetch'))
         try:
-            content = fetch_pattern_header(url)
+            content = fetch_pattern_header(url, verify_ssl=verify_ssl)
         except httpx.HTTPError as exc:
             self.stdout.write(self.style.ERROR(f'Failed to fetch: {exc}'))
             return

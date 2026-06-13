@@ -1,3 +1,5 @@
+from unittest.mock import Mock, patch
+
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 from django.test import SimpleTestCase as TestCase
@@ -83,6 +85,46 @@ class PatternHeaderSplitTest(TestCase):
         )
         self.assertEqual(parsed_link.get('rel'), ['stylesheet'])
         self.assertNotIn('bul_patterns.css', body_content)
+
+
+class PatternHeaderFetchTest(TestCase):
+    """
+    Checks pattern-header fetch configuration.
+    """
+
+    def test_resolve_verify_ssl_defaults_to_true(self) -> None:
+        """
+        Checks SSL certificate verification defaults to enabled.
+        """
+        with patch.dict('os.environ', {}, clear=True):
+            verify_ssl = update_pattern_header.resolve_verify_ssl()
+
+        self.assertTrue(verify_ssl)
+
+    def test_resolve_verify_ssl_accepts_false_values(self) -> None:
+        """
+        Checks SSL certificate verification can be disabled by environment variable.
+        """
+        for value in ['0', 'false', 'no', 'FALSE']:
+            with patch.dict('os.environ', {'PATTERN_HEADER_VERIFY_SSL': value}, clear=True):
+                verify_ssl = update_pattern_header.resolve_verify_ssl()
+
+            self.assertFalse(verify_ssl)
+
+    @patch('bdr_uploader_hub_app.management.commands.update_pattern_header.httpx.get')
+    def test_fetch_pattern_header_passes_verify_ssl_to_httpx(self, mock_get: Mock) -> None:
+        """
+        Checks fetch_pattern_header() passes the SSL verification setting to httpx.
+        """
+        mock_response = Mock()
+        mock_response.text = 'pattern header'
+        mock_get.return_value = mock_response
+
+        content = update_pattern_header.fetch_pattern_header('https://example.edu/header.html', verify_ssl=False)
+
+        self.assertEqual(content, 'pattern header')
+        mock_get.assert_called_once_with('https://example.edu/header.html', timeout=30.0, verify=False)
+        mock_response.raise_for_status.assert_called_once_with()
 
 
 class PatternHeaderTemplateTest(TestCase):
