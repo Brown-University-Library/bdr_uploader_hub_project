@@ -1,3 +1,8 @@
+.info-section {
+    margin: 0 auto;
+    max-width: 72rem;
+}
+
 h2 {
     margin-bottom: 1rem;
 }
