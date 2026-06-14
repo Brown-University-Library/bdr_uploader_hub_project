@@ -1,6 +1,10 @@
 # Isolate imported CSS
 
-(original question -- 2026-June-14)
+This is 2026-June-14 reasearch on a general approach to isolate imported CSS (for imported HTML) -- to prevent it affecting the styling of the rest of the webapp.
+
+The main answer has not been implemented in this project.
+
+(original question)
 
 > I have a question about "negating" the cascading effect of CSS.
 >
