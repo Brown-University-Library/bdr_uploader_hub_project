@@ -26,14 +26,18 @@ import httpx
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-
 PATTERN_CSS_STATIC_PATH = 'bdr_student_uploader_hub_app/css/bul_patterns.css'
 
 
 def resolve_verify_ssl() -> bool:
     """
     Resolves whether SSL certificates should be verified for the pattern-header fetch.
-    NOTE: This is a temporary work-around to allow local development while our dev-server's cert is down.
+
+    NOTE:
+    - This is a work-around to allow local development while our dev-server's cert is down.
+    - It allows the `manage.py` command to be run like:
+      `PATTERN_HEADER_VERIFY_SSL=false uv run ./manage.py update_pattern_header`
+    - This envar is intentionally not loaded in settings from the `.env`, because this should not be an ongoing issue.
 
     Called by: Command.handle()
     """
@@ -115,10 +119,7 @@ def build_pattern_css_head_content() -> str:
 
     Called by: split_pattern_header()
     """
-    head_content = (
-        '{% load static %}\n'
-        f'<link rel="stylesheet" href="{{% static \'{PATTERN_CSS_STATIC_PATH}\' %}}">\n'
-    )
+    head_content = f'{{% load static %}}\n<link rel="stylesheet" href="{{% static \'{PATTERN_CSS_STATIC_PATH}\' %}}">\n'
     return head_content
 
 
@@ -179,6 +180,7 @@ class Command(BaseCommand):
 
         Called by: Django management command runner
         """
+        ## analyze options ------------------------------------------
         options_dict: dict[str, object] = options
         url_option = options_dict.get('url')
         url_override = url_option if isinstance(url_option, str) else ''
@@ -186,11 +188,15 @@ class Command(BaseCommand):
         if not url:
             self.stdout.write(self.style.ERROR('PATTERN_HEADER_URL not set in settings and --url not provided'))
             return
-
         dry_run = bool(options_dict.get('dry_run'))
-        upstream_path, head_path, body_path, css_path = resolve_target_paths()
+
+        ## prep paths -----------------------------------------------
+        upstream_path, head_path, body_path, css_path = (
+            resolve_target_paths()
+        )  # returns tuple[pathlib.Path, pathlib.Path, pathlib.Path, pathlib.Path]
         verify_ssl: bool = resolve_verify_ssl()
 
+        ## fetch pattern-header html --------------------------------
         self.stdout.write(f'Fetching pattern header from: {url}')
         if not verify_ssl:
             self.stdout.write(self.style.WARNING('SSL certificate verification is disabled for this fetch'))
@@ -199,8 +205,9 @@ class Command(BaseCommand):
         except httpx.HTTPError as exc:
             self.stdout.write(self.style.ERROR(f'Failed to fetch: {exc}'))
             return
-
         self.stdout.write(f'Fetched {len(content)} characters')
+
+        ## fetch css ------------------------------------------------
         _, css_url = extract_pattern_css_link(content)
         css_content = ''
         if css_url:
@@ -214,17 +221,20 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.WARNING('No bul_patterns.css link found in pattern header HTML'))
 
+        ## split pattern-header into head and body ------------------
         head_content, body_content = split_pattern_header(content)
 
         if dry_run:
             self.stdout.write(self.style.WARNING('Dry run - not saving'))
             return
 
+        ## save files -----------------------------------------------
         save_pattern_header(content, upstream_path)
         save_pattern_header(head_content, head_path)
         save_pattern_header(body_content, body_path)
         if css_content:
             save_pattern_header(css_content, css_path)
+
         self.stdout.write(self.style.SUCCESS(f'Saved upstream snapshot to: {upstream_path}\n'))
         self.stdout.write(self.style.SUCCESS(f'Saved head include to: {head_path}\n'))
         self.stdout.write(self.style.SUCCESS(f'Saved body include to: {body_path}\n'))
