@@ -29,6 +29,21 @@ from django.core.management.base import BaseCommand
 PATTERN_CSS_STATIC_PATH = 'bdr_student_uploader_hub_app/css/bul_patterns.css'
 
 
+def resolve_target_paths() -> tuple[pathlib.Path, pathlib.Path, pathlib.Path, pathlib.Path]:
+    """
+    Resolves the target paths for the pattern header files.
+
+    Called by: Command.handle()
+    """
+    app_dir: pathlib.Path = pathlib.Path(__file__).resolve().parent.parent.parent
+    upstream_path: pathlib.Path = app_dir / 'lib' / 'pattern_header_upstream.html'
+    template_dir: pathlib.Path = app_dir / 'bdr_uploader_hub_app_templates' / 'includes' / 'pattern_header'
+    head_path: pathlib.Path = template_dir / 'head.html'
+    body_path: pathlib.Path = template_dir / 'body.html'
+    css_path: pathlib.Path = app_dir / 'static' / PATTERN_CSS_STATIC_PATH
+    return upstream_path, head_path, body_path, css_path
+
+
 def resolve_verify_ssl() -> bool:
     """
     Resolves whether SSL certificates should be verified for the pattern-header fetch.
@@ -46,17 +61,6 @@ def resolve_verify_ssl() -> bool:
     return verify_ssl
 
 
-def fetch_url(url: str, verify_ssl: bool = True) -> str:
-    """
-    Fetches text content from the given URL.
-
-    Called by: Command.handle()
-    """
-    response: httpx.Response = httpx.get(url, timeout=30.0, verify=verify_ssl)
-    response.raise_for_status()
-    return response.text
-
-
 def fetch_pattern_header(url: str, verify_ssl: bool = True) -> str:
     """
     Fetches pattern header HTML from the given URL.
@@ -67,29 +71,15 @@ def fetch_pattern_header(url: str, verify_ssl: bool = True) -> str:
     return content
 
 
-def fetch_pattern_css(url: str, verify_ssl: bool = True) -> str:
+def fetch_url(url: str, verify_ssl: bool = True) -> str:
     """
-    Fetches pattern header CSS from the given URL.
+    Fetches text content from the given URL.
 
-    Called by: Command.handle()
+    Called by: fetch_pattern_header(), fetch_pattern_css()
     """
-    content: str = fetch_url(url, verify_ssl=verify_ssl)
-    return content
-
-
-def resolve_target_paths() -> tuple[pathlib.Path, pathlib.Path, pathlib.Path, pathlib.Path]:
-    """
-    Resolves the target paths for the pattern header files.
-
-    Called by: Command.handle()
-    """
-    app_dir: pathlib.Path = pathlib.Path(__file__).resolve().parent.parent.parent
-    upstream_path: pathlib.Path = app_dir / 'lib' / 'pattern_header_upstream.html'
-    template_dir: pathlib.Path = app_dir / 'bdr_uploader_hub_app_templates' / 'includes' / 'pattern_header'
-    head_path: pathlib.Path = template_dir / 'head.html'
-    body_path: pathlib.Path = template_dir / 'body.html'
-    css_path: pathlib.Path = app_dir / 'static' / PATTERN_CSS_STATIC_PATH
-    return upstream_path, head_path, body_path, css_path
+    response: httpx.Response = httpx.get(url, timeout=30.0, verify=verify_ssl)
+    response.raise_for_status()
+    return response.text
 
 
 def extract_pattern_css_link(content: str) -> tuple[str, str]:
@@ -113,14 +103,14 @@ def extract_pattern_css_link(content: str) -> tuple[str, str]:
     return link_tag, css_url
 
 
-def build_pattern_css_head_content() -> str:
+def fetch_pattern_css(url: str, verify_ssl: bool = True) -> str:
     """
-    Builds the template head content for the locally saved pattern CSS.
+    Fetches pattern header CSS from the given URL.
 
-    Called by: split_pattern_header()
+    Called by: Command.handle()
     """
-    head_content = f'{{% load static %}}\n<link rel="stylesheet" href="{{% static \'{PATTERN_CSS_STATIC_PATH}\' %}}">\n'
-    return head_content
+    content: str = fetch_url(url, verify_ssl=verify_ssl)
+    return content
 
 
 def split_pattern_header(content: str) -> tuple[str, str]:
@@ -138,6 +128,16 @@ def split_pattern_header(content: str) -> tuple[str, str]:
         body_content = content.replace(link_tag, '', 1)
 
     return head_content, body_content
+
+
+def build_pattern_css_head_content() -> str:
+    """
+    Builds the template head content for the locally saved pattern CSS.
+
+    Called by: split_pattern_header()
+    """
+    head_content = f'{{% load static %}}\n<link rel="stylesheet" href="{{% static \'{PATTERN_CSS_STATIC_PATH}\' %}}">\n'
+    return head_content
 
 
 def save_pattern_header(content: str, target_path: pathlib.Path) -> None:
