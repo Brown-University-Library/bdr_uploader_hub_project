@@ -6,7 +6,8 @@ from typing import Any, Callable, Tuple
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.http import HttpRequest, HttpResponse, HttpResponseServerError
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseServerError
+from django.urls import reverse
 
 log = logging.getLogger(__name__)
 
@@ -39,6 +40,13 @@ def shib_decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpRespo
             return func(request, *args, **kwargs)
         ## process shib metadata ------------------------------------
         shib_metadata: dict = prep_shib_meta(request.META, request.get_host())
+        if shib_metadata.get('Shibboleth-eppn') and not shib_metadata.get('Shibboleth-mail'):
+            log.warning('Shibboleth metadata is missing email for eppn, ``%s``', shib_metadata.get('Shibboleth-eppn'))
+            request.session['problem_message'] = (
+                'Your Brown/Shibboleth login did not include an email address, '
+                'which is required to use this uploader. Please contact bdr@brown.edu for assistance.'
+            )
+            return HttpResponseRedirect(reverse('info_url'))
         ## provision user -------------------------------------------
         user: User | None = provision_user(shib_metadata)
         if not user:
