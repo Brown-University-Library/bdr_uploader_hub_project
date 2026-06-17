@@ -6,7 +6,8 @@ from typing import Any, Callable, Tuple
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.http import HttpRequest, HttpResponse, HttpResponseServerError
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseServerError
+from django.urls import reverse
 
 log = logging.getLogger(__name__)
 
@@ -39,6 +40,13 @@ def shib_decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpRespo
             return func(request, *args, **kwargs)
         ## process shib metadata ------------------------------------
         shib_metadata: dict = prep_shib_meta(request.META, request.get_host())
+        if shib_metadata.get('Shibboleth-eppn') and not shib_metadata.get('Shibboleth-mail'):
+            log.warning('Shibboleth metadata is missing email for eppn, ``%s``', shib_metadata.get('Shibboleth-eppn'))
+            request.session['problem_message'] = (
+                'Your Brown/Shibboleth login did not include an email address, '
+                'which is required to use this uploader. Please contact bdr@brown.edu for assistance.'
+            )
+            return HttpResponseRedirect(reverse('info_url'))
         ## provision user -------------------------------------------
         user: User | None = provision_user(shib_metadata)
         if not user:
@@ -113,11 +121,11 @@ def provision_user(shib_metadata: dict) -> User | None:
         user.save()
         try:
             ## update userprofile -----------------------------------------
-            user.userprofile.is_member_of_groups = is_member_of_groups
-            user.userprofile.save()
+            user.userprofile.is_member_of_groups = is_member_of_groups  # type: ignore (ignores errant pylance warning)
+            user.userprofile.save()  # type: ignore (ignores errant pylance warning)
         except Exception:
             log.exception('Error updating user profile')
-            log.debug(f'User profile details: {pprint.pformat(user.userprofile.__dict__)}')
+            log.debug(f'User profile details: {pprint.pformat(user.userprofile.__dict__)}')  # type: ignore (ignores errant pylance warning)
     except Exception:
         log.exception('Error creating user')
         user = None
@@ -125,42 +133,3 @@ def provision_user(shib_metadata: dict) -> User | None:
     return user
 
     ## end def provision_user()
-
-
-# def provision_user(shib_metadata: dict) -> User | None:
-#     """
-#     Creates or updates User object based on Shibboleth metadata.
-#     Returns User object or None
-#     Called by wrapper().
-#     """
-#     log.debug('starting provision_user()')
-#     ## ensure username and email ------------------------------------
-#     username: str | None = shib_metadata.get('Shibboleth-eppn')
-#     if not username:
-#         log.warning('No eppn found in Shibboleth metadata')
-#     email: str | None = shib_metadata.get('Shibboleth-mail')
-#     if not email:
-#         log.warning('No email found in Shibboleth metadata')
-#     if not username or not email:
-#         return None
-#     ## set defaults -------------------------------------------------
-#     defaults: dict[str, str] = {
-#         'email': email,
-#         'first_name': shib_metadata.get('Shibboleth-givenName', ''),
-#         'last_name': shib_metadata.get('Shibboleth-sn', ''),
-#     }
-#     log.debug(f'username, ``{username}``')
-#     log.debug(f'defaults, ``{pprint.pformat(defaults)}``')
-#     ## create or update user ----------------------------------------
-#     try:
-#         result: Tuple[User, bool] = User.objects.update_or_create(username=username, defaults=defaults)
-#         (user, created) = result
-#         log.debug(f'user-created, ``{created}``')
-#         user.save()
-#     except Exception:
-#         log.exception('Error creating user')
-#         user = None
-#     log.debug(f'returning user, ``{user}``')
-#     return user
-
-#     ## end def provision_user()
