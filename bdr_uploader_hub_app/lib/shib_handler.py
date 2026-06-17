@@ -121,11 +121,11 @@ def provision_user(shib_metadata: dict) -> User | None:
         user.save()
         try:
             ## update userprofile -----------------------------------------
-            user.userprofile.is_member_of_groups = is_member_of_groups
-            user.userprofile.save()
+            user.userprofile.is_member_of_groups = is_member_of_groups  # type: ignore (ignores errant pylance warning)
+            user.userprofile.save()  # type: ignore (ignores errant pylance warning)
         except Exception:
             log.exception('Error updating user profile')
-            log.debug(f'User profile details: {pprint.pformat(user.userprofile.__dict__)}')
+            log.debug(f'User profile details: {pprint.pformat(user.userprofile.__dict__)}')  # type: ignore (ignores errant pylance warning)
     except Exception:
         log.exception('Error creating user')
         user = None
@@ -133,42 +133,3 @@ def provision_user(shib_metadata: dict) -> User | None:
     return user
 
     ## end def provision_user()
-
-
-# def provision_user(shib_metadata: dict) -> User | None:
-#     """
-#     Creates or updates User object based on Shibboleth metadata.
-#     Returns User object or None
-#     Called by wrapper().
-#     """
-#     log.debug('starting provision_user()')
-#     ## ensure username and email ------------------------------------
-#     username: str | None = shib_metadata.get('Shibboleth-eppn')
-#     if not username:
-#         log.warning('No eppn found in Shibboleth metadata')
-#     email: str | None = shib_metadata.get('Shibboleth-mail')
-#     if not email:
-#         log.warning('No email found in Shibboleth metadata')
-#     if not username or not email:
-#         return None
-#     ## set defaults -------------------------------------------------
-#     defaults: dict[str, str] = {
-#         'email': email,
-#         'first_name': shib_metadata.get('Shibboleth-givenName', ''),
-#         'last_name': shib_metadata.get('Shibboleth-sn', ''),
-#     }
-#     log.debug(f'username, ``{username}``')
-#     log.debug(f'defaults, ``{pprint.pformat(defaults)}``')
-#     ## create or update user ----------------------------------------
-#     try:
-#         result: Tuple[User, bool] = User.objects.update_or_create(username=username, defaults=defaults)
-#         (user, created) = result
-#         log.debug(f'user-created, ``{created}``')
-#         user.save()
-#     except Exception:
-#         log.exception('Error creating user')
-#         user = None
-#     log.debug(f'returning user, ``{user}``')
-#     return user
-
-#     ## end def provision_user()
