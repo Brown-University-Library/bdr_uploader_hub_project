@@ -40,6 +40,29 @@ class ShibDecoratorTest(TestCase):
         self.assertIn('bdr@brown.edu', request.session['problem_message'])
 
 
+class InfoProblemMessageTemplateTest(TestCase):
+    def test_missing_mail_problem_message_renders_subject_mailto(self):
+        """
+        Checks that the missing Shib mail problem message renders a mailto link with a subject.
+        """
+        problem_message = (
+            'Your Brown/Shibboleth login did not include an email address, '
+            'which is required to use this uploader. Please contact bdr@brown.edu for assistance.'
+        )
+        session = self.client.session
+        session['problem_message'] = problem_message
+        session.save()
+
+        response = self.client.get(reverse('info_url'))
+
+        self.assertContains(response, 'did not include an email address')
+        self.assertContains(response, 'bdr@brown.edu')
+        self.assertContains(
+            response,
+            'mailto:bdr@brown.edu?subject=bdr-uploader-hub%3A%20missing%20Shibboleth%20email',
+        )
+
+
 class ShibProvisionUserTest(TestCase):
     def test_missing_mail_returns_none(self):
         """
