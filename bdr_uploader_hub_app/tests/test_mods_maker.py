@@ -9,6 +9,9 @@ from bdr_uploader_hub_app.models import AppConfig, Submission
 
 log = logging.getLogger(__name__)
 
+LONG_KEYWORD_TERMS: list[str] = [f'keyword-{index:02d}-extended-topic' for index in range(1, 22)]
+LONG_KEYWORDS: str = '|'.join(LONG_KEYWORD_TERMS)
+
 
 class ModsMakerBasicStaticFieldsTest(SimpleTestCase):
     """
@@ -594,5 +597,24 @@ class ModsMakerFullTest(SimpleTestCase):
             '<mods:genre authority="aat" valueURI="http://vocab.getty.edu/aat/300426530">instructional posters</mods:genre>',
             result,
         )
+
+    def test_long_keywords_render_one_topic_per_keyword(self):
+        """
+        Checks long pipe-delimited keywords render one MODS topic per keyword.
+        """
+        submission = Submission(
+            title='foo',
+            abstract='bar',
+            keywords=LONG_KEYWORDS,
+            created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
+        )
+        result = ModsMaker(submission).prepare_mods()
+        soup = BeautifulSoup(result, 'xml')
+        topics = soup.find_all('topic')
+
+        self.assertGreater(len(LONG_KEYWORDS), 255)
+        self.assertEqual(len(LONG_KEYWORD_TERMS), len(topics))
+        self.assertEqual(LONG_KEYWORD_TERMS[0], topics[0].text)
+        self.assertEqual(LONG_KEYWORD_TERMS[-1], topics[-1].text)
 
     ## end class ModsMakerFullTest()
