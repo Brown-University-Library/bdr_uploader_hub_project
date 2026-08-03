@@ -12,7 +12,7 @@ Copy `example.env` to `../.env`, and change values as needed. Note that in the e
 Create the directories `DBs` and `logs` in the configured location (`uploader_hub_files/` by default.)
 
 ```sh
-uv run manage.py makemigrations bdr_student_uploader_hub_app
+uv run ./manage.py makemigrations bdr_uploader_hub_app
 uv run ./manage.py migrate
 ```
 Based on the example config, this should create a sqlite file in the DBs directory and set up all required tables.
@@ -45,9 +45,9 @@ This webapp is configured to auto-create a UserProfile record, automatically, wh
 
 To enable that:
 - `models.UserProfile()` was created.
-- `apps.py` was added to the `bdr_student_uploader_hub_app` -- specifically to load `signals.py`.
+- `apps.py` was added to `bdr_uploader_hub_app` -- specifically to load `signals.py`.
 - `signals.py` was added to trigger the `UserProfile` auto-creation.
-- `settings.py` was updated to specify `bdr_student_uploader_hub_app.apps.BdrUploaderHubAppConfig`, instead of just `bdr_student_uploader_hub_app`.
+- `settings.py` was updated to specify `bdr_uploader_hub_app.apps.BdrUploaderHubAppConfig`, instead of just `bdr_uploader_hub_app`.
 
 ### Updating pattern-header
 

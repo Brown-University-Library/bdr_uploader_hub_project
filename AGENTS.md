@@ -207,7 +207,7 @@ When implementing a change (especially from an issue/task):
 - `upload_slug()` stores submission data in the `student_form_data` session key. `student_confirm()` removes `accessibility_agreement` before persistence because that checkbox is a submission-time gate, not descriptive metadata.
 - Collection routing has two modes: fixed collection data comes from the app configuration, while department-menu mode stores a submission-level `target_collection_pid`; ingest prefers the submission-level PID and falls back to the app-level PID.
 - `config/settings.py` asserts that the outer-directory `.env` exists during import. Never copy secret values from that file into this public repository or into `AGENTS.md`; use `example.env` only to understand variable names and shapes.
-- `README.md` currently shows the stale app label `bdr_student_uploader_hub_app` in its `makemigrations` example; the actual Django app label is `bdr_uploader_hub_app`.
+- The Django app label is `bdr_uploader_hub_app`; the static asset directory retains the legacy namespace `bdr_student_uploader_hub_app`, so do not rename that directory without coordinating template and deployment references.
 - `ruff.toml` currently retains `target-version = "py38"`, but `pyproject.toml` is the runtime authority and requires Python 3.12.
 - `bdr_uploader_hub_app/lib/OLD_version_helper.py` is retained history; active version endpoint code imports `bdr_uploader_hub_app/lib/version_helper.py`.
 - `send_ingest_success_email()` in `bdr_uploader_hub_app/lib/emailer.py` currently logs inputs but does not send email.
