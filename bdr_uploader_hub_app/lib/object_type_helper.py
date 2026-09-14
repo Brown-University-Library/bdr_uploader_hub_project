@@ -42,7 +42,7 @@ def build_object_type_choices() -> list[tuple[str, str]]:
     Called by: bdr_uploader_hub_app.forms.staff_form.StaffForm.__init__()
     """
     object_type_map = _normalize_object_type_options()
-    choices = sorted([(key, key) for key in object_type_map], key=lambda item: item[0])
+    choices = sorted([(key, key) for key in object_type_map])
     return choices
 
 
