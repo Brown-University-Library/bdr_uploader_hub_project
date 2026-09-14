@@ -242,6 +242,26 @@ GENRE_OPTIONS: list[dict] = [
     },
 ]
 
+## creates, eg: [{'menu_label': 'none', 'uri': ''}, {'menu_label': 'doctoral thesis', 'uri': 'http://...'}, ...]
+OBJECT_TYPE_OPTIONS: list[dict] = [
+    {
+        'menu_label': 'none',
+        'uri': '',
+    },
+    {
+        'menu_label': 'bachelors thesis',
+        'uri': 'http://purl.org/spar/fabio/BachelorsThesis',
+    },
+    {
+        'menu_label': 'masters thesis',
+        'uri': 'http://purl.org/spar/fabio/MastersThesis',
+    },
+    {
+        'menu_label': 'doctoral thesis',
+        'uri': 'http://purl.org/spar/fabio/DoctoralThesis',
+    },
+]
+
 ## used for pid<-->collection-name validation
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = 'http://localhost:8000/api/collections/'
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = 'test:123'

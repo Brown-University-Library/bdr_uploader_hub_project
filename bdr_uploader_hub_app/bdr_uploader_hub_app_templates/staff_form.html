@@ -193,6 +193,16 @@
                 </div>
                 {{ form.assigned_genre }}
             </div>
+
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.assigned_object_type.label_tag }}
+                    {% if form.assigned_object_type.help_text %}
+                        <p id="id_assigned_object_type_helptext" class="help">{{ form.assigned_object_type.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.assigned_object_type }}
+            </div>
             
             <div class="form-group">
                 <div class="label-container">

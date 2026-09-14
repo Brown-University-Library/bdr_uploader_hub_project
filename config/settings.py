@@ -239,6 +239,11 @@ genre_options_json: str = os.environ.get('GENRE_OPTIONS_JSON', '[]')
 genre_options_list: list = json.loads(genre_options_json)
 GENRE_OPTIONS: list[dict] = [dict(item) for item in genre_options_list]
 
+## creates, eg: [{'menu_label': 'none', 'uri': ''}, {'menu_label': 'doctoral thesis', 'uri': 'http://...'}, ...]
+object_type_options_json: str = os.environ.get('OBJECT_TYPE_OPTIONS_JSON', '[]')
+object_type_options_list: list = json.loads(object_type_options_json)
+OBJECT_TYPE_OPTIONS: list[dict] = [dict(item) for item in object_type_options_list]
+
 ## used for pid<-->collection-name validation
 BDR_PUBLIC_API_COLLECTION_ROOT_URL: str = os.environ['BDR_PUBLIC_API_COLLECTION_ROOT_URL']
 TEST_COLLECTION_PID_FOR_FORM_VALIDATION: str = os.environ['TEST_COLLECTION_PID_FOR_FORM_VALIDATION']
