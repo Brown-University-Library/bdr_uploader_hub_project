@@ -8,6 +8,10 @@ log = logging.getLogger(__name__)
 
 
 DEFAULT_OBJECT_TYPE_KEY = 'none'
+DEFAULT_OBJECT_TYPE_ENTRY: dict[str, str] = {
+    'menu_label': DEFAULT_OBJECT_TYPE_KEY,
+    'uri': '',
+}
 
 
 def _normalize_object_type_options() -> dict[str, dict]:
@@ -32,6 +36,9 @@ def _normalize_object_type_options() -> dict[str, dict]:
             raise ValueError(msg)
         normalized[menu_label] = entry
 
+    if DEFAULT_OBJECT_TYPE_KEY not in normalized:
+        normalized[DEFAULT_OBJECT_TYPE_KEY] = DEFAULT_OBJECT_TYPE_ENTRY.copy()
+
     return normalized
 
 
@@ -53,10 +60,7 @@ def get_default_object_type_entry() -> dict:
     Called by: get_object_type_entry(), bdr_uploader_hub_app.forms.staff_form.StaffForm.__init__()
     """
     object_type_map = _normalize_object_type_options()
-    default_entry = object_type_map.get(DEFAULT_OBJECT_TYPE_KEY)
-    if default_entry is None:
-        msg = f'Default object type key {DEFAULT_OBJECT_TYPE_KEY!r} is missing from OBJECT_TYPE_OPTIONS.'
-        raise ValueError(msg)
+    default_entry = object_type_map[DEFAULT_OBJECT_TYPE_KEY]
     return default_entry
 
 

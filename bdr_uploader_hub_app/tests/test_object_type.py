@@ -6,7 +6,11 @@ from django.test import SimpleTestCase, override_settings
 
 from bdr_uploader_hub_app.forms.staff_form import StaffForm
 from bdr_uploader_hub_app.lib.ingester_handler import Ingester
-from bdr_uploader_hub_app.lib.object_type_helper import build_object_type_choices, get_object_type_entry
+from bdr_uploader_hub_app.lib.object_type_helper import (
+    DEFAULT_OBJECT_TYPE_ENTRY,
+    build_object_type_choices,
+    get_object_type_entry,
+)
 
 OBJECT_TYPE_OPTIONS: list[dict] = [
     {
@@ -58,6 +62,27 @@ class ObjectTypeHelperTest(SimpleTestCase):
         """
         with self.assertRaisesRegex(ValueError, 'Unknown object type menu_label: invalid'):
             get_object_type_entry('invalid')
+
+    @override_settings(
+        OBJECT_TYPE_OPTIONS=[
+            {
+                'menu_label': 'masters thesis',
+                'uri': 'http://purl.org/spar/fabio/MastersThesis',
+            }
+        ]
+    )
+    def test_helper_adds_builtin_none_entry_when_settings_omit_it(self):
+        """
+        Checks helper falls back to a built-in none entry when settings omit it.
+        """
+        self.assertEqual(
+            [
+                ('masters thesis', 'masters thesis'),
+                ('none', 'none'),
+            ],
+            build_object_type_choices(),
+        )
+        self.assertEqual(DEFAULT_OBJECT_TYPE_ENTRY, get_object_type_entry(None))
 
 
 class StaffFormObjectTypeTest(SimpleTestCase):
