@@ -12,6 +12,7 @@ from bdr_uploader_hub_app.lib.department_collection_helper import (
     load_department_collection_data,
 )
 from bdr_uploader_hub_app.lib.genre_helper import get_genre_entry
+from bdr_uploader_hub_app.lib.object_type_helper import get_object_type_entry
 
 log = logging.getLogger(__name__)
 
@@ -61,6 +62,12 @@ def validate_staff_form(form, cleaned_data):
         cleaned_data['assigned_genre'] = selected_genre
     except ValueError as exc:
         form.add_error('assigned_genre', str(exc))
+
+    try:
+        selected_object_type = get_object_type_entry(cleaned_data.get('assigned_object_type'))
+        cleaned_data['assigned_object_type'] = selected_object_type
+    except ValueError as exc:
+        form.add_error('assigned_object_type', str(exc))
 
     mode = cleaned_data.get('collection_assignment_mode') or FIXED_COLLECTION_MODE
     if mode not in {FIXED_COLLECTION_MODE, DEPARTMENT_COLLECTION_MENU_MODE}:

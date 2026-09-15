@@ -6,6 +6,7 @@ from django.conf import settings
 from bdr_uploader_hub_app.forms.staff_form_validation import validate_staff_form
 from bdr_uploader_hub_app.lib.department_collection_helper import COLLECTION_ASSIGNMENT_MODE_CHOICES, FIXED_COLLECTION_MODE
 from bdr_uploader_hub_app.lib.genre_helper import build_genre_choices, get_default_genre_entry
+from bdr_uploader_hub_app.lib.object_type_helper import build_object_type_choices, get_default_object_type_entry
 
 log = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ class StaffForm(forms.Form):
         help_text='email1 | email2 | ...',
     )
     assigned_genre = forms.ChoiceField(required=True, label='Assigned Genre', choices=[])
+    assigned_object_type = forms.ChoiceField(required=False, label='Assigned Object Type', choices=[])
 
     authorized_student_groups = forms.CharField(
         required=False,
@@ -129,6 +131,7 @@ class StaffForm(forms.Form):
         self.fields['visibility_options'].choices = settings.ALL_VISIBILITY_OPTIONS
         self.fields['visibility_default'].choices = [('ERR', 'Unselected')] + settings.ALL_VISIBILITY_OPTIONS
         self.fields['assigned_genre'].choices = build_genre_choices()
+        self.fields['assigned_object_type'].choices = build_object_type_choices()
         assigned_genre_initial = self.initial.get('assigned_genre') if isinstance(self.initial, dict) else None
         if isinstance(assigned_genre_initial, dict):
             assigned_genre_initial = assigned_genre_initial.get(
@@ -139,6 +142,16 @@ class StaffForm(forms.Form):
         if isinstance(self.initial, dict):
             self.initial['assigned_genre'] = assigned_genre_initial
         self.fields['assigned_genre'].initial = assigned_genre_initial
+        assigned_object_type_initial = self.initial.get('assigned_object_type') if isinstance(self.initial, dict) else None
+        if isinstance(assigned_object_type_initial, dict):
+            assigned_object_type_initial = assigned_object_type_initial.get(
+                'menu_label', get_default_object_type_entry().get('menu_label', 'none')
+            )
+        if not assigned_object_type_initial:
+            assigned_object_type_initial = get_default_object_type_entry().get('menu_label', 'none')
+        if isinstance(self.initial, dict):
+            self.initial['assigned_object_type'] = assigned_object_type_initial
+        self.fields['assigned_object_type'].initial = assigned_object_type_initial
 
     def clean(self):
         ## delegate all validation to bdr_uploader_hub_app/forms/staff_form_validation.py

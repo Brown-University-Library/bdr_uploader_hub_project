@@ -11,6 +11,7 @@ from django.contrib import messages
 from lxml import etree
 
 from bdr_uploader_hub_app.lib.mods_handler import ModsMaker
+from bdr_uploader_hub_app.lib.object_type_helper import get_object_type_entry
 from bdr_uploader_hub_app.models import Submission
 
 from .emailer import send_ingest_success_email
@@ -190,6 +191,10 @@ class Ingester:
             error_message = 'No collection pid is available for ingest.'
             raise ValueError(error_message)
         rels_ext = {'isMemberOfCollection': collection_pid}
+        object_type_entry = get_object_type_entry(app_config_dict_from_json.get('assigned_object_type'))
+        object_type_uri = str(object_type_entry.get('uri', '')).strip()
+        if object_type_uri:
+            rels_ext['type'] = object_type_uri
         log.debug(f'rels_ext: {rels_ext}')
         return rels_ext
 
