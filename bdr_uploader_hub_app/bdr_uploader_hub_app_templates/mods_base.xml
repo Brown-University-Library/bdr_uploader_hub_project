@@ -6,8 +6,8 @@
 
     <mods:abstract>{{ abstract }}</mods:abstract>
 
-    {% if authors %}
-        {% for author in authors %}
+    {%- if authors %}
+        {%- for author in authors %}
             <!-- author -->
             <mods:name type="personal">
                 <mods:namePart>{{ author }}</mods:namePart>
@@ -15,11 +15,11 @@
                     <mods:roleTerm authority="marcrelator" authorityURI="http://id.loc.gov/vocabulary/relators" valueURI="http://id.loc.gov/vocabulary/relators/aut">Author</mods:roleTerm>
                 </mods:role>
             </mods:name>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
-    {% if advisor_reader_names %}
-        {% for advisor_reader_name in advisor_reader_names %}
+    {%- if advisor_reader_names %}
+        {%- for advisor_reader_name in advisor_reader_names %}
             <!-- advisor/reader -->
             <mods:name type="personal">
                 <mods:namePart>{{ advisor_reader_name }}</mods:namePart>
@@ -27,33 +27,33 @@
                     <mods:roleTerm>Advisor/Reader</mods:roleTerm>
                 </mods:role>
             </mods:name>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
-    {% if keywords %}
-        {% for keyword in keywords %}
+    {%- if keywords %}
+        {%- for keyword in keywords %}
             <mods:subject>
                 <mods:topic>{{ keyword }}</mods:topic>
             </mods:subject>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
-    {% if concentrations %}
-        {% for concentration in concentrations %}
+    {%- if concentrations %}
+        {%- for concentration in concentrations %}
             <!-- concentration -->
             <mods:note type="fieldOfStudy" displayLabel="Scholarly concentration">{{ concentration }}</mods:note>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
-    {% if degrees %}
-        {% for degree in degrees %}
+    {%- if degrees %}
+        {%- for degree in degrees %}
             <!-- degree -->
             <mods:note type="degree" displayLabel="Degree">{{ degree }}</mods:note>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
-    {% if departments %}
-        {% for department in departments %}
+    {%- if departments %}
+        {%- for department in departments %}
             <!-- department -->
             <mods:name type="corporate">
                 <mods:namePart>{{ department }}</mods:namePart>
@@ -65,11 +65,11 @@
                     >sponsor</mods:roleTerm>
                 </mods:role>
             </mods:name>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
-    {% if faculty_mentors %}
-        {% for faculty_mentor in faculty_mentors %}
+    {%- if faculty_mentors %}
+        {%- for faculty_mentor in faculty_mentors %}
             <!-- faculty mentor -->
             <mods:name type="personal">
                 <mods:namePart>{{ faculty_mentor }}</mods:namePart>
@@ -77,11 +77,11 @@
                     <mods:roleTerm authority="local" type="text">Faculty Mentor</mods:roleTerm>
                 </mods:role>
             </mods:name>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
-    {% if team_members %}
-        {% for team_member in team_members %}
+    {%- if team_members %}
+        {%- for team_member in team_members %}
             <!-- team member -->
             <mods:name type="personal">
                 <mods:namePart>{{ team_member }}</mods:namePart>
@@ -89,40 +89,44 @@
                     <mods:roleTerm authority="local" type="text">Team Member</mods:roleTerm>
                 </mods:role>
             </mods:name>
-        {% endfor %}
-    {% endif %}
+        {%- endfor %}
+    {%- endif %}
 
     <!-- access conditions -->
-    {% if selected_license %}
-        {% if selected_license == 'all_rights_reserved' %}
+    {%- if selected_license %}
+        {%- if selected_license == 'all_rights_reserved' %}
             <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
             <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
-        {% elif selected_license == 'CC_BY' %}
+        {%- elif selected_license == 'CC_BY' %}
             <mods:accessCondition type="use and reproduction">Attribution (CC BY)</mods:accessCondition>
             <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International (CC BY 4.0)</mods:accessCondition>
-        {% elif selected_license == 'CC_BY-SA' %}
+        {%- elif selected_license == 'CC_BY-SA' %}
             <mods:accessCondition type="use and reproduction">Attribution-ShareAlike (CC BY-SA)</mods:accessCondition>
             <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</mods:accessCondition>
-        {% elif selected_license == 'CC_BY-NC-SA' %}
+        {%- elif selected_license == 'CC_BY-NC-SA' %}
             <mods:accessCondition type="use and reproduction">Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)</mods:accessCondition>
             <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</mods:accessCondition>
-        {% elif selected_license == 'CC_BY-NC-ND' %}
+        {%- elif selected_license == 'CC_BY-NC-ND' %}
             <mods:accessCondition type="use and reproduction">Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)</mods:accessCondition>
             <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)</mods:accessCondition>
-        {% elif selected_license == 'CC_BY-NC' %}
+        {%- elif selected_license == 'CC_BY-NC' %}
             <mods:accessCondition type="use and reproduction">Attribution-NonCommercial (CC BY-NC)</mods:accessCondition>
             <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</mods:accessCondition>
-        {% elif selected_license == 'CC_BY-ND' %}
+        {%- elif selected_license == 'CC_BY-ND' %}
             <mods:accessCondition type="use and reproduction">Attribution-NoDerivatives (CC BY-ND)</mods:accessCondition>
             <mods:accessCondition type="license" xlink:href="https://creativecommons.org/licenses/by-nd/4.0/">Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)</mods:accessCondition>
-        {% elif selected_license == 'CC0' %}
+        {%- elif selected_license == 'CC0' %}
             <mods:accessCondition type="use and reproduction">Creative Commons Zero (CC0) - No Rights Reserved</mods:accessCondition>
             <mods:accessCondition type="license" xlink:href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0 1.0 Universal Public Domain Dedication</mods:accessCondition>
-        {% endif %}
-    {% else %}
+        {%- endif %}
+    {%- else %}
         <mods:accessCondition type="use and reproduction">All rights reserved</mods:accessCondition>
         <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
-    {% endif %}
+    {%- endif %}
+
+    {%- if custom_mods %}
+        {{ custom_mods }}
+    {%- endif %}
 
     <!-- ===================== -->
     <!-- unchanging data START -->
