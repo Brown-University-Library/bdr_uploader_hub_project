@@ -416,6 +416,16 @@
                 {{ form.degrees_required }}
             </div>
 
+            <div class="form-group">
+                <div class="label-container">
+                    {{ form.custom_mods.label_tag }}
+                    {% if form.custom_mods.help_text %}
+                        <p id="id_custom_mods_helptext" class="help">{{ form.custom_mods.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {{ form.custom_mods }}
+            </div>
+
             {% comment %}
             <div class="form-group">
                 {{ form.invite_supplementary_files.label_tag }} {{ form.invite_supplementary_files }}
