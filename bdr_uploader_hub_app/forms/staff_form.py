@@ -122,6 +122,13 @@ class StaffForm(forms.Form):
         required=False, label='Degrees required', help_text='auto-selects `Ask...` on save'
     )
 
+    custom_mods = forms.CharField(
+        required=False,
+        label='Static custom MODS to include in all submissions',
+        help_text='<mods:note type="foo">...',
+        widget=forms.Textarea(attrs={'rows': 5}),
+    )
+
     invite_supplementary_files = forms.BooleanField(required=False, label='Invite supplementary files')
 
     def __init__(self, *args, **kwargs):

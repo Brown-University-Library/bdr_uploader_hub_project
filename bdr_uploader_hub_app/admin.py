@@ -3,7 +3,9 @@ import logging
 from django.contrib import admin
 
 from .lib.ingester_handler import Ingester
+from .lib.mods_handler import ModsMaker
 from .models import AppConfig, Submission, UserProfile
+from django.http import HttpResponse
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +28,7 @@ class SubmissionAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('id', 'created_at', 'updated_at', 'staff_ingester', 'ingest_error_message', 'bdr_pid')
 
-    actions = ['ingest']
+    actions = ['ingest', 'preview_mods']
 
     ## id field -------------------------------------------------====
     def short_id(self, obj):
@@ -71,6 +73,33 @@ class SubmissionAdmin(admin.ModelAdmin):
         return
 
     ingest.short_description = 'Ingest selected submissions'
+
+    ## preview mods action -------------------------------------------
+    def preview_mods(self, request, queryset):
+        """
+        Previews the MODS for a submission
+        """
+        log.debug('MODS preview requested')
+        log.debug(f'queryset: ``{queryset}``')
+        maker = ModsMaker(request)
+
+        self.mods = ""
+        self.is_xml = True
+        for submission in queryset:
+            self.submission = submission
+            if self.mods:
+                self.mods = self.mods+"\n\n---\n\n"
+                self.is_xml = False
+            try:
+                self.mods: str = self.mods + ModsMaker(submission).prepare_mods()
+            except Exception as e:
+                log.exception(f'Error previewing submission: {submission}, Error: {e}')
+                errors.append(message_error)
+        httptype = "text/xml" if self.is_xml else "text"
+        response = HttpResponse(self.mods,content_type=httptype)
+        return response
+
+    preview_mods.short_description = 'Preview the MODS to be generated'
 
 
 admin.site.register(UserProfile, UserProfileAdmin)
