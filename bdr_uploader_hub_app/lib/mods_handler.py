@@ -90,6 +90,7 @@ class ModsMaker:
         genre_authority: str = genre_entry.get('authority', '')
         genre_value_uri: str = genre_entry.get('value_uri', '')
         genre_text: str = genre_entry.get('mods_string', '')
+        custom_mods: str = temp_config_data.get('custom_mods')
 
         ## assembling data -------------------------------------------
         context = {
@@ -109,7 +110,7 @@ class ModsMaker:
             'genre_authority': genre_authority,
             'genre_value_uri': genre_value_uri,
             'genre_text': genre_text,
-            'custom_mods': self.submission.custom_mods
+            'custom_mods': custom_mods
         }
         ## render the template ---------------------------------------
         template = get_template('mods_base.xml')
