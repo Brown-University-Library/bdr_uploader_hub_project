@@ -88,6 +88,7 @@ class Submission(models.Model):
     keywords = models.CharField(max_length=255, blank=True, null=True)
     concentrations = models.CharField(max_length=255, blank=True, null=True)
     degrees = models.CharField(max_length=255, blank=True, null=True)
+    custom_mods = models.CharField(max_length=999, blank=True, null=True)
     ## file stuff -------------------------------
     primary_file = models.FileField(upload_to='primary_files/', blank=True, null=True)
     supplementary_files = models.FileField(upload_to='supplementary_files/', blank=True, null=True)  # not currently used
