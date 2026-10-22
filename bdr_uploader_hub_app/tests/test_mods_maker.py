@@ -510,7 +510,7 @@ class ModsMakerFullTest(SimpleTestCase):
         """
         Tests that the static custom mods fields are being correctly generated
         """
-        self.assertIn('<mods:note type="testingnote">result</mods:note>')
+        self.assertIn('<mods:note type="testingnote">test!</mods:note>',self.result)
 
     @override_settings(
         GENRE_OPTIONS=[

@@ -124,9 +124,11 @@
         <mods:accessCondition type="rights statement" xlink:href="http://rightsstatements.org/vocab/InC/1.0/">In Copyright</mods:accessCondition>
     {% endif %}
 
+    {% autoescape off %}
     {% if custom_mods %}
         {{ custom_mods }}
     {% endif %}
+    {% endautoescape %}
 
     <!-- ===================== -->
     <!-- unchanging data START -->

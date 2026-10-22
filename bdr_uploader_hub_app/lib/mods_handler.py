@@ -109,6 +109,7 @@ class ModsMaker:
             'genre_authority': genre_authority,
             'genre_value_uri': genre_value_uri,
             'genre_text': genre_text,
+            'custom_mods': self.submission.custom_mods
         }
         ## render the template ---------------------------------------
         template = get_template('mods_base.xml')
