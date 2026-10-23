@@ -79,7 +79,6 @@ class ModsMakerBasicCustomFieldsTest(SimpleTestCase):
             title='foo foo',
             abstract='bar bar',
             created_at=datetime.datetime(2025, 5, 6, 18, 26, 37),
-            custom_mods='<mods:note type="testingnote">test!</mods:note>',
         )
         self.mods_maker = ModsMaker(self.submission)
         self.result: str = self.mods_maker.prepare_mods()
@@ -126,7 +125,11 @@ class ModsMakerFullTest(SimpleTestCase):
             team_members='team member1 | team member2',
             visibility_options='public',
             created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
-            custom_mods='<mods:note type="testingnote">test!</mods:note>',
+            app=AppConfig(
+                temp_config_json={
+                    'custom_mods':'<mods:note type="testingnote">test!</mods:note>',
+                }
+            ),
         )
         self.mods_maker = ModsMaker(self.submission)
         self.result: str = self.mods_maker.prepare_mods()
