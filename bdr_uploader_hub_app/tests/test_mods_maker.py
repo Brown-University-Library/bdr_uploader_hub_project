@@ -125,6 +125,11 @@ class ModsMakerFullTest(SimpleTestCase):
             team_members='team member1 | team member2',
             visibility_options='public',
             created_at=datetime.datetime(2025, 5, 8, 7, 53, 21, 29655),
+            app=AppConfig(
+                temp_config_json={
+                    'custom_mods':'<mods:note type="testingnote">test!</mods:note>',
+                }
+            ),
         )
         self.mods_maker = ModsMaker(self.submission)
         self.result: str = self.mods_maker.prepare_mods()
