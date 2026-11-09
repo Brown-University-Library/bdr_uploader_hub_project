@@ -24,7 +24,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 class SubmissionAdmin(admin.ModelAdmin):
     list_display = ('short_id', 'title', 'short_app_slug', 'status', 'bdr_pid', 'updated_at')
     list_filter = ('app', 'status', 'created_at', 'updated_at')
-    search_fields = ('title', 'bdr_pid', 'app', 'created_at', 'updated_at')
+    search_fields = ('title', 'bdr_pid', 'app__slug', 'created_at', 'updated_at')
     ordering = ('-created_at',)
     readonly_fields = ('id', 'created_at', 'updated_at', 'staff_ingester', 'ingest_error_message', 'bdr_pid')
 
