@@ -25,6 +25,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
     ## Basic Information section ------------------------------------
     fields['title'] = forms.CharField(
         label='Title',
+        max_length=255,
         required=True,
         help_text='(required)',
     )
@@ -51,6 +52,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             help_text = 'Person1 | Person2 | ...'
         fields['advisors_and_readers'] = forms.CharField(
             label='Advisors and Readers',
+            max_length=255,
             required=config_data.get('advisors_and_readers_required', False),
             help_text=help_text,
         )
@@ -63,6 +65,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             help_text = 'Member1 | Member2 | ...'
         fields['team_members'] = forms.CharField(
             label='Team Members',
+            max_length=255,
             required=config_data.get('team_members_required', False),
             help_text=help_text,
         )
@@ -73,6 +76,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             help_text = 'Mentor1 | Mentor2 | ...'
         fields['faculty_mentors'] = forms.CharField(
             label='Faculty Mentors',
+            max_length=255,
             required=config_data.get('faculty_mentors_required', False),
             help_text='Enter names or identifiers for faculty mentors',
         )
@@ -82,7 +86,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         else:
             help_text = 'Author1 | Author2 | ...'
         fields['authors'] = forms.CharField(
-            label='Authors', required=config_data.get('authors_required', False), help_text=help_text
+            label='Authors', max_length=255, required=config_data.get('authors_required', False), help_text=help_text
         )
 
     ## Department & Research Program section ------------------------
@@ -93,6 +97,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             help_text = 'Dept1 | Dept2 | ...'
         fields['department'] = forms.CharField(
             label='Department(s)',
+            max_length=255,
             required=config_data.get('department_required', False),
             help_text=help_text,
         )
@@ -114,6 +119,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             help_text = 'Program1 | Program2 | ...'
         fields['research_program'] = forms.CharField(
             label='Research Program(s)',
+            max_length=255,
             required=config_data.get('research_program_required', False),
             help_text=help_text,
         )
@@ -206,6 +212,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
             help_text = 'Concentration1 | Concentration2 | ...'
         fields['concentrations'] = forms.CharField(
             label='Concentrations',
+            max_length=255,
             required=config_data.get('concentrations_required', False),
             help_text=help_text,
         )
@@ -215,7 +222,7 @@ def make_student_form_class(config_data: dict) -> type[forms.Form]:
         else:
             help_text = 'Degree1 | Degree2 | ...'
         fields['degrees'] = forms.CharField(
-            label='Degrees', required=config_data.get('degrees_required', False), help_text=help_text
+            label='Degrees', max_length=255, required=config_data.get('degrees_required', False), help_text=help_text
         )
     if config_data.get('invite_supplementary_files'):
         fields['supplementary_files'] = forms.FileField(
