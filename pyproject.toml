@@ -23,4 +23,5 @@ prod = [
     ]
 
 [tool.uv]
+constraint-dependencies = ["certifi>=2026.10.18"]
 exclude-newer = "2 days"
